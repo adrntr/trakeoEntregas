@@ -3,11 +3,13 @@ package com.example.ingeniera.trakeoentregas;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,6 +18,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,6 +31,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -83,10 +91,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 }
                 mMap.addMarker(markerOptions);
-                //TODO: request get direction code bellow
+
                 if(listPoints.size()==2){
                     //create the URL to get request from first marker to second marker
                     String url = getRequestedUrl(listPoints.get(0),listPoints.get(1));
+                    TaskRequestDirections taskRequestDirections=new TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+
                 }
             }
         });
@@ -174,6 +185,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            //parse json
+            TaskParser taskParser=new TaskParser();
+            taskParser.execute(s);
+        }
+    }
+
+    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>>{
+
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
+            JSONObject jsonObject=null;
+            List<List<HashMap<String, String>>> routes = null;
+            try {
+                jsonObject=new JSONObject(strings[0]);
+                DirectionsParser directionsParser=new DirectionsParser();
+                routes = directionsParser.parse(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
+            //get list route and display it into the map
+
+            ArrayList points = null;
+            PolylineOptions polylineOptions = null;
+            for(List<HashMap<String,String>> path : lists ){
+                points=new ArrayList();
+                polylineOptions=new PolylineOptions();
+                for(HashMap<String,String>point : path){
+                    double lat=Double.parseDouble(point.get("lat"));
+                    double lon=Double.parseDouble(point.get("lon"));
+
+                    points.add(new LatLng(lat,lon));
+
+                }
+
+                polylineOptions.addAll(points);
+                polylineOptions.width(15);
+                polylineOptions.color(Color.BLUE);
+                polylineOptions.geodesic(true);
+            }
+
+            if(polylineOptions!=null){
+                mMap.addPolyline(polylineOptions);
+            }else {
+                Toast.makeText(getApplicationContext(),"Direction not found",Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
