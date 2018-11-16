@@ -40,6 +40,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int LOCATION_REQUEST = 500;
     ArrayList<LatLng> listPoints;
 
+    private static final LatLng ADELAIDE = new LatLng(-34.92873, 138.59995);
+    private static final LatLng DARWIN = new LatLng(-12.4258647, 130.7932231);
+    private static final LatLng MELBOURNE = new LatLng(-37.81319, 144.96298);
+    private static final LatLng PERTH = new LatLng(-31.95285, 115.85734);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,12 +94,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }else{
                     //add second marker to the map
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-
-                    MarkerOptions markerOptionsWayPoint =new MarkerOptions();
-                    markerOptionsWayPoint.position(new LatLng(-34.6353325,-58.3690203));
-                    markerOptionsWayPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                    mMap.addMarker(markerOptionsWayPoint);
-
                 }
                 mMap.addMarker(markerOptions);
 
@@ -111,11 +110,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String getRequestedUrl(LatLng origin, LatLng dest) {
         ArrayList<LatLng> waypoints =new ArrayList<>();
-        waypoints.add(new LatLng(-34.6353325,-58.3690203));
-        waypoints.add(new LatLng(-34.649662,-58.390782));
-        String waypointsStr="waypoints=";
+        waypoints.add(new LatLng(-34.673582, -58.574977));
+        waypoints.add(new LatLng(-34.672977, -58.574432));
+        waypoints.add(new LatLng(-34.681377,-58.573032));
+        //waypoints.add(new LatLng(-34.670177,-58.571532));
+        String waypointsStr="waypoints=optimize:true";
         Boolean inicio=true;
         for (LatLng paradas : waypoints){
+            MarkerOptions markerOptionsWayPoint =new MarkerOptions();
+            markerOptionsWayPoint.position(paradas);
+            markerOptionsWayPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            mMap.addMarker(markerOptionsWayPoint);
+
             if(inicio){
                 waypointsStr+=paradas.latitude+","+paradas.longitude;
                 inicio=false;
@@ -232,29 +238,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
             //get list route and display it into the map
 
+            LatLng latLngAnt;
             ArrayList points = null;
-            PolylineOptions polylineOptions = null;
+            int index=0;
             for(List<HashMap<String,String>> path : lists ){
+                index++;
                 points=new ArrayList();
-                polylineOptions=new PolylineOptions();
-                for(HashMap<String,String>point : path){
+                for(HashMap<String,String> point : path){
                     double lat=Double.parseDouble(point.get("lat"));
                     double lon=Double.parseDouble(point.get("lon"));
 
                     points.add(new LatLng(lat,lon));
-
                 }
 
-                polylineOptions.addAll(points);
-                polylineOptions.width(15);
-                polylineOptions.color(Color.BLUE);
-                polylineOptions.geodesic(true);
-            }
 
-            if(polylineOptions!=null){
-                mMap.addPolyline(polylineOptions);
-            }else {
-                Toast.makeText(getApplicationContext(),"Direction not found",Toast.LENGTH_SHORT).show();
+                if(points!=null){
+                    mMap.addPolyline(new PolylineOptions()
+                            .color(Color.BLUE)
+                            .width(10)
+                            .addAll(points));
+                    break;
+                }else {
+                    Toast.makeText(getApplicationContext(),"Direction not found",Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
+
+
+
+
+
             }
         }
     }
