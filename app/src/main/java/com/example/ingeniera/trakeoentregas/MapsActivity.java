@@ -110,6 +110,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private String getRequestedUrl(LatLng origin, LatLng dest) {
+        ArrayList<LatLng> waypoints =new ArrayList<>();
+        waypoints.add(new LatLng(-34.6353325,-58.3690203));
+        waypoints.add(new LatLng(-34.649662,-58.390782));
+        String waypointsStr="waypoints=";
+        Boolean inicio=true;
+        for (LatLng paradas : waypoints){
+            if(inicio){
+                waypointsStr+=paradas.latitude+","+paradas.longitude;
+                inicio=false;
+            }else {
+                waypointsStr+="|"+paradas.latitude+","+paradas.longitude;
+            }
+        }
         //value of origin =
         String str_org = "origin="+origin.latitude+","+origin.longitude;
         //value of detination
@@ -119,9 +132,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //mode for find direction
         String mode= "mode=driving";
         //Waypoints
-        String wayPoints= "waypoints=DelValle1139,LaBoca";
+        //String wayPoints= "waypoints=-34.6353325,-58.3690203|CALIFORNIA3099,BARRACAS|Brandsen4755,Ciudadela";
         //build the full param
-        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+wayPoints+"&key=AIzaSyBh8thmOqQy78-ozgmQOYIdKgqHDCKgDME";
+        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+waypointsStr+"&key=AIzaSyBh8thmOqQy78-ozgmQOYIdKgqHDCKgDME";
         String output = "json";
         //create url to request
         String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+param;
