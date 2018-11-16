@@ -89,6 +89,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }else{
                     //add second marker to the map
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+
+                    MarkerOptions markerOptionsWayPoint =new MarkerOptions();
+                    markerOptionsWayPoint.position(new LatLng(-34.6353325,-58.3690203));
+                    markerOptionsWayPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    mMap.addMarker(markerOptionsWayPoint);
+
                 }
                 mMap.addMarker(markerOptions);
 
@@ -112,8 +118,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String sensor="sensor=false";
         //mode for find direction
         String mode= "mode=driving";
+        //Waypoints
+        String wayPoints= "waypoints=DelValle1139,LaBoca";
         //build the full param
-        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&key=AIzaSyBh8thmOqQy78-ozgmQOYIdKgqHDCKgDME";
+        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+wayPoints+"&key=AIzaSyBh8thmOqQy78-ozgmQOYIdKgqHDCKgDME";
         String output = "json";
         //create url to request
         String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+param;
