@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -11,6 +12,8 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,6 +22,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,6 +44,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int LOCATION_REQUEST = 500;
     ArrayList<LatLng> listPoints;
 
+    private FusedLocationProviderClient mFusedLocationClient; //Necessary to obtain client's location
+
     private static final LatLng ADELAIDE = new LatLng(-34.92873, 138.59995);
     private static final LatLng DARWIN = new LatLng(-12.4258647, 130.7932231);
     private static final LatLng MELBOURNE = new LatLng(-37.81319, 144.96298);
@@ -54,7 +60,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        listPoints=new ArrayList<>();
+        listPoints = new ArrayList<>();
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+
+
     }
 
 
@@ -76,6 +87,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         mMap.setMyLocationEnabled(true);
+
+        //obtain last user's location
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            Toast.makeText(getApplicationContext(),"Lat: "+Double.toString(location.getLatitude())+"\nLon: "
+                                    +Double.toString(location.getLongitude()),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -191,6 +217,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case LOCATION_REQUEST:
                 if(grantResults.length>0&&grantResults[0]==PackageManager.PERMISSION_GRANTED){
                     mMap.setMyLocationEnabled(true);
+
+                    //obtain last user's location
+                    mFusedLocationClient.getLastLocation()
+                            .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    // Got last known location. In some rare situations this can be null.
+                                    if (location != null) {
+                                        Toast.makeText(getApplicationContext(),"Lat: "+Double.toString(location.getLatitude())+"\nLon: "
+                                                +Double.toString(location.getLongitude()),Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                 }
                 break;
         }

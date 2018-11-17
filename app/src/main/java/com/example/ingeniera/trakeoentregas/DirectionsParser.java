@@ -12,7 +12,17 @@ import java.util.List;
 
 /**
  * Created by NgocTri on 12/11/2017.
+ * Modify by Trillo Adrian on 17/11/2018
  */
+
+/*Explanation
+*
+*Google maps Api return an JSON Object with:
+*   Routes: The whole way you want to do.
+*       Legs: Each way between destinations (e.g. Origin-->Waypoint_1-->Waypoint_2-->Destination in this case there are 3 Legs)
+*           Steps: Each Legs contain steps, which are decode into "Polylines" (e.g. vajrExqmdJv@|BfAvC~@rC`AnCxB~FBHrAtD)
+*               Polylines: After decode it, we obtain a Arraylist<LatLng> with a series of points.
+* */
 
 public class DirectionsParser {
     /**
@@ -38,6 +48,8 @@ public class DirectionsParser {
                 for (int j = 0; j < jLegs.length(); j++) {
                     jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
                     List path = new ArrayList<HashMap<String, String>>();
+                    int duration = 0;
+                    duration = (int) ((JSONObject) ((JSONObject) jLegs.get(j)).get("duration")).get("value");
 
                     //Loop for all steps
                     for (int k = 0; k < jSteps.length(); k++) {
@@ -54,7 +66,7 @@ public class DirectionsParser {
                         }
                     }
 
-                    routes.add(path);
+                    routes.add(path); //Add all the points for one of the Legs
                 }
             }
 
@@ -63,7 +75,7 @@ public class DirectionsParser {
         } catch (Exception e) {
         }
 
-        return routes;
+        return routes;//return all the legs
     }
 
     /**
