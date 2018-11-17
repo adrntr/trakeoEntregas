@@ -114,7 +114,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         waypoints.add(new LatLng(-34.672977, -58.574432));
         waypoints.add(new LatLng(-34.681377,-58.573032));
         //waypoints.add(new LatLng(-34.670177,-58.571532));
-        String waypointsStr="waypoints=optimize:true";
+        String waypointsStr="waypoints=";
         Boolean inicio=true;
         for (LatLng paradas : waypoints){
             MarkerOptions markerOptionsWayPoint =new MarkerOptions();
@@ -253,14 +253,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                 if(points!=null){
-                    mMap.addPolyline(new PolylineOptions()
-                            .color(Color.BLUE)
-                            .width(10)
-                            .addAll(points));
-                    break;
+                    if(index%2==0){
+                        mMap.addPolyline(new PolylineOptions()
+                                .color(Color.BLUE)
+                                .width(10)
+                                .addAll(points));
+                    }else {
+                        mMap.addPolyline(new PolylineOptions()
+                                .color(Color.RED)
+                                .width(10)
+                                .addAll(points));
+                    }
+
                 }else {
                     Toast.makeText(getApplicationContext(),"Direction not found",Toast.LENGTH_SHORT).show();
-                    break;
                 }
 
 
