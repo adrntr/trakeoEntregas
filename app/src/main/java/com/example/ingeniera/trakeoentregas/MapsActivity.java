@@ -2,6 +2,7 @@ package com.example.ingeniera.trakeoentregas;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -12,8 +13,15 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,7 +30,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,11 +50,16 @@ import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private static final int REQUEST_CHECK_SETTINGS =400 ;
     private GoogleMap mMap;
     private static final int LOCATION_REQUEST = 500;
     ArrayList<LatLng> listPoints;
 
     private FusedLocationProviderClient mFusedLocationClient; //Necessary to obtain client's location
+    private Location mCurrentLocation;
+    private LocationCallback mLocationCallback;
+    private LocationRequest mLocationRequest;//object that contain settings for getting user's location
+    boolean mRequestingLocationUpdates=true;
 
     private static final LatLng ADELAIDE = new LatLng(-34.92873, 138.59995);
     private static final LatLng DARWIN = new LatLng(-12.4258647, 130.7932231);
@@ -62,8 +77,67 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         listPoints = new ArrayList<>();
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        //SETTINGS to get user's location
+        userLocation();
 
+        //Get latitude and longitude based in the settings from mLocationRequest
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(MapsActivity.this);
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+
+                    Double latitude=location.getLatitude();
+                    Double longitude=location.getLongitude();
+                }
+            };
+        };
+    }
+
+    private void userLocation() {
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(60000);// This method sets the rate in milliseconds at which your app prefers to receive location updates
+        mLocationRequest.setFastestInterval(5000);//This method sets the fastest rate in milliseconds at which your app can handle location updates.
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);//This method sets the priority of the request, which gives the Google Play services location services a strong hint about which location sources to use
+        //Get the location settings
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+
+        //LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+
+
+        SettingsClient client = LocationServices.getSettingsClient(this);
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
+        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+
+            }
+        });
+
+        task.addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (e instanceof ResolvableApiException) {
+                    // Location settings are not satisfied, but this can be fixed
+                    // by showing the user a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        ResolvableApiException resolvable = (ResolvableApiException) e;
+                        resolvable.startResolutionForResult(MapsActivity.this,
+                                REQUEST_CHECK_SETTINGS);
+                    } catch (IntentSender.SendIntentException sendEx) {
+                        // Ignore the error.
+                    }
+                }
+            }
+        });
 
 
     }
@@ -97,6 +171,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (location != null) {
                             Toast.makeText(getApplicationContext(),"Lat: "+Double.toString(location.getLatitude())+"\nLon: "
                                     +Double.toString(location.getLongitude()),Toast.LENGTH_SHORT).show();
+
+                            mCurrentLocation=new Location(location);
+
                         }
                     }
                 });
@@ -316,4 +393,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mRequestingLocationUpdates) {
+            startLocationUpdates();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void startLocationUpdates() {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                    mLocationCallback,
+                    null /* Looper */);
+
+
+    }
 }
+
