@@ -51,6 +51,7 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final int REQUEST_CHECK_SETTINGS =400 ;
+    private static final String REQUESTING_LOCATION_UPDATES_KEY = "RLUK" ;
     private GoogleMap mMap;
     private static final int LOCATION_REQUEST = 500;
     ArrayList<LatLng> listPoints;
@@ -75,6 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        //get whether if the app have to get user's location or not
+        updateValuesFromBundle(savedInstanceState);
         listPoints = new ArrayList<>();
 
         //SETTINGS to get user's location
@@ -95,6 +98,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             };
         };
+    }
+
+    private void updateValuesFromBundle(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return;
+        }
+        // Update the value of mRequestingLocationUpdates from the Bundle.
+        if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
+            mRequestingLocationUpdates = savedInstanceState.getBoolean(REQUESTING_LOCATION_UPDATES_KEY);
+        }
+
+        // ...
+
+        // Update UI to match restored state
+        //updateUI();
     }
 
     private void userLocationSettings() {
@@ -419,6 +437,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     null /* Looper */);
 
 
+    }
+
+    //whether change of activity it funtion save some states
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,mRequestingLocationUpdates);
+        super.onSaveInstanceState(outState);
     }
 }
 
