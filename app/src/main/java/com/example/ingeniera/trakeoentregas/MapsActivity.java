@@ -78,7 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         listPoints = new ArrayList<>();
 
         //SETTINGS to get user's location
-        userLocation();
+        userLocationSettings();
 
         //Get latitude and longitude based in the settings from mLocationRequest
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(MapsActivity.this);
@@ -97,7 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
     }
 
-    private void userLocation() {
+    private void userLocationSettings() {
 
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(60000);// This method sets the rate in milliseconds at which your app prefers to receive location updates
@@ -400,6 +400,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mRequestingLocationUpdates) {
             startLocationUpdates();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
     @SuppressLint("MissingPermission")
