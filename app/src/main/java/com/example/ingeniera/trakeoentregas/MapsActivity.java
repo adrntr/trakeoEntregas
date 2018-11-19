@@ -34,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -121,6 +122,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     +Double.toString(location.getLongitude()),Toast.LENGTH_SHORT).show();
 
                             mCurrentLocation=new Location(location);
+
+                            LatLng currentLatLng = new LatLng(location.getLatitude(),location.getLongitude());
+
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,12));
 
                             convertirLatLng.startIntentService(mCurrentLocation); //convierto la ubicacion en una dirección
 
