@@ -178,7 +178,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 if(listPoints.size()==2){
                     //create the URL to get request from first marker to second marker
-                    String url = getRequestedUrl(listPoints.get(0),listPoints.get(1));
+                    DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi();
+                    String url = direccionesMapsApi.getRequestedUrl(listPoints.get(0),listPoints.get(1),mMap);
                     TaskRequestDirections taskRequestDirections=new TaskRequestDirections();
                     taskRequestDirections.execute(url);
 
@@ -200,45 +201,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private String getRequestedUrl(LatLng origin, LatLng dest) {
-        ArrayList<LatLng> waypoints =new ArrayList<>();
-        waypoints.add(new LatLng(-34.673582, -58.574977));
-        waypoints.add(new LatLng(-34.672977, -58.574432));
-        waypoints.add(new LatLng(-34.681377,-58.573032));
-        //waypoints.add(new LatLng(-34.670177,-58.571532));
-        String waypointsStr="waypoints=";
-        Boolean inicio=true;
-        for (LatLng paradas : waypoints){
-            MarkerOptions markerOptionsWayPoint =new MarkerOptions();
-            markerOptionsWayPoint.position(paradas);
-            markerOptionsWayPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-            mMap.addMarker(markerOptionsWayPoint);
 
-            if(inicio){
-                waypointsStr+=paradas.latitude+","+paradas.longitude;
-                inicio=false;
-            }else {
-                waypointsStr+="|"+paradas.latitude+","+paradas.longitude;
-            }
-        }
-        //value of origin =
-        String str_org = "origin="+origin.latitude+","+origin.longitude;
-        //value of detination
-        String str_dest = "destination="+dest.latitude+","+dest.longitude;
-        //set value enable the sensor
-        String sensor="sensor=false";
-        //mode for find direction
-        String mode= "mode=driving";
-        //Waypoints
-        //String wayPoints= "waypoints=-34.6353325,-58.3690203|CALIFORNIA3099,BARRACAS|Brandsen4755,Ciudadela";
-        //build the full param
-        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+waypointsStr+"&key=AIzaSyBh8thmOqQy78-ozgmQOYIdKgqHDCKgDME";
-        String output = "json";
-        //create url to request
-        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+param;
-        return url;
-
-    }
 
     //a partir de una url obtiene los datos de como llegar al destino
     private String requestDirection(String reqUrl) throws IOException {
