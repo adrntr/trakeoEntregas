@@ -18,6 +18,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -41,6 +47,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,6 +61,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -70,13 +78,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ConvertirLatLng convertirLatLng;
     RealTimeLocation realTimeLocation;
 
+    private ArrayList<Destinos> destinos;
+
+    public static AlmacenDestinos almacenDestinos; //defino
+
+    private String codigo="id_planilla";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        almacenDestinos=new AlmacenDestinos(this);
 
         //get whether the app have to get user's location or not
         updateValuesFromBundle(savedInstanceState);
@@ -89,6 +108,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Get latitude and longitude based in the settings from mLocationRequest
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(MapsActivity.this);
+
+        destinos=new ArrayList<>();
 
     }
 
@@ -164,6 +185,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
+
+        obtenerDatos("409");
+
+        MarkerOptions markerOptions2 = new MarkerOptions();
+        markerOptions2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        destinos=almacenDestinos.getArrayList("arrayDestinosKey");
+        if(destinos!=null){
+            for (int j=0;j<destinos.size();j++){
+                LatLng latLng2= new LatLng(destinos.get(j).getLatitude(),destinos.get(j).getLongitude());
+                markerOptions2.position(latLng2);
+                mMap.addMarker(markerOptions2);
+            }
+        }
     }
 
     private String getRequestedUrl(LatLng origin, LatLng dest) {
@@ -383,6 +417,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Update UI to match restored state
         //updateUI();
     }
+
+
+    private void obtenerDatos(final String numPedidos) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://sistemas.andif.com.ar/pruebas/prueba-remito-transporte/datos-planilla-seguro.php";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("registros");
+                    Destinos destino;
+                    ArrayList<Destinos> destinos = new ArrayList<>();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        destino = new Destinos();
+                        JSONObject jsonObjectExplorer = jsonArray.getJSONObject(i);
+                        destino.setIdCliente(jsonObjectExplorer.optInt("id_cliente"));
+                        destino.setCantidadBultos(jsonObjectExplorer.optInt("cantidad_bultos"));
+                        destino.setNombre_cliente(jsonObjectExplorer.optString("nombre_cliente"));
+                        destino.setTransporte(jsonObjectExplorer.optString("transporte"));
+                        destino.setDireccion_transporte(jsonObjectExplorer.optString("direccion_transporte"));
+                        destino.setLatitude(jsonObjectExplorer.optDouble("latitud"));
+                        destino.setLongitude(jsonObjectExplorer.optDouble("longitud"));
+                        destinos.add(destino);
+                    }
+
+                    almacenDestinos.saveArrayList(destinos);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put(codigo, numPedidos);
+                return params;
+            }
+        };
+
+
+        queue.add(stringRequest);
+
+    }
+
 
 
 }

@@ -1,6 +1,7 @@
 package com.example.ingeniera.trakeoentregas;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -36,8 +37,7 @@ public class SolicitarDestinos extends AppCompatActivity {
     public ArrayList<Destinos> destinos;
     JsonObjectRequest jsonObjectRequest;
     ProgressDialog progress;
-
-
+    Context context;
 
 
     @Override
@@ -108,7 +108,9 @@ public class SolicitarDestinos extends AppCompatActivity {
             }
         };
 
+
         queue.add(stringRequest);
+
     }
 
 }
