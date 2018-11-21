@@ -49,11 +49,11 @@ public class ConvertirLatLng {
             if (mAddressOutput == null) {
                 mAddressOutput = "";
             }
-            Toast.makeText(context,mAddressOutput,Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,mAddressOutput,Toast.LENGTH_SHORT).show();
 
             // Show a toast message if an address was found.
             if (resultCode == FetchAddressIntentService.Constants.SUCCESS_RESULT) {
-                Toast.makeText(context,"Address encontrada",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context,"Address encontrada",Toast.LENGTH_SHORT).show();
             }
 
         }

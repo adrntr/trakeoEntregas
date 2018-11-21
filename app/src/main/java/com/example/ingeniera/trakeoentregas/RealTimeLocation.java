@@ -23,6 +23,8 @@ import com.google.android.gms.tasks.Task;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import static com.example.ingeniera.trakeoentregas.MapsActivity.almacenDestinos;
+
 public class RealTimeLocation {
 
     Context context;
@@ -48,6 +50,7 @@ public class RealTimeLocation {
                 Double latitude=location.getLatitude();
                 Double longitude=location.getLongitude();
 
+                almacenDestinos.setCurrentPosition(latitude,longitude);
 
             }
         };

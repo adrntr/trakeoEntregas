@@ -2,6 +2,7 @@ package com.example.ingeniera.trakeoentregas;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -59,58 +60,13 @@ public class SolicitarDestinos extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             String numeroPedido=codigoEt.getText().toString();
-            obtenerDatos(numeroPedido);
+            if(numeroPedido!=null){
+                Intent intent=new Intent(SolicitarDestinos.this,MapsActivity.class);
+                intent.putExtra(MapsActivity.KEY_EXTRA, numeroPedido);
+                startActivity(intent);
+            }
+
         }
     };
-
-
-    private void obtenerDatos(final String numPedidos) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://sistemas.andif.com.ar/pruebas/prueba-remito-transporte/datos-planilla-seguro.php";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(SolicitarDestinos.this, response, Toast.LENGTH_LONG).show();
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray jsonArray = jsonObject.getJSONArray("registros");
-                    Destinos destino;
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        destino = new Destinos();
-                        JSONObject jsonObjectExplorer = jsonArray.getJSONObject(i);
-                        destino.setIdCliente(jsonObjectExplorer.optInt("id_cliente"));
-                        destino.setCantidadBultos(jsonObjectExplorer.optInt("cantidad_bultos"));
-                        destino.setNombre_cliente(jsonObjectExplorer.optString("nombre_cliente"));
-                        destino.setTransporte(jsonObjectExplorer.optString("transporte"));
-                        destino.setDireccion_transporte(jsonObjectExplorer.optString("direccion_transporte"));
-                        destino.setLatitude(jsonObjectExplorer.optDouble("latitud"));
-                        destino.setLongitude(jsonObjectExplorer.optDouble("longitud"));
-                        destinos.add(destino);
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put(codigo, numPedidos);
-                return params;
-            }
-        };
-
-
-        queue.add(stringRequest);
-
-    }
 
 }

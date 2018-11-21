@@ -1,27 +1,53 @@
 package com.example.ingeniera.trakeoentregas;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.example.ingeniera.trakeoentregas.MapsActivity.almacenDestinos;
 
 public class DireccionesMapsApi {
 
-    public String getRequestedUrl(LatLng origin, LatLng dest,GoogleMap mMap) {
+    GoogleMap mMap;
+    Context context;
+
+    public DireccionesMapsApi(GoogleMap mMap, Context context) {
+        this.mMap=mMap;
+        this.context=context;
+    }
+
+    public void getRequestedUrl(ArrayList<Destinos> destinos) {
         ArrayList<LatLng> waypoints =new ArrayList<>();
-        waypoints.add(new LatLng(-34.673582, -58.574977));
-        waypoints.add(new LatLng(-34.672977, -58.574432));
-        waypoints.add(new LatLng(-34.681377,-58.573032));
+
+        for(int i=0;i<destinos.size();i++){
+            if(destinos.get(i).getLatitude()!=0&&destinos.get(i).getLongitude()!=0) {
+                waypoints.add(new LatLng(destinos.get(i).getLatitude(), destinos.get(i).getLongitude()));
+            }
+        }
         String waypointsStr="waypoints=";
         Boolean inicio=true;
         for (LatLng paradas : waypoints){
-            MarkerOptions markerOptionsWayPoint =new MarkerOptions();
-            markerOptionsWayPoint.position(paradas);
-            markerOptionsWayPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-            mMap.addMarker(markerOptionsWayPoint);
 
             if(inicio){
                 waypointsStr+=paradas.latitude+","+paradas.longitude;
@@ -31,9 +57,9 @@ public class DireccionesMapsApi {
             }
         }
         //value of origin =
-        String str_org = "origin="+origin.latitude+","+origin.longitude;
+        String str_org = "origin="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
         //value of detination
-        String str_dest = "destination="+dest.latitude+","+dest.longitude;
+        String str_dest = "destination="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
         //set value enable the sensor
         String sensor="sensor=false";
         //mode for find direction
@@ -45,7 +71,129 @@ public class DireccionesMapsApi {
         String output = "json";
         //create url to request
         String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+param;
-        return url;
+
+        TaskRequestDirections taskRequestDirections=new TaskRequestDirections();
+        taskRequestDirections.execute(url);
+
 
     }
+
+    public class TaskRequestDirections extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String responseString="";
+            try {
+                responseString=requestDirection(strings[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //parse json
+            TaskParser taskParser=new TaskParser();
+            taskParser.execute(s);
+        }
+    }
+
+    //a partir de una url obtiene los datos de como llegar al destino
+    private String requestDirection(String reqUrl) throws IOException {
+        String responseString="";
+        InputStream inputStream=null;
+        HttpURLConnection httpURLConnection = null;
+        try{
+            URL url=new URL(reqUrl);
+            httpURLConnection=(HttpURLConnection)url.openConnection();
+            httpURLConnection.connect();
+
+            //Get the response
+            inputStream=httpURLConnection.getInputStream();
+            InputStreamReader inputStreamReader=new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            StringBuffer stringBuffer = new StringBuffer();
+            String line="";
+            while ((line=bufferedReader.readLine())!=null){
+                stringBuffer.append(line);
+            }
+
+            responseString = stringBuffer.toString();
+            bufferedReader.close();
+            inputStreamReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if (inputStream!=null){
+                inputStream.close();
+            }
+            httpURLConnection.disconnect();
+        }
+
+        return responseString;
+    }
+
+    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>>{
+
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
+            JSONObject jsonObject=null;
+            List<List<HashMap<String, String>>> routes = null;
+            try {
+                jsonObject=new JSONObject(strings[0]);
+                DirectionsParser directionsParser=new DirectionsParser();
+                routes = directionsParser.parse(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
+            //get list route and display it into the map
+
+            LatLng latLngAnt;
+            ArrayList points = null;
+            int index=0;
+            for(List<HashMap<String,String>> path : lists ){
+                index++;
+                points=new ArrayList();
+                for(HashMap<String,String> point : path){
+                    double lat=Double.parseDouble(point.get("lat"));
+                    double lon=Double.parseDouble(point.get("lon"));
+
+                    points.add(new LatLng(lat,lon));
+                }
+
+
+                if(points!=null){
+                    if(index%2==0){
+                        mMap.addPolyline(new PolylineOptions()
+                                .color(Color.BLUE)
+                                .width(10)
+                                .addAll(points));
+                    }else {
+                        mMap.addPolyline(new PolylineOptions()
+                                .color(Color.RED)
+                                .width(10)
+                                .addAll(points));
+                    }
+
+                }else {
+                    Toast.makeText(context,"Direction not found",Toast.LENGTH_SHORT).show();
+                }
+
+
+
+
+
+
+            }
+        }
+    }
+
 }

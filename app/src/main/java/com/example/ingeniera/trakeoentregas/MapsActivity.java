@@ -2,6 +2,7 @@ package com.example.ingeniera.trakeoentregas;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -65,6 +66,7 @@ import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    public static final String KEY_EXTRA = "numeroPedido" ;
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "RLUK" ;
     private GoogleMap mMap;
     private static final int LOCATION_REQUEST = 500;
@@ -82,13 +84,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public static AlmacenDestinos almacenDestinos; //defino
 
-    private String codigo="id_planilla";
+    private String codigo="id_planilla",numPedidos="409";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        if (getIntent().hasExtra(KEY_EXTRA)) {
+            numPedidos = getIntent().getStringExtra(KEY_EXTRA);
+        } else {
+            throw new IllegalArgumentException("Activity cannot find  extras " + KEY_EXTRA);
+        }
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -139,14 +146,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            Toast.makeText(getApplicationContext(),"Lat: "+Double.toString(location.getLatitude())+"\nLon: "
-                                    +Double.toString(location.getLongitude()),Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(),"Lat: "+Double.toString(location.getLatitude())+"\nLon: "
+                            //        +Double.toString(location.getLongitude()),Toast.LENGTH_SHORT).show();
 
                             mCurrentLocation=new Location(location);
 
                             LatLng currentLatLng = new LatLng(location.getLatitude(),location.getLongitude());
 
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,12));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,11));
 
                             convertirLatLng.startIntentService(mCurrentLocation); //convierto la ubicacion en una dirección
 
@@ -154,7 +161,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
 
+        TaskObtenerDatosRuta obtenerDatosRuta=new TaskObtenerDatosRuta(MapsActivity.this,mMap);
+        obtenerDatosRuta.execute(codigo,numPedidos);
 
+
+        /*
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -178,66 +189,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 if(listPoints.size()==2){
                     //create the URL to get request from first marker to second marker
-                    DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi();
-                    String url = direccionesMapsApi.getRequestedUrl(listPoints.get(0),listPoints.get(1),mMap);
-                    TaskRequestDirections taskRequestDirections=new TaskRequestDirections();
-                    taskRequestDirections.execute(url);
+                    DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(mMap,getApplicationContext());
+                    direccionesMapsApi.getRequestedUrl(listPoints.get(0),listPoints.get(1));
+
 
                 }
             }
         });
+*/
 
-        obtenerDatos("409");
-
-        MarkerOptions markerOptions2 = new MarkerOptions();
-        markerOptions2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        destinos=almacenDestinos.getArrayList("arrayDestinosKey");
-        if(destinos!=null){
-            for (int j=0;j<destinos.size();j++){
-                LatLng latLng2= new LatLng(destinos.get(j).getLatitude(),destinos.get(j).getLongitude());
-                markerOptions2.position(latLng2);
-                mMap.addMarker(markerOptions2);
-            }
-        }
     }
 
 
 
-    //a partir de una url obtiene los datos de como llegar al destino
-    private String requestDirection(String reqUrl) throws IOException {
-        String responseString="";
-        InputStream inputStream=null;
-        HttpURLConnection httpURLConnection = null;
-        try{
-            URL url=new URL(reqUrl);
-            httpURLConnection=(HttpURLConnection)url.openConnection();
-            httpURLConnection.connect();
-
-            //Get the response
-            inputStream=httpURLConnection.getInputStream();
-            InputStreamReader inputStreamReader=new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            StringBuffer stringBuffer = new StringBuffer();
-            String line="";
-            while ((line=bufferedReader.readLine())!=null){
-                stringBuffer.append(line);
-            }
-
-            responseString = stringBuffer.toString();
-            bufferedReader.close();
-            inputStreamReader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
-            if (inputStream!=null){
-                inputStream.close();
-            }
-            httpURLConnection.disconnect();
-        }
-
-        return responseString;
-    }
 
     @SuppressLint("MissingPermission")
     @Override
@@ -254,8 +218,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 public void onSuccess(Location location) {
                                     // Got last known location. In some rare situations this can be null.
                                     if (location != null) {
-                                        Toast.makeText(getApplicationContext(),"Lat: "+Double.toString(location.getLatitude())+"\nLon: "
-                                                +Double.toString(location.getLongitude()),Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getApplicationContext(),"Lat: "+Double.toString(location.getLatitude())+"\nLon: "
+                                         //       +Double.toString(location.getLongitude()),Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -264,87 +228,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public class TaskRequestDirections extends AsyncTask<String,Void,String>{
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String responseString="";
-            try {
-                responseString=requestDirection(strings[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            //parse json
-            TaskParser taskParser=new TaskParser();
-            taskParser.execute(s);
-        }
-    }
-
-    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>>{
-
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
-            JSONObject jsonObject=null;
-            List<List<HashMap<String, String>>> routes = null;
-            try {
-                jsonObject=new JSONObject(strings[0]);
-                DirectionsParser directionsParser=new DirectionsParser();
-                routes = directionsParser.parse(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
-            //get list route and display it into the map
-
-            LatLng latLngAnt;
-            ArrayList points = null;
-            int index=0;
-            for(List<HashMap<String,String>> path : lists ){
-                index++;
-                points=new ArrayList();
-                for(HashMap<String,String> point : path){
-                    double lat=Double.parseDouble(point.get("lat"));
-                    double lon=Double.parseDouble(point.get("lon"));
-
-                    points.add(new LatLng(lat,lon));
-                }
-
-
-                if(points!=null){
-                    if(index%2==0){
-                        mMap.addPolyline(new PolylineOptions()
-                                .color(Color.BLUE)
-                                .width(10)
-                                .addAll(points));
-                    }else {
-                        mMap.addPolyline(new PolylineOptions()
-                                .color(Color.RED)
-                                .width(10)
-                                .addAll(points));
-                    }
-
-                }else {
-                    Toast.makeText(getApplicationContext(),"Direction not found",Toast.LENGTH_SHORT).show();
-                }
 
 
 
-
-
-
-            }
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -380,60 +266,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Update UI to match restored state
         //updateUI();
     }
-
-
-    private void obtenerDatos(final String numPedidos) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://sistemas.andif.com.ar/pruebas/prueba-remito-transporte/datos-planilla-seguro.php";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray jsonArray = jsonObject.getJSONArray("registros");
-                    Destinos destino;
-                    ArrayList<Destinos> destinos = new ArrayList<>();
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        destino = new Destinos();
-                        JSONObject jsonObjectExplorer = jsonArray.getJSONObject(i);
-                        destino.setIdCliente(jsonObjectExplorer.optInt("id_cliente"));
-                        destino.setCantidadBultos(jsonObjectExplorer.optInt("cantidad_bultos"));
-                        destino.setNombre_cliente(jsonObjectExplorer.optString("nombre_cliente"));
-                        destino.setTransporte(jsonObjectExplorer.optString("transporte"));
-                        destino.setDireccion_transporte(jsonObjectExplorer.optString("direccion_transporte"));
-                        destino.setLatitude(jsonObjectExplorer.optDouble("latitud"));
-                        destino.setLongitude(jsonObjectExplorer.optDouble("longitud"));
-                        destinos.add(destino);
-                    }
-
-                    almacenDestinos.saveArrayList(destinos);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put(codigo, numPedidos);
-                return params;
-            }
-        };
-
-
-        queue.add(stringRequest);
-
-    }
-
-
 
 }
 

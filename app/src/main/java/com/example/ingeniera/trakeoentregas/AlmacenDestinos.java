@@ -37,5 +37,25 @@ public class AlmacenDestinos {
         return gson.fromJson(json, type);
     }
 
+    public String getLat (){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
+        String s = preferencias.getString("lat",""); //me devuelve el string, si no lo encuentra ""
+        return s;
+    }
+
+    public String getLng (){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
+        String s = preferencias.getString("lng",""); //me devuelve el string, si no lo encuentra ""
+        return s;
+    }
+
+    public void setCurrentPosition(Double lat,Double lng){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
+        SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
+        editor.putString("lat",lat.toString()); //le paso una key y el valor (string)
+        editor.putString("lng",lng.toString()); //le paso una key y el valor (string)
+        editor.commit();//aplico los cambios
+    }
+
 
 }
