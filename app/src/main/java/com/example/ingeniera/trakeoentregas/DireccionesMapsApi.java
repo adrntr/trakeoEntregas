@@ -1,6 +1,9 @@
 package com.example.ingeniera.trakeoentregas;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -25,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.ingeniera.trakeoentregas.MapsActivity.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
 
 public class DireccionesMapsApi {
 
@@ -79,6 +82,7 @@ public class DireccionesMapsApi {
     }
 
     public class TaskRequestDirections extends AsyncTask<String,Void,String> {
+
 
         @Override
         protected String doInBackground(String... strings) {
@@ -156,44 +160,48 @@ public class DireccionesMapsApi {
         protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
             //get list route and display it into the map
 
-            LatLng latLngAnt;
-            ArrayList points = null;
-            int index=0;
-            for(List<HashMap<String,String>> path : lists ){
-                index++;
-                points=new ArrayList();
-                for(HashMap<String,String> point : path){
-                    double lat=Double.parseDouble(point.get("lat"));
-                    double lon=Double.parseDouble(point.get("lon"));
+            almacenDestinos.saveArrayListPuntos(lists);
+            almacenDestinos.setEstadoRuta(2);
 
-                    points.add(new LatLng(lat,lon));
-                }
+            agregarLineas();
 
 
-                if(points!=null){
-                    if(index%2==0){
-                        mMap.addPolyline(new PolylineOptions()
-                                .color(Color.BLUE)
-                                .width(10)
-                                .addAll(points));
-                    }else {
-                        mMap.addPolyline(new PolylineOptions()
-                                .color(Color.RED)
-                                .width(10)
-                                .addAll(points));
-                    }
+        }
+    }
 
-                }else {
-                    Toast.makeText(context,"Direction not found",Toast.LENGTH_SHORT).show();
-                }
+    public void agregarLineas() {
+        List<List<HashMap<String, String>>> lists = almacenDestinos.getArrayListPuntos("arrayPuntosKey");
+        ArrayList points = null;
+        for (List<HashMap<String, String>> path : lists) {
+            points = new ArrayList();
+            for (HashMap<String, String> point : path) {
+                double lat = Double.parseDouble(point.get("lat"));
+                double lon = Double.parseDouble(point.get("lon"));
+                points.add(new LatLng(lat, lon));
+            }
 
+            if (points != null) {
+                mMap.addPolyline(new PolylineOptions()
+                        .color(Color.BLUE)
+                        .width(3)
+                        .addAll(points));
 
-
-
-
-
+            } else {
+                Toast.makeText(context, "Direction not found", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    public void agregarMarkers() {
+
+        ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
+        for (int i = 0; i < destinos.size(); i++) {
+            MarkerOptions markerOptions2 = new MarkerOptions();
+            markerOptions2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            LatLng latLng2 = new LatLng(destinos.get(i).getLatitude(), destinos.get(i).getLongitude());
+            markerOptions2.position(latLng2);
+            mMap.addMarker(markerOptions2);
+        }
+
+    }
 }

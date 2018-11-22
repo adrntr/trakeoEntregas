@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -26,18 +27,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.ingeniera.trakeoentregas.MapsActivity.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
 
+/** A partir de un codigo de ruta, obtiene todos los destinos.
+ *
+ */
 
 public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
 
     Context context;
-    GoogleMap mMap;
     private ProgressDialog progreso;
 
-    public TaskObtenerDatosRuta(Context context,GoogleMap mMap) {
+    public TaskObtenerDatosRuta(Context context) {
         this.context=context;
-        this.mMap=mMap;
     }
 
     @Override
@@ -63,9 +65,42 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //Toast.makeText(context, response, Toast.LENGTH_LONG).show();
 
-                onPostExecute(response);
+                if(response!=null){
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray jsonArray = jsonObject.getJSONArray("registros");
+                        Destinos destino;
+                        ArrayList<Destinos> destinos = new ArrayList<>();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            destino = new Destinos();
+                            JSONObject jsonObjectExplorer = jsonArray.getJSONObject(i);
+                            destino.setIdCliente(jsonObjectExplorer.optInt("id_cliente"));
+                            destino.setCantidadBultos(jsonObjectExplorer.optInt("cantidad_bultos"));
+                            destino.setNombre_cliente(jsonObjectExplorer.optString("nombre_cliente"));
+                            destino.setTransporte(jsonObjectExplorer.optString("transporte"));
+                            destino.setDireccion_transporte(jsonObjectExplorer.optString("direccion_transporte"));
+                            destino.setLatitude(jsonObjectExplorer.optDouble("latitud"));
+                            destino.setLongitude(jsonObjectExplorer.optDouble("longitud"));
+
+                            destinos.add(destino);
+                        }
+                        almacenDestinos.saveArrayList(destinos);
+                        almacenDestinos.setEstadoRuta(1);
+                        progreso.dismiss();
+                        Intent intent = new Intent(context,MapsActivity.class);
+                        context.startActivity(intent);
+
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    Toast.makeText(context,"Sin respuesta",Toast.LENGTH_SHORT).show();
+                }
+
             }
 
         }, new Response.ErrorListener() {
@@ -87,44 +122,6 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
 
         return null;
     }
-
-    @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        if(s!=null){
-            try {
-                JSONObject jsonObject = new JSONObject(s);
-                JSONArray jsonArray = jsonObject.getJSONArray("registros");
-                Destinos destino;
-                ArrayList<Destinos> destinos = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    destino = new Destinos();
-                    JSONObject jsonObjectExplorer = jsonArray.getJSONObject(i);
-                    destino.setIdCliente(jsonObjectExplorer.optInt("id_cliente"));
-                    destino.setCantidadBultos(jsonObjectExplorer.optInt("cantidad_bultos"));
-                    destino.setNombre_cliente(jsonObjectExplorer.optString("nombre_cliente"));
-                    destino.setTransporte(jsonObjectExplorer.optString("transporte"));
-                    destino.setDireccion_transporte(jsonObjectExplorer.optString("direccion_transporte"));
-                    destino.setLatitude(jsonObjectExplorer.optDouble("latitud"));
-                    destino.setLongitude(jsonObjectExplorer.optDouble("longitud"));
-                    MarkerOptions markerOptions2 = new MarkerOptions();
-                    markerOptions2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                    LatLng latLng2= new LatLng(destino.getLatitude(),destino.getLongitude());
-                    markerOptions2.position(latLng2);
-                    mMap.addMarker(markerOptions2);
-                    destinos.add(destino);
-                }
-                almacenDestinos.saveArrayList(destinos);
-                DireccionesMapsApi direccionesMapsApi = new DireccionesMapsApi(mMap,context);
-                direccionesMapsApi.getRequestedUrl(destinos);
-                progreso.dismiss();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
 
 
 }

@@ -2,6 +2,7 @@ package com.example.ingeniera.trakeoentregas;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -16,6 +17,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -64,7 +68,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final String KEY_EXTRA = "numeroPedido" ;
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "RLUK" ;
@@ -80,29 +86,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ConvertirLatLng convertirLatLng;
     RealTimeLocation realTimeLocation;
 
-    private ArrayList<Destinos> destinos;
-
-    public static AlmacenDestinos almacenDestinos; //defino
-
-    private String codigo="id_planilla",numPedidos="409";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        if (getIntent().hasExtra(KEY_EXTRA)) {
-            numPedidos = getIntent().getStringExtra(KEY_EXTRA);
-        } else {
-            throw new IllegalArgumentException("Activity cannot find  extras " + KEY_EXTRA);
-        }
-
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        almacenDestinos=new AlmacenDestinos(this);
 
         //get whether the app have to get user's location or not
         updateValuesFromBundle(savedInstanceState);
@@ -116,7 +108,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Get latitude and longitude based in the settings from mLocationRequest
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(MapsActivity.this);
 
-        destinos=new ArrayList<>();
+
+
 
     }
 
@@ -134,36 +127,73 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST);
             return;
         }
         mMap.setMyLocationEnabled(true);
 
         //obtain last user's location
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            //Toast.makeText(getApplicationContext(),"Lat: "+Double.toString(location.getLatitude())+"\nLon: "
-                            //        +Double.toString(location.getLongitude()),Toast.LENGTH_SHORT).show();
-
-                            mCurrentLocation=new Location(location);
-
-                            LatLng currentLatLng = new LatLng(location.getLatitude(),location.getLongitude());
-
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,11));
-
+                            mCurrentLocation = new Location(location);
+                            LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 11));
                             convertirLatLng.startIntentService(mCurrentLocation); //convierto la ubicacion en una dirección
-
                         }
                     }
                 });
 
-        TaskObtenerDatosRuta obtenerDatosRuta=new TaskObtenerDatosRuta(MapsActivity.this,mMap);
-        obtenerDatosRuta.execute(codigo,numPedidos);
+        /*Consulto el estado de la aplicación para evitar pedir las direcciones de forma repetida
+         * */
 
+        DireccionesMapsApi direccionesMapsApi = new DireccionesMapsApi(mMap, MapsActivity.this);
+        switch (almacenDestinos.getEstadoRuta()) {
+            case 0:
+                finish();
+                break;
+            case 1:
+                ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
+                direccionesMapsApi.agregarMarkers();
+                direccionesMapsApi.getRequestedUrl(destinos);
+                break;
+            case 2:
+                direccionesMapsApi.agregarMarkers();
+                direccionesMapsApi.agregarLineas();
+                break;
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.mapsactivity_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+
+        int id = item.getItemId();
+
+        switch (id){
+
+            case R.id.Terminar:
+                almacenDestinos.setEstadoRuta(0);
+                Intent intent=new Intent(MapsActivity.this,SolicitarDestinos.class);
+                startActivity(intent);
+                finish();
+                break;
+        }
+
+
+
+
+        return super.onOptionsItemSelected(item);
+    }
 
         /*
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
@@ -198,7 +228,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 */
 
-    }
+
 
 
 

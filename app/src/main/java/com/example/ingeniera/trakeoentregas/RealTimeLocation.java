@@ -23,7 +23,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import static com.example.ingeniera.trakeoentregas.MapsActivity.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
 
 public class RealTimeLocation {
 
