@@ -34,14 +34,18 @@ public class DirectionsParser {
         JSONArray jRoutes = null;
         JSONArray jLegs = null;
         JSONArray jSteps = null;
+        JSONArray jWaypointOrder=null;
 
         try {
 
             jRoutes = jObject.getJSONArray("routes");
+            jWaypointOrder=jObject.getJSONArray("waypoint_order");
 
             // Loop for all routes
             for (int i = 0; i < jRoutes.length(); i++) {
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
+
+
 
 
                 //Loop for all legs

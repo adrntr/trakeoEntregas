@@ -99,5 +99,22 @@ public class AlmacenDestinos {
         return gson.fromJson(json, type);
     }
 
+    /***********/
+
+    public String getUrlGoogleMaps (){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
+        String urlGoogleMaps = preferencias.getString("urlGoogleMaps",""); //me devuelve el string, si no lo encuentra ""
+        return urlGoogleMaps;
+    }
+
+    public void setUrlGoogleMaps(String urlGoogleMaps){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
+        SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
+        editor.putString("urlGoogleMaps",urlGoogleMaps);     //0 --> ruta no iniciada
+        editor.commit();//aplico los cambios
+    }
+
+    /***********/
+
 
 }

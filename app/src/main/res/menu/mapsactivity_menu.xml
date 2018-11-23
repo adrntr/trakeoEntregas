@@ -3,10 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/Terminar" android:title="Terminar Ruta"
         android:orderInCategory="100"
+        android:icon="@android:drawable/ic_menu_revert"
         app:showAsAction="always" />
     <item android:id="@+id/LeerQR" android:title="Terminar Ruta"
         android:orderInCategory="90"
         android:icon="@drawable/qricon"
+        app:showAsAction="always" />
+    <item android:id="@+id/MapsApp" android:title="Terminar Ruta"
+        android:orderInCategory="95"
+        android:icon="@android:drawable/ic_menu_mapmode"
         app:showAsAction="always" />
 
 </menu>

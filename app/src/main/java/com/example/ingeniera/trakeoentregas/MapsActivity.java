@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -166,7 +167,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case 1:
                 ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
                 direccionesMapsApi.agregarMarkers();
-                direccionesMapsApi.getRequestedUrl(destinos);
+                direccionesMapsApi.getRequestedUrl(destinos,true);
                 break;
             case 2:
                 direccionesMapsApi.agregarMarkers();
@@ -199,6 +200,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.LeerQR:
                 Intent intent1=new Intent(MapsActivity.this,QrReader.class);
                 startActivity(intent1);
+                break;
+            case R.id.MapsApp:
+                DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(mMap,MapsActivity.this);
+                direccionesMapsApi.getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),false);
+                Uri uri = Uri.parse(almacenDestinos.getUrlGoogleMaps());
+                Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent2);
         }
 
 

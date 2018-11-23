@@ -41,7 +41,7 @@ public class DireccionesMapsApi {
         this.context=context;
     }
 
-    public void getRequestedUrl(ArrayList<Destinos> destinos) {
+    public void getRequestedUrl(ArrayList<Destinos> destinos,Boolean pedirDestinos) {
         ArrayList<LatLng> waypoints =new ArrayList<>();
 
         for(int i=0;i<destinos.size();i++){
@@ -49,35 +49,34 @@ public class DireccionesMapsApi {
                 waypoints.add(new LatLng(destinos.get(i).getLatitude(), destinos.get(i).getLongitude()));
             }
         }
-        String waypointsStr="waypoints=";
-        Boolean inicio=true;
-        for (LatLng paradas : waypoints){
-
-            if(inicio){
-                waypointsStr+=paradas.latitude+","+paradas.longitude;
-                inicio=false;
-            }else {
-                waypointsStr+="|"+paradas.latitude+","+paradas.longitude;
+        String waypointsStr="waypoints=optimize:true|",str_org = null,str_dest=null;
+        for (int i=0;i<waypoints.size();i++){
+            if(i==0){
+                str_org = "origin="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
+            }else if(i==1){
+                waypointsStr+=waypoints.get(i-1).latitude+","+waypoints.get(i-1).longitude;
+            }else if(i==waypoints.size()-1){
+                str_dest = "destination="+waypoints.get(i).latitude+","+waypoints.get(i).longitude;
+            }else{
+                waypointsStr+="|"+waypoints.get(i).latitude+","+waypoints.get(i).longitude;
             }
         }
-        //value of origin =
-        String str_org = "origin="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
-        //value of detination
-        String str_dest = "destination="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
-        //set value enable the sensor
+
         String sensor="sensor=false";
         //mode for find direction
         String mode= "mode=driving";
         //Waypoints
-        //String wayPoints= "waypoints=-34.6353325,-58.3690203|CALIFORNIA3099,BARRACAS|Brandsen4755,Ciudadela";
-        //build the full param
-        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+waypointsStr+"&key=AIzaSyBh8thmOqQy78-ozgmQOYIdKgqHDCKgDME";
+        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+waypointsStr;
         String output = "json";
         //create url to request
-        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+param;
+        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+param+"&key=AIzaSyBh8thmOqQy78-ozgmQOYIdKgqHDCKgDME";
+        String urlGoogleMaps="https://www.google.com/maps/dir/?api=1&"+param;
+        almacenDestinos.setUrlGoogleMaps(urlGoogleMaps);
+        if(pedirDestinos){
+            TaskRequestDirections taskRequestDirections=new TaskRequestDirections();
+            taskRequestDirections.execute(url);
+        }
 
-        TaskRequestDirections taskRequestDirections=new TaskRequestDirections();
-        taskRequestDirections.execute(url);
 
 
     }
@@ -174,7 +173,7 @@ public class DireccionesMapsApi {
         List<List<HashMap<String, String>>> lists = almacenDestinos.getArrayListPuntos("arrayPuntosKey");
         ArrayList points = null;
         if(lists.size()==0){
-            getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"));
+            getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),true);
         }else {
             for (List<HashMap<String, String>> path : lists) {
                 points = new ArrayList();
