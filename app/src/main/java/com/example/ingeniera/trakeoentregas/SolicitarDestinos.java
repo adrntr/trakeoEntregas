@@ -1,8 +1,13 @@
 package com.example.ingeniera.trakeoentregas;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -30,6 +35,7 @@ import java.util.Map;
 
 public class SolicitarDestinos extends AppCompatActivity {
 
+    private static final int LOCATION_REQUEST = 500;
     public EditText codigoEt;
     public static TextView jsonTv;
     public Button consultarBt;
@@ -65,6 +71,10 @@ public class SolicitarDestinos extends AppCompatActivity {
 
 
         estadoRuta = almacenDestinos.getEstadoRuta();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST);
+            return;
+        }
     }
 
     View.OnClickListener ClickListener = new View.OnClickListener() {
@@ -88,4 +98,5 @@ public class SolicitarDestinos extends AppCompatActivity {
             finish();
         }
     }
+
 }

@@ -46,6 +46,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -61,6 +62,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.IDN;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -70,7 +72,7 @@ import java.util.Map;
 
 import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,GoogleMap.OnMapClickListener,GoogleMap.OnMarkerClickListener,GoogleMap.OnInfoWindowClickListener {
 
     public static final String KEY_EXTRA = "numeroPedido" ;
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "RLUK" ;
@@ -86,6 +88,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     ConvertirLatLng convertirLatLng;
     RealTimeLocation realTimeLocation;
 
+    /**
+     * Keeps track of the selected marker.
+     */
+    private Marker mSelectedMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +137,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
         mMap.setMyLocationEnabled(true);
+
+        mMap.setOnInfoWindowClickListener(this);
+        mMap.setOnMarkerClickListener(this);
 
         //obtain last user's location
         mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
@@ -187,6 +196,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent);
                 finish();
                 break;
+            case R.id.LeerQR:
+                Intent intent1=new Intent(MapsActivity.this,QrReader.class);
+                startActivity(intent1);
         }
 
 
@@ -195,51 +207,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
-        /*
-        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng latLng) {
-                //reset marker when already 2
-                if(listPoints.size()==2){
-                    listPoints.clear();
-                    mMap.clear();
-                }
-                listPoints.add(latLng);
-                //create maker
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                if(listPoints.size()==1){
-                    //add first marker to the map
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                }else{
-                    //add second marker to the map
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                }
-                mMap.addMarker(markerOptions);
-
-                if(listPoints.size()==2){
-                    //create the URL to get request from first marker to second marker
-                    DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(mMap,getApplicationContext());
-                    direccionesMapsApi.getRequestedUrl(listPoints.get(0),listPoints.get(1));
-
-
-                }
-            }
-        });
-*/
-
-
-
-
-
-
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
             case LOCATION_REQUEST:
                 if(grantResults.length>0&&grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                    mMap.setMyLocationEnabled(true);
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(MapsActivity.this, "Permiso aceptado", Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+                        startActivity(i);
+                        finish();
+                    } else {
+
+                        Toast.makeText(MapsActivity.this, "Permiso NO aceptado", Toast.LENGTH_SHORT).show();
+                    }
+                    return;
+                }
+                    /*mMap.setMyLocationEnabled(true);
 
                     //obtain last user's location
                     mFusedLocationClient.getLastLocation()
@@ -254,7 +239,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                             });
                 }
-                break;
+                break;*/
+
+
         }
     }
 
@@ -297,5 +284,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //updateUI();
     }
 
+    @Override
+    public void onMapClick(LatLng latLng) {
+        // Any showing info window closes when the map is clicked.
+        // Clear the currently selected marker.
+        mSelectedMarker = null;
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        // The user has re-tapped on the marker which was already showing an info window.
+        if (marker.equals(mSelectedMarker)) {
+            // The showing info window has already been closed - that's the first thing to happen
+            // when any marker is clicked.
+            // Return true to indicate we have consumed the event and that we do not want the
+            // the default behavior to occur (which is for the camera to move such that the
+            // marker is centered and for the marker's info window to open, if it has one).
+            mSelectedMarker = null;
+            return true;
+        }
+
+        mSelectedMarker = marker;
+
+        // Return false to indicate that we have not consumed the event and that we wish
+        // for the default behavior to occur.
+        return false;
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        int idDestino= (int) marker.getTag();
+        Toast.makeText(this,"TAG= "+idDestino,Toast.LENGTH_SHORT).show();
+        Intent intent=new Intent(this,TransporteInfo.class);
+        intent.putExtra("idDestino",idDestino);
+        startActivity(intent);
+
+    }
 }
 

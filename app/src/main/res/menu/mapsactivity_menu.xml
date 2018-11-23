@@ -4,5 +4,9 @@
     <item android:id="@+id/Terminar" android:title="Terminar Ruta"
         android:orderInCategory="100"
         app:showAsAction="always" />
+    <item android:id="@+id/LeerQR" android:title="Terminar Ruta"
+        android:orderInCategory="90"
+        android:icon="@drawable/qricon"
+        app:showAsAction="always" />
 
 </menu>

@@ -75,7 +75,7 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             destino = new Destinos();
                             JSONObject jsonObjectExplorer = jsonArray.getJSONObject(i);
-                            destino.setIdCliente(jsonObjectExplorer.optInt("id_cliente"));
+                            destino.setIdCliente(jsonObjectExplorer.optInt("id_cliente"));//cambiar por id destino
                             destino.setCantidadBultos(jsonObjectExplorer.optInt("cantidad_bultos"));
                             destino.setNombre_cliente(jsonObjectExplorer.optString("nombre_cliente"));
                             destino.setTransporte(jsonObjectExplorer.optString("transporte"));

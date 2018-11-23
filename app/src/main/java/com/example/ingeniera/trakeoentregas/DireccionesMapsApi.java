@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -172,35 +173,42 @@ public class DireccionesMapsApi {
     public void agregarLineas() {
         List<List<HashMap<String, String>>> lists = almacenDestinos.getArrayListPuntos("arrayPuntosKey");
         ArrayList points = null;
-        for (List<HashMap<String, String>> path : lists) {
-            points = new ArrayList();
-            for (HashMap<String, String> point : path) {
-                double lat = Double.parseDouble(point.get("lat"));
-                double lon = Double.parseDouble(point.get("lon"));
-                points.add(new LatLng(lat, lon));
-            }
+        if(lists.size()==0){
+            getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"));
+        }else {
+            for (List<HashMap<String, String>> path : lists) {
+                points = new ArrayList();
+                for (HashMap<String, String> point : path) {
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lon = Double.parseDouble(point.get("lon"));
+                    points.add(new LatLng(lat, lon));
+                }
 
-            if (points != null) {
-                mMap.addPolyline(new PolylineOptions()
-                        .color(Color.BLUE)
-                        .width(3)
-                        .addAll(points));
+                if (points != null) {
+                    mMap.addPolyline(new PolylineOptions()
+                            .color(Color.BLUE)
+                            .width(3)
+                            .addAll(points));
 
-            } else {
-                Toast.makeText(context, "Direction not found", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Direction not found", Toast.LENGTH_SHORT).show();
+                }
             }
         }
+
     }
 
     public void agregarMarkers() {
 
         ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
         for (int i = 0; i < destinos.size(); i++) {
-            MarkerOptions markerOptions2 = new MarkerOptions();
-            markerOptions2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-            LatLng latLng2 = new LatLng(destinos.get(i).getLatitude(), destinos.get(i).getLongitude());
-            markerOptions2.position(latLng2);
-            mMap.addMarker(markerOptions2);
+            Marker marker;
+            marker=mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                    .title(destinos.get(i).getTransporte())
+                    .snippet(String.valueOf(destinos.get(i).getIdCliente()))
+                    .position(new LatLng(destinos.get(i).getLatitude(), destinos.get(i).getLongitude())));
+            marker.setTag(destinos.get(i).getIdCliente());
         }
 
     }
