@@ -34,19 +34,19 @@ public class DirectionsParser {
         JSONArray jRoutes = null;
         JSONArray jLegs = null;
         JSONArray jSteps = null;
-        JSONArray jWaypointOrder=null;
+        JSONArray jWaypointsOpt=null;
+        Integer waypoint;
 
         try {
 
             jRoutes = jObject.getJSONArray("routes");
-            jWaypointOrder=jObject.getJSONArray("waypoint_order");
+
 
             // Loop for all routes
             for (int i = 0; i < jRoutes.length(); i++) {
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
-
-
-
+                jWaypointsOpt = ((JSONObject) jRoutes.get(i)).getJSONArray("waypoint_order");
+                ArrayList<Integer> waypointOrder =new ArrayList<>();
 
                 //Loop for all legs
                 for (int j = 0; j < jLegs.length(); j++) {
@@ -71,6 +71,10 @@ public class DirectionsParser {
                     }
 
                     routes.add(path); //Add all the points for one of the Legs
+                }
+                for(int n=0;n<jWaypointsOpt.length();n++){
+                    waypoint= jWaypointsOpt.getInt(n);
+                    waypointOrder.add(waypoint);
                 }
             }
 

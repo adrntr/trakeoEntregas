@@ -49,7 +49,7 @@ public class DireccionesMapsApi {
                 waypoints.add(new LatLng(destinos.get(i).getLatitude(), destinos.get(i).getLongitude()));
             }
         }
-        String waypointsStr="waypoints=optimize:true|",str_org = null,str_dest=null;
+        String waypointsStr="",str_org = null,str_dest=null;
         for (int i=0;i<waypoints.size();i++){
             if(i==0){
                 str_org = "origin="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
@@ -66,11 +66,12 @@ public class DireccionesMapsApi {
         //mode for find direction
         String mode= "mode=driving";
         //Waypoints
-        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+waypointsStr;
+        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+"waypoints=optimize:true|"+waypointsStr;
+        String paramMaps=str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+"waypoints="+waypointsStr;
         String output = "json";
         //create url to request
         String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+param+"&key=AIzaSyBh8thmOqQy78-ozgmQOYIdKgqHDCKgDME";
-        String urlGoogleMaps="https://www.google.com/maps/dir/?api=1&"+param;
+        String urlGoogleMaps="https://www.google.com/maps/dir/?api=1&"+paramMaps;
         almacenDestinos.setUrlGoogleMaps(urlGoogleMaps);
         if(pedirDestinos){
             TaskRequestDirections taskRequestDirections=new TaskRequestDirections();
