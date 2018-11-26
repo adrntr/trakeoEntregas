@@ -82,8 +82,9 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
                             destino.setDireccion_transporte(jsonObjectExplorer.optString("direccion_transporte"));
                             destino.setLatitude(jsonObjectExplorer.optDouble("latitud"));
                             destino.setLongitude(jsonObjectExplorer.optDouble("longitud"));
-
-                            destinos.add(destino);
+                            if(destino.getLongitude()!=0&&destino.getLatitude()!=0){
+                                destinos.add(destino);
+                            }
                         }
                         almacenDestinos.saveArrayList(destinos);
                         almacenDestinos.setEstadoRuta(1);

@@ -49,7 +49,7 @@
         android:text="Jean Juares 3070, San Justo, Buenos Aires, Argentina"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintStart_toEndOf="@+id/clienteTv"
         app:layout_constraintTop_toBottomOf="@+id/transporteTv" />
 
     <TextView
@@ -65,8 +65,8 @@
         android:text="Andif"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintStart_toEndOf="@+id/cantidadTv"
+        app:layout_constraintTop_toBottomOf="@+id/clienteTv" />
 
     <TextView
         android:id="@+id/cantidadTv"
@@ -147,7 +147,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/transporteTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
@@ -160,7 +160,7 @@
         app:layout_constraintEnd_toStartOf="@+id/idDestinoTv" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/clienteTv"
         android:layout_width="200dp"
         android:layout_height="47dp"
         android:layout_marginStart="8dp"
@@ -172,7 +172,7 @@
         app:layout_constraintTop_toBottomOf="@+id/transporteTv" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/cantidadTv"
         android:layout_width="200dp"
         android:layout_height="47dp"
         android:layout_marginStart="8dp"
@@ -181,7 +181,7 @@
         android:text="Cliente:"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/clienteTv" />
 
     <TextView
         android:id="@+id/textView6"
@@ -193,7 +193,7 @@
         android:text="Cantidad:"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/cantidadTv" />
 
     <TextView
         android:id="@+id/textView7"

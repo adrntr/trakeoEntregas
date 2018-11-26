@@ -72,6 +72,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public static final String KEY_EXTRA = "numeroPedido" ;
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "RLUK" ;
+    private static final int QR_REQUEST = 600 ;
     private GoogleMap mMap;
     private static final int LOCATION_REQUEST = 500;
     ArrayList<LatLng> listPoints;
@@ -194,15 +195,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             case R.id.LeerQR:
                 Intent intent1=new Intent(MapsActivity.this,QrReader.class);
-                startActivity(intent1);
+                startActivityForResult(intent1,QR_REQUEST);
                 break;
             case R.id.MapsApp:
                 DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(mMap,MapsActivity.this);
-                ordenarArrayListDestinos();
+                //ordenarArrayListDestinos();
                 direccionesMapsApi.getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),false);
                 Uri uri = Uri.parse(almacenDestinos.getUrlGoogleMaps());
                 Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent2);
+                break;
+            case R.id.listDestinos:
+                Intent intent4=new Intent(MapsActivity.this,ListaDestinos.class);
+                startActivity(intent4);
         }
 
 
@@ -211,22 +216,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
-    private void ordenarArrayListDestinos() {
 
-        ArrayList<Integer> waypointsOrder = almacenDestinos.getArrayWaypointOrder("waypointsOrderKey");
-        ArrayList<Destinos> destinos=almacenDestinos.getArrayList("arrayDestinosKey");
-
-        ArrayList<Destinos> tempDestino=new ArrayList<>();
-        for (int j=0;j<destinos.size();j++){
-            tempDestino.add(new Destinos());
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case QR_REQUEST:
+                Intent intent=new Intent(MapsActivity.this,MapsActivity.class);
+                startActivity(intent);
+                finish();
+                break;
         }
-
-
-        for (int i=0;i<waypointsOrder.size();i++){
-            int ubicacion=waypointsOrder.get(i);
-            tempDestino.set(ubicacion,destinos.get(i));
-        }
-        almacenDestinos.saveArrayList(tempDestino);
     }
 
     @SuppressLint("MissingPermission")
@@ -276,6 +275,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onResume();
         if (mRequestingLocationUpdates) {
             realTimeLocation.startLocationUpdates(mFusedLocationClient);
+
         }
     }
 

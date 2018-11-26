@@ -50,11 +50,21 @@ public class DireccionesMapsApi {
             }
         }
         String waypointsStr="",str_org = null,str_dest=null;
-        for (int i=0;i<waypoints.size();i++){
-            if(i==0){
-                waypointsStr+=waypoints.get(i).latitude+","+waypoints.get(i).longitude;
-            }else{
-                waypointsStr+="|"+waypoints.get(i).latitude+","+waypoints.get(i).longitude;
+        if(pedirDestinos){
+            for (int i=0;i<waypoints.size();i++){
+                if(i==0){
+                    waypointsStr+=waypoints.get(i).latitude+","+waypoints.get(i).longitude;
+                }else{
+                    waypointsStr+="|"+waypoints.get(i).latitude+","+waypoints.get(i).longitude;
+                }
+            }
+        }else {
+            for (int i = 0;i<waypoints.size()&& i < 9; i++) {
+                if (i == 0) {
+                    waypointsStr += waypoints.get(i).latitude + "," + waypoints.get(i).longitude;
+                } else {
+                    waypointsStr += "|" + waypoints.get(i).latitude + "," + waypoints.get(i).longitude;
+                }
             }
         }
         str_org = "origin="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
@@ -202,6 +212,8 @@ public class DireccionesMapsApi {
     public void agregarMarkers() {
 
         ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
+        if (destinos!=null&&mMap!=null){
+
         for (int i = 0; i < destinos.size(); i++) {
             Marker marker;
             marker=mMap.addMarker(new MarkerOptions()
@@ -210,6 +222,7 @@ public class DireccionesMapsApi {
                     .snippet(String.valueOf(destinos.get(i).getIdCliente()))
                     .position(new LatLng(destinos.get(i).getLatitude(), destinos.get(i).getLongitude())));
             marker.setTag(destinos.get(i).getIdCliente());
+            }
         }
 
     }

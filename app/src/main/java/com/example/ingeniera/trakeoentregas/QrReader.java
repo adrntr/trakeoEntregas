@@ -14,6 +14,9 @@ import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +32,9 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
+import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
 import static com.google.android.gms.vision.CameraSource.CAMERA_FACING_BACK;
 import static com.google.android.gms.vision.CameraSource.CAMERA_FACING_FRONT;
 
@@ -39,6 +44,8 @@ public class QrReader extends AppCompatActivity {
     SurfaceView surfaceView;
     CameraSource cameraSource;
     TextView textView, actividadTv, codigoTv;
+    EditText ingresoEt;
+    Button entregarBt;
     BarcodeDetector barcodeDetector;
     Boolean enviando = false;
     long timeUltimoUso = System.currentTimeMillis();
@@ -55,6 +62,10 @@ public class QrReader extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         actividadTv = findViewById(R.id.actividadTv);
         codigoTv = findViewById(R.id.codigoTv);
+        ingresoEt=findViewById(R.id.ingresoEt);
+        entregarBt=findViewById(R.id.entregarBt);
+
+        entregarBt.setOnClickListener(clicListener);
 
 
         barcodeDetector = new BarcodeDetector.Builder(this)
@@ -132,12 +143,14 @@ public class QrReader extends AppCompatActivity {
                                 switch (datos[0]) {
 
                                     case "TRANSPORTE":
-                                        tareaEnviarDatos.execute("https://sistemas.andif.com.ar/pruebas/prueba-remito-transporte/index.php", datos[1], "id_remito_transporte");
+                                        //tareaEnviarDatos.execute("https://sistemas.andif.com.ar/pruebas/prueba-remito-transporte/index.php", datos[1], "id_remito_transporte");
+                                        tareaEnviarDatos.execute("http://192.168.1.176/pruebas/prueba-remito-transporte/index.php", datos[1], "id_remito_transporte");
                                         textView.setText("Enviando...");
                                         Toast.makeText(QrReader.this, "Codigo " + datos[1], Toast.LENGTH_SHORT).show();
                                         break;
                                     default:
                                         Toast.makeText(QrReader.this, "Intente Nuevamente", Toast.LENGTH_SHORT).show();
+
                                         break;
 
                                 }
@@ -151,6 +164,28 @@ public class QrReader extends AppCompatActivity {
             }
         });
     }
+
+    View.OnClickListener clicListener =new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.entregarBt:
+                    ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
+                    int destino=Integer.parseInt(ingresoEt.getText().toString());
+                    Boolean noEsta=true;
+                    for(int i=0;i<destinos.size();i++){
+                        if (destinos.get(i).getIdCliente()==destino){
+                            destinos.remove(i);
+                            noEsta=false;
+                            almacenDestinos.saveArrayList(destinos);
+                        }
+                    }
+                    if (noEsta){
+                        Toast.makeText(QrReader.this,"No se encuentra",Toast.LENGTH_SHORT).show();
+                    }
+            }
+        }
+    };
 
     @SuppressLint("MissingPermission")
     @Override
@@ -227,6 +262,7 @@ public class QrReader extends AppCompatActivity {
             if (s != null) {
                 if (s.equals("error")) {
                     Toast.makeText(QrReader.this, "Intente nuevamente", Toast.LENGTH_SHORT).show();
+                    textView.setText("Intente Nuevamente");
                 } else {
                     textView.setText(s);
                 }
@@ -236,16 +272,6 @@ public class QrReader extends AppCompatActivity {
         }
     }
 
-    /*
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        cameraSource.stop();
-        cameraSource.release();
-    }
-
-    */
     @Override
     protected void onPause() {
         super.onPause();

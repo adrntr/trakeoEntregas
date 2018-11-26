@@ -13,5 +13,10 @@
         android:orderInCategory="95"
         android:icon="@android:drawable/ic_menu_mapmode"
         app:showAsAction="always" />
+    <item android:id="@+id/listDestinos" android:title="Terminar Ruta"
+        android:orderInCategory="102"
+        android:icon="@android:drawable/ic_menu_gallery"
+        app:showAsAction="always" />
+
 
 </menu>

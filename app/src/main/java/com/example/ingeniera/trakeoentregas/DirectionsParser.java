@@ -79,6 +79,7 @@ public class DirectionsParser {
                     waypointOrder.add(waypoint);
                 }
                 almacenDestinos.setArrayWaypointOrder(waypointOrder);
+                ordenarArrayListDestinos();
             }
 
         } catch (JSONException e) {
@@ -126,4 +127,23 @@ public class DirectionsParser {
 
         return poly;
     }
+
+    private void ordenarArrayListDestinos() {
+
+        ArrayList<Integer> waypointsOrder = almacenDestinos.getArrayWaypointOrder("waypointsOrderKey");
+        ArrayList<Destinos> destinos=almacenDestinos.getArrayList("arrayDestinosKey");
+
+        ArrayList<Destinos> tempDestino=new ArrayList<>();
+        for (int j=0;j<destinos.size();j++){
+            tempDestino.add(new Destinos());
+        }
+
+
+        for (int i=0;i<waypointsOrder.size();i++){
+            int ubicacion=waypointsOrder.get(i);
+            tempDestino.set(i,destinos.get(ubicacion));
+        }
+        almacenDestinos.saveArrayList(tempDestino);
+    }
+
 }
