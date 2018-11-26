@@ -198,6 +198,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             case R.id.MapsApp:
                 DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(mMap,MapsActivity.this);
+                ordenarArrayListDestinos();
                 direccionesMapsApi.getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),false);
                 Uri uri = Uri.parse(almacenDestinos.getUrlGoogleMaps());
                 Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
@@ -208,6 +209,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void ordenarArrayListDestinos() {
+
+        ArrayList<Integer> waypointsOrder = almacenDestinos.getArrayWaypointOrder("waypointsOrderKey");
+        ArrayList<Destinos> destinos=almacenDestinos.getArrayList("arrayDestinosKey");
+
+        ArrayList<Destinos> tempDestino=new ArrayList<>();
+        for (int j=0;j<destinos.size();j++){
+            tempDestino.add(new Destinos());
+        }
+
+
+        for (int i=0;i<waypointsOrder.size();i++){
+            int ubicacion=waypointsOrder.get(i);
+            tempDestino.set(ubicacion,destinos.get(i));
+        }
+        almacenDestinos.saveArrayList(tempDestino);
     }
 
     @SuppressLint("MissingPermission")

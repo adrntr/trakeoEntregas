@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
+
 /**
  * Created by NgocTri on 12/11/2017.
  * Modify by Trillo Adrian on 17/11/2018
@@ -76,6 +78,7 @@ public class DirectionsParser {
                     waypoint= jWaypointsOpt.getInt(n);
                     waypointOrder.add(waypoint);
                 }
+                almacenDestinos.setArrayWaypointOrder(waypointOrder);
             }
 
         } catch (JSONException e) {

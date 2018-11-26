@@ -116,5 +116,27 @@ public class AlmacenDestinos {
 
     /***********/
 
+    public void setArrayWaypointOrder(ArrayList<Integer> list){
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString("waypointsOrderKey", json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
+
+    public ArrayList<Integer> getArrayWaypointOrder(String key){
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<Integer>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    /***********/
+
+
+
+
 
 }

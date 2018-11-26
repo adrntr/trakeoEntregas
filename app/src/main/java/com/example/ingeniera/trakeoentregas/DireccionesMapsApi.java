@@ -52,16 +52,13 @@ public class DireccionesMapsApi {
         String waypointsStr="",str_org = null,str_dest=null;
         for (int i=0;i<waypoints.size();i++){
             if(i==0){
-                str_org = "origin="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
-            }else if(i==1){
-                waypointsStr+=waypoints.get(i-1).latitude+","+waypoints.get(i-1).longitude;
-            }else if(i==waypoints.size()-1){
-                str_dest = "destination="+waypoints.get(i).latitude+","+waypoints.get(i).longitude;
+                waypointsStr+=waypoints.get(i).latitude+","+waypoints.get(i).longitude;
             }else{
                 waypointsStr+="|"+waypoints.get(i).latitude+","+waypoints.get(i).longitude;
             }
         }
-
+        str_org = "origin="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
+        str_dest = "destination="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
         String sensor="sensor=false";
         //mode for find direction
         String mode= "mode=driving";
@@ -173,6 +170,10 @@ public class DireccionesMapsApi {
     public void agregarLineas() {
         List<List<HashMap<String, String>>> lists = almacenDestinos.getArrayListPuntos("arrayPuntosKey");
         ArrayList points = null;
+        if (lists == null){
+            almacenDestinos.setEstadoRuta(0);
+            return;
+        }
         if(lists.size()==0){
             getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),true);
         }else {
