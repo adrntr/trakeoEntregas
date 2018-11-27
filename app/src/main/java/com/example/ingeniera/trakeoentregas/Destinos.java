@@ -5,8 +5,9 @@ import com.google.android.gms.maps.model.LatLng;
 public class Destinos {
 
     private Double latitude,longitude;
-    private String nombre_cliente,transporte,direccion_transporte;
-    private int idCliente,cantidadBultos;
+    private String nombre_cliente,transporte,direccion_transporte,telefono,fechaHoraEntrega;
+    private int idDestino,codigoRemito,idCliente,cantidadBultos,tipoEntrega;
+    Boolean entregado;
 
 
     public Double getLatitude() {
@@ -35,6 +36,55 @@ public class Destinos {
 
     public String getTransporte() {
         return transporte;
+    }
+
+    public String getFechaHoraEntrega() {
+        return fechaHoraEntrega;
+    }
+
+    public void setFechaHoraEntrega(String fechaHoraEntrega) {
+        this.fechaHoraEntrega = fechaHoraEntrega;
+    }
+
+    public String getTelefono() {
+        return telefono;
+
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public int getIdDestino() {
+        return idDestino;
+    }
+
+    public void setIdDestino(int idDestino) {
+        this.idDestino = idDestino;
+    }
+
+    public int getCodigoRemito() {
+        return codigoRemito;
+    }
+
+    public void setCodigoRemito(int codigoRemito) {
+        this.codigoRemito = codigoRemito;
+    }
+
+    public int getTipoEntrega() {
+        return tipoEntrega;
+    }
+
+    public void setTipoEntrega(int tipoEntrega) {
+        this.tipoEntrega = tipoEntrega;
+    }
+
+    public Boolean getEntregado() {
+        return entregado;
+    }
+
+    public void setEntregado(Boolean entregado) {
+        this.entregado = entregado;
     }
 
     public void setTransporte(String transporte) {

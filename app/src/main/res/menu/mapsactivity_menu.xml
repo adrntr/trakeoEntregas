@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/Terminar" android:title="Terminar Ruta"
+    <item
+        android:id="@+id/Terminar"
+        android:icon="@android:drawable/ic_delete"
         android:orderInCategory="100"
-        android:icon="@android:drawable/ic_menu_revert"
+        android:title="Terminar Ruta"
         app:showAsAction="always" />
-    <item android:id="@+id/LeerQR" android:title="Terminar Ruta"
+    <item
+        android:id="@+id/LeerQR"
+        android:icon="@android:drawable/ic_menu_myplaces"
         android:orderInCategory="90"
-        android:icon="@drawable/qricon"
+        android:title="Terminar Ruta"
         app:showAsAction="always" />
-    <item android:id="@+id/MapsApp" android:title="Terminar Ruta"
+    <item
+        android:id="@+id/MapsApp"
+        android:icon="@android:drawable/ic_dialog_map"
         android:orderInCategory="95"
-        android:icon="@android:drawable/ic_menu_mapmode"
+        android:title="Terminar Ruta"
         app:showAsAction="always" />
-    <item android:id="@+id/listDestinos" android:title="Terminar Ruta"
-        android:orderInCategory="102"
-        android:icon="@android:drawable/ic_menu_gallery"
+    <item
+        android:id="@+id/listDestinos"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:orderInCategory="10"
+        android:title="Terminar Ruta"
         app:showAsAction="always" />
 
 

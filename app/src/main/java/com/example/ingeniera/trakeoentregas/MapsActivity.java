@@ -284,6 +284,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onPause();
         realTimeLocation.stopLocationUpdates(mFusedLocationClient);
     }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Intent intent=new Intent(MapsActivity.this,MapsActivity.class);
+        startActivity(intent);
+        finish();
+    }
     //whether change of activity it funtion save some states
     @Override
     protected void onSaveInstanceState(Bundle outState) {

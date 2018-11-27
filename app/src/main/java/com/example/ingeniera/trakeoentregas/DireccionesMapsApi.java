@@ -59,11 +59,18 @@ public class DireccionesMapsApi {
                 }
             }
         }else {
-            for (int i = 0;i<waypoints.size()&& i < 9; i++) {
-                if (i == 0) {
-                    waypointsStr += waypoints.get(i).latitude + "," + waypoints.get(i).longitude;
-                } else {
-                    waypointsStr += "|" + waypoints.get(i).latitude + "," + waypoints.get(i).longitude;
+            Boolean primero=true;
+            int cant=0;
+            for (int i = 0;i<waypoints.size()&& cant < 9; i++) {
+                if (!(destinos.get(i).getEntregado())){
+                    if (primero) {
+                        waypointsStr += waypoints.get(i).latitude + "," + waypoints.get(i).longitude;
+                        primero=false;
+                        cant++;
+                    } else {
+                        waypointsStr += "|" + waypoints.get(i).latitude + "," + waypoints.get(i).longitude;
+                        cant++;
+                    }
                 }
             }
         }
@@ -215,15 +222,43 @@ public class DireccionesMapsApi {
         if (destinos!=null&&mMap!=null){
 
         for (int i = 0; i < destinos.size(); i++) {
-            Marker marker;
-            marker=mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                    .title(destinos.get(i).getTransporte())
-                    .snippet(String.valueOf(destinos.get(i).getIdCliente()))
-                    .position(new LatLng(destinos.get(i).getLatitude(), destinos.get(i).getLongitude())));
-            marker.setTag(destinos.get(i).getIdCliente());
+
+            if (destinos.get(i).getEntregado()){
+                colocarMarker(BitmapDescriptorFactory.HUE_RED,destinos.get(i));
+            }else{
+                switch (destinos.get(i).getTipoEntrega()){
+                    case 1:
+                        colocarMarker(BitmapDescriptorFactory.HUE_BLUE,destinos.get(i));
+                        break;
+                    case 2:
+                        colocarMarker(BitmapDescriptorFactory.HUE_ORANGE,destinos.get(i));
+                        break;
+                    case 3:
+                        colocarMarker(BitmapDescriptorFactory.HUE_GREEN,destinos.get(i));
+                        break;
+                    case 4:
+                        colocarMarker(BitmapDescriptorFactory.HUE_MAGENTA,destinos.get(i));
+                        break;
+                        default:
+                            colocarMarker(BitmapDescriptorFactory.HUE_GREEN,destinos.get(i));
+                            break;
+
+
+                }
             }
         }
+        }
+
+    }
+
+    private void colocarMarker(float hue, Destinos destino) {
+        Marker marker;
+        marker=mMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.defaultMarker(hue))
+                .title(destino.getTransporte())
+                .snippet(String.valueOf(destino.getIdCliente()))
+                .position(new LatLng(destino.getLatitude(), destino.getLongitude())));
+        marker.setTag(destino.getIdCliente());
 
     }
 }

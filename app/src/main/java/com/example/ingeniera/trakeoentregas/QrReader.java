@@ -32,7 +32,9 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
 import static com.google.android.gms.vision.CameraSource.CAMERA_FACING_BACK;
@@ -175,9 +177,14 @@ public class QrReader extends AppCompatActivity {
                     Boolean noEsta=true;
                     for(int i=0;i<destinos.size();i++){
                         if (destinos.get(i).getIdCliente()==destino){
-                            destinos.remove(i);
+                            destinos.get(i).setEntregado(true);
                             noEsta=false;
+                            String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+                            destinos.get(i).setFechaHoraEntrega(currentDateTimeString);
                             almacenDestinos.saveArrayList(destinos);
+                            Toast.makeText(QrReader.this,"Entregado a las "+currentDateTimeString,Toast.LENGTH_SHORT).show();
+                            ingresoEt.setText("");
+
                         }
                     }
                     if (noEsta){
