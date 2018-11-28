@@ -36,9 +36,8 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 import static com.google.android.gms.vision.CameraSource.CAMERA_FACING_BACK;
-import static com.google.android.gms.vision.CameraSource.CAMERA_FACING_FRONT;
 
 public class QrReader extends AppCompatActivity {
 

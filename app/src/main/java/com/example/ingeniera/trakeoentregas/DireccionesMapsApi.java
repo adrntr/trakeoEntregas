@@ -1,9 +1,6 @@
 package com.example.ingeniera.trakeoentregas;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -27,9 +24,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 
 public class DireccionesMapsApi {
 
@@ -176,7 +172,7 @@ public class DireccionesMapsApi {
             //get list route and display it into the map
 
             almacenDestinos.saveArrayListPuntos(lists);
-            almacenDestinos.setEstadoRuta(2);
+            almacenDestinos.setEstadoRuta(3);
 
             agregarLineas();
 

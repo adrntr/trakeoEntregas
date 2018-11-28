@@ -20,10 +20,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.Map;
-import java.util.concurrent.Executor;
-
-import static com.example.ingeniera.trakeoentregas.SolicitarDestinos.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 
 public class RealTimeLocation {
 

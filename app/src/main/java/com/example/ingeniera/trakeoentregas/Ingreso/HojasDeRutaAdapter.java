@@ -1,4 +1,4 @@
-package com.example.ingeniera.trakeoentregas;
+package com.example.ingeniera.trakeoentregas.Ingreso;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,15 +13,20 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.ingeniera.trakeoentregas.Destinos;
+import com.example.ingeniera.trakeoentregas.ListDestinosAdapter;
+import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.TransporteInfo;
+
 import java.util.ArrayList;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 
-public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapter.ListViewHolder> {
+public class HojasDeRutaAdapter extends RecyclerView.Adapter<HojasDeRutaAdapter.ListViewHolder> {
 
     private Context mCtx;//para pasarle las vistas
 
-    public ListDestinosAdapter(Context mCtx) {
+    public HojasDeRutaAdapter(Context mCtx) {
         this.mCtx = mCtx;
     }
 
@@ -30,14 +35,13 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mCtx);
-        View view = inflater.inflate(R.layout.activity_lista_destinos, null);
+        View view = inflater.inflate(R.layout.card_hojas_de_ruta, null);
         ListViewHolder holder = new ListViewHolder(view);
         return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
-
         ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
         Destinos destino = destinos.get(position);
 
@@ -51,6 +55,7 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
         }
         holder.setOnClickListeners();
     }
+
 
     @Override
     public int getItemCount() {

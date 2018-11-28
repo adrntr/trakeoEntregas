@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.example.ingeniera.trakeoentregas.Ingreso.HojasDeRuta;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -75,8 +76,9 @@ public class AlmacenDestinos {
         SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
         SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
         editor.putInt("EstadoRuta",estadoRuta);     //0 --> ruta no iniciada
-                                                    //1 --> datos obtenidos
-                                                    //2--->direcciones obtenidas
+                                                    //1 --> Hojas de ruta obtenidas pero no se selecciono alguna
+                                                    //2 --> Se selecciono una hoja de ruta y se obtuvieron los destinos
+                                                    //3 -->direcciones obtenidas
         editor.commit();//aplico los cambios
     }
 
@@ -130,6 +132,41 @@ public class AlmacenDestinos {
         Gson gson = new Gson();
         String json = prefs.getString(key, null);
         Type type = new TypeToken<ArrayList<Integer>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    /***********/
+
+
+    public String getNombreApellido (){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
+        String nombreApellido = preferencias.getString("nombreApellidoKey",""); //me devuelve el string, si no lo encuentra ""
+        return nombreApellido;
+    }
+
+    public void setNombreApellido(String nombreApellido){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
+        SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
+        editor.putString("nombreApellidoKey",nombreApellido);     //0 --> ruta no iniciada
+        editor.commit();//aplico los cambios
+    }
+
+    /***********/
+
+    public void setArrayHojasDeRutas(ArrayList<HojasDeRuta> list){
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString("arrayHojasDeRutaKey", json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
+
+    public ArrayList<HojasDeRuta> getArrayHojasDeRutas(String key){
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<HojasDeRuta>>() {}.getType();
         return gson.fromJson(json, type);
     }
 

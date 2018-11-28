@@ -1,5 +1,6 @@
-package com.example.ingeniera.trakeoentregas;
+package com.example.ingeniera.trakeoentregas.Ingreso;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +14,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ingeniera.trakeoentregas.Destinos;
+import com.example.ingeniera.trakeoentregas.MapsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,38 +27,34 @@ import java.util.Map;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 
-/** A partir de un codigo de ruta, obtiene todos los destinos.
- *
- */
+public class TaskObtenerHojasRutas extends AsyncTask<String,Void,String> {
 
-public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
+
 
     Context context;
     private ProgressDialog progreso;
 
-    public TaskObtenerDatosRuta(Context context) {
-        this.context=context;
+    public TaskObtenerHojasRutas(Context context) {
+        this.context = context;
     }
 
     @Override
     protected void onPreExecute() {
         progreso=new ProgressDialog(context);
-        progreso.setMessage("Cargando Ruta...");
+        progreso.setMessage("Verificando su DNI...");
         progreso.setCancelable(true);
         progreso.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                TaskObtenerDatosRuta.this.cancel(true);
+                TaskObtenerHojasRutas.this.cancel(true);
             }
         });
         progreso.show();
     }
-
     @Override
     protected String doInBackground(final String... strings) {
-
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "https://sistemas.andif.com.ar/pruebas/prueba-remito-transporte/datos-planilla-seguro.php";
+        String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/ultimas-hojas-ruta.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -65,33 +64,21 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         JSONArray jsonArray = jsonObject.getJSONArray("registros");
-                        Destinos destino;
-                        ArrayList<Destinos> destinos = new ArrayList<>();
+                        HojasDeRuta hojaDeRuta;
+                        ArrayList<HojasDeRuta> hojasDeRutas = new ArrayList<>();
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            destino = new Destinos();
+                            hojaDeRuta = new HojasDeRuta();
                             JSONObject jsonObjectExplorer = jsonArray.getJSONObject(i);
-                            destino.setIdCliente(jsonObjectExplorer.optInt("id_cliente"));//cambiar por id destino
-                            destino.setCantidadBultos(jsonObjectExplorer.optInt("cantidad_bultos"));
-                            destino.setNombre_cliente(jsonObjectExplorer.optString("nombre_cliente"));
-                            destino.setTransporte(jsonObjectExplorer.optString("transporte"));
-                            destino.setDireccion_transporte(jsonObjectExplorer.optString("direccion_transporte"));
-                            destino.setLatitude(jsonObjectExplorer.optDouble("latitud"));
-                            destino.setLongitude(jsonObjectExplorer.optDouble("longitud"));
-
-                            destino.setEntregado(false);
-                            if(destino.getLongitude()!=0&&destino.getLatitude()!=0){
-                                destinos.add(destino);
-                            }
+                            hojaDeRuta.setCodigo(jsonObjectExplorer.optInt("id"));
+                            hojaDeRuta.setFecha(jsonObjectExplorer.optString("fecha_ruta"));
+                            hojasDeRutas.add(hojaDeRuta);
                         }
-                        almacenDestinos.saveArrayList(destinos);
-                        almacenDestinos.setEstadoRuta(2);
+                        almacenDestinos.setArrayHojasDeRutas(hojasDeRutas);
+                        almacenDestinos.setEstadoRuta(1);
                         progreso.dismiss();
-                        Intent intent = new Intent(context,MapsActivity.class);
+                        Intent intent = new Intent(context,SolicitarDestinos.class);
                         context.startActivity(intent);
-
-
-
-
+                        ((Activity)context).finish();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -106,20 +93,11 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
             public void onErrorResponse(VolleyError error) {
 
             }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put(strings[0], strings[1]);
-                return params;
-            }
-        };
+        });
 
 
         queue.add(stringRequest);
 
         return null;
     }
-
-
 }
