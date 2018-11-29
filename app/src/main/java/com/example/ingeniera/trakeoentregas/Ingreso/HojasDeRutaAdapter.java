@@ -16,7 +16,10 @@ import android.widget.TextView;
 import com.example.ingeniera.trakeoentregas.Destinos;
 import com.example.ingeniera.trakeoentregas.ListDestinosAdapter;
 import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.TaskObtenerDatosRuta;
 import com.example.ingeniera.trakeoentregas.TransporteInfo;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -42,73 +45,49 @@ public class HojasDeRutaAdapter extends RecyclerView.Adapter<HojasDeRutaAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
-        ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
-        Destinos destino = destinos.get(position);
+        ArrayList<HojasDeRuta> hojasDeRutas = almacenDestinos.getArrayHojasDeRutas("arrayHojasDeRutaKey");
+        HojasDeRuta hojaDeRuta = hojasDeRutas.get(position);
 
-        holder.transporteTv.setText(destino.getTransporte());
-        holder.dirTransporteTv.setText(destino.getDireccion_transporte());
-        holder.clienteTv.setText(String.valueOf(destino.getNombre_cliente()));
-        holder.cantidadTv.setText("Cantidad: "+String.valueOf(destino.getCantidadBultos()));
-        holder.codigoClienteTv.setText(String.valueOf(destino.getIdCliente()));
-        if (destino.getEntregado()) {
-            holder.cardViewTransporte.setCardBackgroundColor(0xFF00FF00);
-        }
+        holder.idHojaDeRutaTv.setText(String.valueOf(hojaDeRuta.getCodigo()));
+        holder.creadoTv.setText(hojaDeRuta.getFecha());
+
         holder.setOnClickListeners();
     }
 
 
     @Override
     public int getItemCount() {
-        int itemCount = almacenDestinos.getArrayList("arrayDestinosKey").size();
+        int itemCount = almacenDestinos.getArrayHojasDeRutas("arrayHojasDeRutaKey").size();
         return itemCount;
     }
 
 
     public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView tipoEnvioIv;
-        TextView transporteTv, dirTransporteTv, clienteTv, cantidadTv,codigoClienteTv;
-        CardView cardViewTransporte;
-        Button irBt;
+
+        TextView idHojaDeRutaTv,creadoTv,cantidadDestinosTv;
+        CardView hojasDeRutaCv;
 
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
-            transporteTv = itemView.findViewById(R.id.transporteListaTv);
-            dirTransporteTv = itemView.findViewById(R.id.dirTransporteListaTv);
-            clienteTv = itemView.findViewById(R.id.textview34);
-            cantidadTv = itemView.findViewById(R.id.texview32);
-            cardViewTransporte = itemView.findViewById(R.id.cardviewTransporte);
-            codigoClienteTv=itemView.findViewById(R.id.codigoClienteListaTv);
-            irBt=itemView.findViewById(R.id.irBt);
+            idHojaDeRutaTv = itemView.findViewById(R.id.IdHojaDeRutaTv);
+            creadoTv = itemView.findViewById(R.id.creadoTv);
+            cantidadDestinosTv = itemView.findViewById(R.id.cantidadDestinosTv);
+            hojasDeRutaCv=itemView.findViewById(R.id.HojasDeRutaCv);
+
 
         }
 
         public void setOnClickListeners() {
-            cardViewTransporte.setOnClickListener(this);
-            irBt.setOnClickListener(this);
+            hojasDeRutaCv.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.cardviewTransporte:
-                    Intent intent = new Intent(mCtx,TransporteInfo.class);
-                    intent.putExtra("idDestino",Integer.parseInt(codigoClienteTv.getText().toString()));
-                    mCtx.startActivity(intent);
-                    break;
-                case R.id.irBt:
-                    String latDest = null,lngDest = null;
-                    int codigoCliente=Integer.parseInt(codigoClienteTv.getText().toString());
-                    ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
-                    for(int i=0;i<destinos.size();i++){
-                        if (destinos.get(i).getIdCliente()==codigoCliente){
-                            latDest=String.valueOf(destinos.get(i).getLatitude());
-                            lngDest=String.valueOf(destinos.get(i).getLongitude());
-                        }
-                    }
-                    Uri uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin="+almacenDestinos.getLat()+","+almacenDestinos.getLng()+"&destination="+latDest+","+lngDest+"&sensor=false&mode=driving");
-                    Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
-                    mCtx.startActivity(intent2);
+                case R.id.HojasDeRutaCv:
+                    TaskObtenerDatosRuta taskObtenerDatosRuta = new TaskObtenerDatosRuta(mCtx);
+                    taskObtenerDatosRuta.execute("id_ruta",idHojaDeRutaTv.getText().toString());
                     break;
             }
         }

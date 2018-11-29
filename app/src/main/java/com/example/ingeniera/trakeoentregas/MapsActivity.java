@@ -12,9 +12,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 
+import com.example.ingeniera.trakeoentregas.Entregas.QrReader;
 import com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -53,6 +56,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     private Marker mSelectedMarker;
 
+    Button irATodosMapsBt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +78,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //Get latitude and longitude based in the settings from mLocationRequest
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(MapsActivity.this);
+
+        irATodosMapsBt=findViewById(R.id.irATodosMapsBt);
+
+        irATodosMapsBt.setOnClickListener(clicListener);
 
 
 
@@ -170,10 +179,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Uri uri = Uri.parse(almacenDestinos.getUrlGoogleMaps());
                 Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent2);
+                finish();
                 break;
             case R.id.listDestinos:
                 Intent intent4=new Intent(MapsActivity.this,ListaDestinos.class);
                 startActivity(intent4);
+                finish();
         }
 
 
@@ -211,26 +222,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                     return;
                 }
-                    /*mMap.setMyLocationEnabled(true);
-
-                    //obtain last user's location
-                    mFusedLocationClient.getLastLocation()
-                            .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                                @Override
-                                public void onSuccess(Location location) {
-                                    // Got last known location. In some rare situations this can be null.
-                                    if (location != null) {
-                                        //Toast.makeText(getApplicationContext(),"Lat: "+Double.toString(location.getLatitude())+"\nLon: "
-                                         //       +Double.toString(location.getLongitude()),Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                }
-                break;*/
 
 
         }
     }
+
+
+    View.OnClickListener clicListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            switch(v.getId()){
+                case R.id.irATodosMapsBt:
+                    DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi();
+                    //ordenarArrayListDestinos();
+                    direccionesMapsApi.getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),false);
+                    Uri uri = Uri.parse(almacenDestinos.getUrlGoogleMaps());
+                    Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent2);
+                    break;
+
+            }
+        }
+    };
 
 
 

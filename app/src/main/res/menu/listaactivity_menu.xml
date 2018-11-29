@@ -10,16 +10,16 @@
     <item
         android:id="@+id/LeerQR"
         android:icon="@android:drawable/ic_menu_myplaces"
-        android:orderInCategory="1"
+        android:orderInCategory="90"
+        android:title="Terminar Ruta"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/MapsApp"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:orderInCategory="95"
         android:title="Terminar Ruta"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/listDestinos"
-        android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:orderInCategory="10"
-        android:title="Terminar Ruta"
-        app:showAsAction="always" />
 
 
 </menu>

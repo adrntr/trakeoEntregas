@@ -5,10 +5,9 @@ import com.google.android.gms.maps.model.LatLng;
 public class Destinos {
 
     private Double latitude,longitude;
-    private String nombre_cliente,transporte,direccion_transporte,telefono,fechaHoraEntrega;
-    private int idDestino,codigoRemito,idCliente,cantidadBultos,tipoEntrega;
+    private String nombre_cliente,nombre_transporte,direccion_transporte,telefono,fechaHoraEntrega,motivo;
+    private int id,id_cliente,cantidad,id_tipo_registro,orden,id_externo;
     Boolean entregado;
-
 
     public Double getLatitude() {
         return latitude;
@@ -30,65 +29,32 @@ public class Destinos {
         return nombre_cliente;
     }
 
+    public int getOrden() {
+        return orden;
+    }
+
+    public int getId_externo() {
+        return id_externo;
+    }
+
+    public void setId_externo(int id_externo) {
+        this.id_externo = id_externo;
+    }
+
+    public void setOrden(int orden) {
+        this.orden = orden;
+    }
+
     public void setNombre_cliente(String nombre_cliente) {
         this.nombre_cliente = nombre_cliente;
     }
 
-    public String getTransporte() {
-        return transporte;
+    public String getNombre_transporte() {
+        return nombre_transporte;
     }
 
-    public String getFechaHoraEntrega() {
-        return fechaHoraEntrega;
-    }
-
-    public void setFechaHoraEntrega(String fechaHoraEntrega) {
-        this.fechaHoraEntrega = fechaHoraEntrega;
-    }
-
-    public String getTelefono() {
-        return telefono;
-
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public int getIdDestino() {
-        return idDestino;
-    }
-
-    public void setIdDestino(int idDestino) {
-        this.idDestino = idDestino;
-    }
-
-    public int getCodigoRemito() {
-        return codigoRemito;
-    }
-
-    public void setCodigoRemito(int codigoRemito) {
-        this.codigoRemito = codigoRemito;
-    }
-
-    public int getTipoEntrega() {
-        return tipoEntrega;
-    }
-
-    public void setTipoEntrega(int tipoEntrega) {
-        this.tipoEntrega = tipoEntrega;
-    }
-
-    public Boolean getEntregado() {
-        return entregado;
-    }
-
-    public void setEntregado(Boolean entregado) {
-        this.entregado = entregado;
-    }
-
-    public void setTransporte(String transporte) {
-        this.transporte = transporte;
+    public void setNombre_transporte(String nombre_transporte) {
+        this.nombre_transporte = nombre_transporte;
     }
 
     public String getDireccion_transporte() {
@@ -99,19 +65,67 @@ public class Destinos {
         this.direccion_transporte = direccion_transporte;
     }
 
-    public int getIdCliente() {
-        return idCliente;
+    public String getTelefono() {
+        return telefono;
     }
 
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
-    public int getCantidadBultos() {
-        return cantidadBultos;
+    public String getFechaHoraEntrega() {
+        return fechaHoraEntrega;
     }
 
-    public void setCantidadBultos(int cantidadBultos) {
-        this.cantidadBultos = cantidadBultos;
+    public void setFechaHoraEntrega(String fechaHoraEntrega) {
+        this.fechaHoraEntrega = fechaHoraEntrega;
+    }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId_cliente() {
+        return id_cliente;
+    }
+
+    public void setId_cliente(int id_cliente) {
+        this.id_cliente = id_cliente;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public int getId_tipo_registro() {
+        return id_tipo_registro;
+    }
+
+    public void setId_tipo_registro(int id_tipo_registro) {
+        this.id_tipo_registro = id_tipo_registro;
+    }
+
+    public Boolean getEntregado() {
+        return entregado;
+    }
+
+    public void setEntregado(Boolean entregado) {
+        this.entregado = entregado;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.ingeniera.trakeoentregas;
+package com.example.ingeniera.trakeoentregas.Entregas;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -20,6 +20,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ingeniera.trakeoentregas.Destinos;
+import com.example.ingeniera.trakeoentregas.R;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -172,17 +174,22 @@ public class QrReader extends AppCompatActivity {
             switch (v.getId()){
                 case R.id.entregarBt:
                     ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
-                    int destino=Integer.parseInt(ingresoEt.getText().toString());
+                    int id=Integer.parseInt(ingresoEt.getText().toString());
                     Boolean noEsta=true;
                     for(int i=0;i<destinos.size();i++){
-                        if (destinos.get(i).getIdCliente()==destino){
-                            destinos.get(i).setEntregado(true);
+                        if (destinos.get(i).getId()==id){
+                            noEsta=false;
+                            TaskConsultarQrCode taskConsultarQrCode = new TaskConsultarQrCode(QrReader.this,destinos,i);
+                            taskConsultarQrCode.execute(String.valueOf(destinos.get(i).getId_externo()),
+                                    String.valueOf(destinos.get(i).getId_tipo_registro()));
+
+                            /*destinos.get(i).setEntregado(true);
                             noEsta=false;
                             String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
                             destinos.get(i).setFechaHoraEntrega(currentDateTimeString);
                             almacenDestinos.saveArrayList(destinos);
                             Toast.makeText(QrReader.this,"Entregado a las "+currentDateTimeString,Toast.LENGTH_SHORT).show();
-                            ingresoEt.setText("");
+                            ingresoEt.setText("");*/
 
                         }
                     }

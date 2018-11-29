@@ -41,17 +41,17 @@ public class TransporteInfo extends AppCompatActivity {
         ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
 
         for (int i=0;i<destinos.size();i++){
-            if(destinos.get(i).getIdCliente()==idDestino){
+            if(destinos.get(i).getId()==idDestino){
                 Destinos destino = new Destinos();
                 destino=destinos.get(i);
-                transporteTv.setText(destino.getTransporte());
+                transporteTv.setText(destino.getNombre_transporte());
                 direccionTv.setText(destino.getDireccion_transporte());
                 clienteTv.setText(destino.getNombre_cliente());
-                cantidadTv.setText(String.valueOf(destino.getCantidadBultos()));
+                cantidadTv.setText(String.valueOf(destino.getCantidad()));
                 tipoTv.setText("Entrega Sobre");
                 telefonoTv.setText("155123123");
                 cierreTV.setText("18:00");
-                idDestinoTv.setText(String.valueOf(destino.getIdCliente()));
+                idDestinoTv.setText(String.valueOf(destino.getId()));
                 if(destino.getEntregado()){
                     cancelarEntregaBt.setVisibility(View.VISIBLE);
                     entregadoTv.setVisibility(View.VISIBLE);
@@ -71,9 +71,9 @@ public class TransporteInfo extends AppCompatActivity {
             switch (v.getId()){
                 case R.id.cancelarEntregaBt:
                     ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
-                    int clienteID= Integer.parseInt(idDestinoTv.getText().toString());
+                    int ID= Integer.parseInt(idDestinoTv.getText().toString());
                     for (int i=0;i<destinos.size();i++){
-                        if(destinos.get(i).getIdCliente()==clienteID){
+                        if(destinos.get(i).getId()==ID){
                             destinos.get(i).setEntregado(false);
                             almacenDestinos.saveArrayList(destinos);
                             cancelarEntregaBt.setVisibility(View.GONE);

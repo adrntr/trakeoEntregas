@@ -55,7 +55,7 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
     protected String doInBackground(final String... strings) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "https://sistemas.andif.com.ar/pruebas/prueba-remito-transporte/datos-planilla-seguro.php";
+        String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/datos-hoja-ruta.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -64,30 +64,45 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
                 if(response!=null){
                     try {
                         JSONObject jsonObject = new JSONObject(response);
-                        JSONArray jsonArray = jsonObject.getJSONArray("registros");
+                        JSONArray jsonArray = jsonObject.getJSONArray("destinos");
                         Destinos destino;
                         ArrayList<Destinos> destinos = new ArrayList<>();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             destino = new Destinos();
                             JSONObject jsonObjectExplorer = jsonArray.getJSONObject(i);
-                            destino.setIdCliente(jsonObjectExplorer.optInt("id_cliente"));//cambiar por id destino
-                            destino.setCantidadBultos(jsonObjectExplorer.optInt("cantidad_bultos"));
+                            destino.setId(jsonObjectExplorer.optInt("id"));
+                            destino.setId_externo(jsonObjectExplorer.optInt("id_externo"));
+                            destino.setId_tipo_registro(jsonObjectExplorer.optInt("id_tipo_registro"));
+                            destino.setOrden(jsonObjectExplorer.optInt("orden"));
+                            destino.setId_cliente(jsonObjectExplorer.optInt("id_cliente"));//cambiar por id destino
                             destino.setNombre_cliente(jsonObjectExplorer.optString("nombre_cliente"));
-                            destino.setTransporte(jsonObjectExplorer.optString("transporte"));
+                            destino.setCantidad(jsonObjectExplorer.optInt("cantidad"));
+                            destino.setMotivo(jsonObjectExplorer.optString("motivo"));
+                            destino.setNombre_transporte(jsonObjectExplorer.optString("nombre_transporte"));
                             destino.setDireccion_transporte(jsonObjectExplorer.optString("direccion_transporte"));
                             destino.setLatitude(jsonObjectExplorer.optDouble("latitud"));
                             destino.setLongitude(jsonObjectExplorer.optDouble("longitud"));
+
 
                             destino.setEntregado(false);
                             if(destino.getLongitude()!=0&&destino.getLatitude()!=0){
                                 destinos.add(destino);
                             }
                         }
-                        almacenDestinos.saveArrayList(destinos);
-                        almacenDestinos.setEstadoRuta(2);
-                        progreso.dismiss();
-                        Intent intent = new Intent(context,MapsActivity.class);
-                        context.startActivity(intent);
+                        if (destinos.size()>0){
+                            almacenDestinos.saveArrayList(destinos);
+                            almacenDestinos.setEstadoRuta(2);
+                            progreso.dismiss();
+                            Intent intent = new Intent(context,ListaDestinos.class);
+                            context.startActivity(intent);
+                        }else {
+                            progreso.dismiss();
+                            Toast.makeText(context,"No se encontraron los destinos",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context,"Vuelva a intentar",Toast.LENGTH_SHORT).show();
+
+
+                        }
+
 
 
 

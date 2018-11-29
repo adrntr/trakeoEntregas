@@ -135,23 +135,6 @@ public class AlmacenDestinos {
         return gson.fromJson(json, type);
     }
 
-    /***********/
-
-
-    public String getNombreApellido (){
-        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
-        String nombreApellido = preferencias.getString("nombreApellidoKey",""); //me devuelve el string, si no lo encuentra ""
-        return nombreApellido;
-    }
-
-    public void setNombreApellido(String nombreApellido){
-        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
-        SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
-        editor.putString("nombreApellidoKey",nombreApellido);     //0 --> ruta no iniciada
-        editor.commit();//aplico los cambios
-    }
-
-    /***********/
 
     public void setArrayHojasDeRutas(ArrayList<HojasDeRuta> list){
         SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
@@ -171,6 +154,37 @@ public class AlmacenDestinos {
     }
 
     /***********/
+
+
+
+    public void setToken(String token) {
+
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
+        SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
+        editor.putString("tokenKey",token); //le paso una key y el valor (string)
+        editor.commit();//aplico los cambios
+
+    }
+
+    public void setUsuario(String dni,String nombreApellido) {
+
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
+        SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
+        editor.putString("dniKey",dni);
+        editor.putString("nombreApellidoKey",nombreApellido);
+        editor.commit();//aplico los cambios
+
+    }
+
+
+    public String getUsuario (String key){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
+        String s = preferencias.getString(key,""); //me devuelve el string, si no lo encuentra ""
+        return s;
+    }
+
+    /***********/
+
 
 
 

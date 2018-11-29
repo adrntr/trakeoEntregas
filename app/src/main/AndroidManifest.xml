@@ -53,7 +53,7 @@
 
         <activity android:name=".MapsActivity" />
         <activity android:name=".TransporteInfo" />
-        <activity android:name=".QrReader" />
+        <activity android:name=".Entregas.QrReader" />
         <activity android:name=".ListaDestinos" />
     </application>
 

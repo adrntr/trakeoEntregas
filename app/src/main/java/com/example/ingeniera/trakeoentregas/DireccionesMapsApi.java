@@ -36,6 +36,8 @@ public class DireccionesMapsApi {
         this.mMap=mMap;
         this.context=context;
     }
+    public DireccionesMapsApi() {
+    }
 
     public void getRequestedUrl(ArrayList<Destinos> destinos,Boolean pedirDestinos) {
         ArrayList<LatLng> waypoints =new ArrayList<>();
@@ -76,7 +78,7 @@ public class DireccionesMapsApi {
         //mode for find direction
         String mode= "mode=driving";
         //Waypoints
-        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+"waypoints=optimize:true|"+waypointsStr;
+        String param = str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+"waypoints="+waypointsStr;
         String paramMaps=str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+"waypoints="+waypointsStr;
         String output = "json";
         //create url to request
@@ -222,7 +224,7 @@ public class DireccionesMapsApi {
             if (destinos.get(i).getEntregado()){
                 colocarMarker(BitmapDescriptorFactory.HUE_RED,destinos.get(i));
             }else{
-                switch (destinos.get(i).getTipoEntrega()){
+                switch (destinos.get(i).getId_tipo_registro()){
                     case 1:
                         colocarMarker(BitmapDescriptorFactory.HUE_BLUE,destinos.get(i));
                         break;
@@ -249,12 +251,18 @@ public class DireccionesMapsApi {
 
     private void colocarMarker(float hue, Destinos destino) {
         Marker marker;
+        String title;
+        if(destino.getNombre_transporte()==""){
+            title=destino.getNombre_transporte();
+        }else {
+            title=destino.getNombre_cliente();
+        }
         marker=mMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.defaultMarker(hue))
-                .title(destino.getTransporte())
-                .snippet(String.valueOf(destino.getIdCliente()))
+                .title(title)
+                .snippet(String.valueOf(destino.getOrden()))
                 .position(new LatLng(destino.getLatitude(), destino.getLongitude())));
-        marker.setTag(destino.getIdCliente());
+        marker.setTag(destino.getId());
 
     }
 }

@@ -1,9 +1,9 @@
-package com.example.ingeniera.trakeoentregas.Ingreso;
+package com.example.ingeniera.trakeoentregas.Entregas;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -14,37 +14,42 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ingeniera.trakeoentregas.Destinos;
-import com.example.ingeniera.trakeoentregas.MapsActivity;
-import com.example.ingeniera.trakeoentregas.TaskObtenerDatosRuta;
+import com.example.ingeniera.trakeoentregas.Ingreso.TaskObtenerHojasRutas;
+import com.example.ingeniera.trakeoentregas.Ingreso.TaskValidarDNI;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 
-public class TaskValidarDNI extends AsyncTask<String,Void,String> {
+public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
 
     Context context;
     private ProgressDialog progreso;
-
-    public TaskValidarDNI(Context context) {
+    ArrayList<Destinos> destinos;
+    int i;
+    public TaskConsultarQrCode(Context context, ArrayList<Destinos> destinos, int i) {
         this.context=context;
+        this.destinos=destinos;
+        this.i=i;
+
     }
 
     @Override
     protected void onPreExecute() {
         progreso=new ProgressDialog(context);
-        progreso.setMessage("Verificando su DNI...");
+        progreso.setMessage("Realizando entrega...");
         progreso.setCancelable(true);
         progreso.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                TaskValidarDNI.this.cancel(true);
+                TaskConsultarQrCode.this.cancel(true);
             }
         });
         progreso.show();
@@ -53,7 +58,7 @@ public class TaskValidarDNI extends AsyncTask<String,Void,String> {
     @Override
     protected String doInBackground(final String... strings) {
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "https://sistemas.andif.com.ar/pruebas/prueba-remito-transporte/logueo.php";
+        String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/marcar-despachado.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -62,16 +67,18 @@ public class TaskValidarDNI extends AsyncTask<String,Void,String> {
                 if(response!=null){
                     try {
                         JSONObject jsonObject = new JSONObject(response);
-                        String tienePermiso=jsonObject.getString("tiene_permiso");
-                        if(tienePermiso.equals("true")){
-                            String nombreApellido=jsonObject.getString("nombre_colaborador");
-                            almacenDestinos.setUsuario(strings[1],nombreApellido);
-                            Toast.makeText(context,"Bienvenido Sr/Sra "+nombreApellido,Toast.LENGTH_SHORT).show();
+                        String tienePermiso=jsonObject.getString("error");
+                        if(tienePermiso.equals("false")){
+                            Toast.makeText(context,"Entregado Correctamente",Toast.LENGTH_SHORT).show();
                             progreso.dismiss();
-                            TaskObtenerHojasRutas obtenerHojasRutas = new TaskObtenerHojasRutas(context);
-                            obtenerHojasRutas.execute();
+                            destinos.get(i).setEntregado(true);
+                            String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+                            destinos.get(i).setFechaHoraEntrega(currentDateTimeString);
+                            almacenDestinos.saveArrayList(destinos);
+                            Toast.makeText(context,"Entregado a las "+currentDateTimeString,Toast.LENGTH_SHORT).show();
+                            //ingresoEt.setText("");
                         }else {
-                            Toast.makeText(context,"No se encuentra su DNI",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context,"No se pudo entregar",Toast.LENGTH_SHORT).show();
                             progreso.dismiss();
                         }
 
@@ -94,7 +101,10 @@ public class TaskValidarDNI extends AsyncTask<String,Void,String> {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put(strings[0], strings[1]);
+                params.put("id_externo", strings[0]);
+                params.put("id_tipo_registro", strings[1]);
+                params.put("responsable", almacenDestinos.getUsuario("dniKey"));
+
                 return params;
             }
         };

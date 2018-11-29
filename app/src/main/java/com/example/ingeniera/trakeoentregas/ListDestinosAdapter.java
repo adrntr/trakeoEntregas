@@ -41,11 +41,11 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
         ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
         Destinos destino = destinos.get(position);
 
-        holder.transporteTv.setText(destino.getTransporte());
+        holder.transporteTv.setText(destino.getNombre_transporte());
         holder.dirTransporteTv.setText(destino.getDireccion_transporte());
         holder.clienteTv.setText(String.valueOf(destino.getNombre_cliente()));
-        holder.cantidadTv.setText("Cantidad: "+String.valueOf(destino.getCantidadBultos()));
-        holder.codigoClienteTv.setText(String.valueOf(destino.getIdCliente()));
+        holder.cantidadTv.setText("Cantidad: "+String.valueOf(destino.getCantidad()));
+        holder.codigoClienteTv.setText(String.valueOf(destino.getId()));
         if (destino.getEntregado()) {
             holder.cardViewTransporte.setCardBackgroundColor(0xFF00FF00);
         }
@@ -93,10 +93,10 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
                     break;
                 case R.id.irBt:
                     String latDest = null,lngDest = null;
-                    int codigoCliente=Integer.parseInt(codigoClienteTv.getText().toString());
+                    int id=Integer.parseInt(codigoClienteTv.getText().toString());
                     ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
                     for(int i=0;i<destinos.size();i++){
-                        if (destinos.get(i).getIdCliente()==codigoCliente){
+                        if (destinos.get(i).getId()==id){
                             latDest=String.valueOf(destinos.get(i).getLatitude());
                             lngDest=String.valueOf(destinos.get(i).getLongitude());
                         }

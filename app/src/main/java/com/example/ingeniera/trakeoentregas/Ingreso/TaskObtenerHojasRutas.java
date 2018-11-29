@@ -41,7 +41,7 @@ public class TaskObtenerHojasRutas extends AsyncTask<String,Void,String> {
     @Override
     protected void onPreExecute() {
         progreso=new ProgressDialog(context);
-        progreso.setMessage("Verificando su DNI...");
+        progreso.setMessage("Obteniendo hojas de ruta...");
         progreso.setCancelable(true);
         progreso.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
