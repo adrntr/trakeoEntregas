@@ -24,7 +24,7 @@ public class ConvertirLatLng {
         this.context=context;
     }
 
-    protected void startIntentService(Location mLastKnownLocation) {
+    public void startIntentService(Location mLastKnownLocation) {
         Intent intent = new Intent(context, FetchAddressIntentService.class);
         intent.putExtra(FetchAddressIntentService.Constants.RECEIVER, mResultReceiver= new AddressResultReceiver(new Handler()));
         intent.putExtra(FetchAddressIntentService.Constants.LOCATION_DATA_EXTRA, mLastKnownLocation);

@@ -1,4 +1,4 @@
-package com.example.ingeniera.trakeoentregas;
+package com.example.ingeniera.trakeoentregas.Destino;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -17,8 +17,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 
+import com.example.ingeniera.trakeoentregas.ConvertirLatLng;
 import com.example.ingeniera.trakeoentregas.Entregas.QrReader;
 import com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos;
+import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.RealTimeLocation;
+import com.example.ingeniera.trakeoentregas.TransporteInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationServices;
@@ -83,6 +87,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         irATodosMapsBt.setOnClickListener(clicListener);
 
+        setTitle("MAPA - "+ almacenDestinos.getUsuario("nombreApellidoKey"));
+
+        almacenDestinos.setGoogleMapsApp(false);
 
 
 
@@ -234,12 +241,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             switch(v.getId()){
                 case R.id.irATodosMapsBt:
-                    DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi();
-                    //ordenarArrayListDestinos();
-                    direccionesMapsApi.getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),false);
-                    Uri uri = Uri.parse(almacenDestinos.getUrlGoogleMaps());
-                    Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent2);
+                    DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(MapsActivity.this);
+                    direccionesMapsApi.irAGoogleMaps();
                     break;
 
             }
@@ -268,9 +271,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onRestart() {
         super.onRestart();
-        Intent intent=new Intent(MapsActivity.this,MapsActivity.class);
-        startActivity(intent);
-        finish();
+        if (!almacenDestinos.getGoogleMapsApp("googleMpasAppKey")) {
+            Intent intent = new Intent(MapsActivity.this, MapsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        }
     }
     //whether change of activity it funtion save some states
     @Override

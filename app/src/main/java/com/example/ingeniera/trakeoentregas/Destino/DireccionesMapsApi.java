@@ -1,10 +1,20 @@
-package com.example.ingeniera.trakeoentregas;
+package com.example.ingeniera.trakeoentregas.Destino;
 
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
+import com.example.ingeniera.trakeoentregas.DirectionsParser;
+import com.example.ingeniera.trakeoentregas.Entregas.QrReader;
+import com.example.ingeniera.trakeoentregas.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -25,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 
 public class DireccionesMapsApi {
@@ -38,8 +49,11 @@ public class DireccionesMapsApi {
     }
     public DireccionesMapsApi() {
     }
+    public DireccionesMapsApi(Context context) {
+        this.context=context;
+    }
 
-    public void getRequestedUrl(ArrayList<Destinos> destinos,Boolean pedirDestinos) {
+    public void getRequestedUrl(ArrayList<Destinos> destinos, Boolean pedirDestinos) {
         ArrayList<LatLng> waypoints =new ArrayList<>();
 
         for(int i=0;i<destinos.size();i++){
@@ -263,6 +277,34 @@ public class DireccionesMapsApi {
                 .snippet(String.valueOf(destino.getOrden()))
                 .position(new LatLng(destino.getLatitude(), destino.getLongitude())));
         marker.setTag(destino.getId());
+
+    }
+
+    public void irAGoogleMaps() {
+
+        Intent i = new Intent(context,QrReader.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,i, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setAutoCancel(true)
+                .setContentText("Marcar como entregado")
+                .setSmallIcon(R.drawable.qrcode)
+                .setContentTitle("ENTREGAR")
+                .setContentIntent(pendingIntent);
+        NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        manager.notify(0,builder.build());
+        DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi();
+        //ordenarArrayListDestinos();
+        direccionesMapsApi.getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),false);
+        Uri uri = Uri.parse(almacenDestinos.getUrlGoogleMaps());
+        Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
+        context.startActivity(intent2);
+        if(context instanceof QrReader){
+            ((Activity)context).finish();
+        }
+
+        almacenDestinos.setGoogleMapsApp(true);
 
     }
 }

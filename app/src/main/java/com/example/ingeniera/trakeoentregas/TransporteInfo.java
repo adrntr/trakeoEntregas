@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.ingeniera.trakeoentregas.Destino.Destinos;
+import com.example.ingeniera.trakeoentregas.Entregas.TaskConsultarQrCode;
 
 import java.util.ArrayList;
 
@@ -62,6 +64,8 @@ public class TransporteInfo extends AppCompatActivity {
             }
         }
 
+        setTitle("INFORMACIÓN - "+ almacenDestinos.getUsuario("nombreApellidoKey"));
+
 
     }
 
@@ -74,10 +78,8 @@ public class TransporteInfo extends AppCompatActivity {
                     int ID= Integer.parseInt(idDestinoTv.getText().toString());
                     for (int i=0;i<destinos.size();i++){
                         if(destinos.get(i).getId()==ID){
-                            destinos.get(i).setEntregado(false);
-                            almacenDestinos.saveArrayList(destinos);
-                            cancelarEntregaBt.setVisibility(View.GONE);
-                            Toast.makeText(TransporteInfo.this,"Entrega cancelada",Toast.LENGTH_SHORT).show();
+                            TaskConsultarQrCode taskConsultarQrCode = new TaskConsultarQrCode(TransporteInfo.this,destinos,i);
+                            taskConsultarQrCode.execute(String.valueOf(destinos.get(i).getId_externo()),String.valueOf(destinos.get(i).getId_tipo_registro()),"0");
                         }
                     }
 

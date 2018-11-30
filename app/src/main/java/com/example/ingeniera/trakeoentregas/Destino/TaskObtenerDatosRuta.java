@@ -1,4 +1,4 @@
-package com.example.ingeniera.trakeoentregas;
+package com.example.ingeniera.trakeoentregas.Destino;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -76,6 +76,7 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
                             destino.setOrden(jsonObjectExplorer.optInt("orden"));
                             destino.setId_cliente(jsonObjectExplorer.optInt("id_cliente"));//cambiar por id destino
                             destino.setNombre_cliente(jsonObjectExplorer.optString("nombre_cliente"));
+                            destino.setEntregado(jsonObjectExplorer.optBoolean("entregado"));
                             destino.setCantidad(jsonObjectExplorer.optInt("cantidad"));
                             destino.setMotivo(jsonObjectExplorer.optString("motivo"));
                             destino.setNombre_transporte(jsonObjectExplorer.optString("nombre_transporte"));
@@ -84,9 +85,10 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
                             destino.setLongitude(jsonObjectExplorer.optDouble("longitud"));
 
 
-                            destino.setEntregado(false);
                             if(destino.getLongitude()!=0&&destino.getLatitude()!=0){
                                 destinos.add(destino);
+                            }else {
+                                Toast.makeText(context,"El destino: "+destino.getNombre_transporte()+ "No tiene latitudo y/o longitud",Toast.LENGTH_SHORT).show();
                             }
                         }
                         if (destinos.size()>0){

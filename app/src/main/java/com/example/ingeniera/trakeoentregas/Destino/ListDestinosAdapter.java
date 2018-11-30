@@ -1,4 +1,4 @@
-package com.example.ingeniera.trakeoentregas;
+package com.example.ingeniera.trakeoentregas.Destino;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.TransporteInfo;
 
 import java.util.ArrayList;
 
@@ -47,7 +50,8 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
         holder.cantidadTv.setText("Cantidad: "+String.valueOf(destino.getCantidad()));
         holder.codigoClienteTv.setText(String.valueOf(destino.getId()));
         if (destino.getEntregado()) {
-            holder.cardViewTransporte.setCardBackgroundColor(0xFF00FF00);
+            holder.cardViewTransporte.setCardBackgroundColor(0xFFDAF7A6);
+            holder.irBt.setVisibility(View.GONE);
         }
         holder.setOnClickListeners();
     }

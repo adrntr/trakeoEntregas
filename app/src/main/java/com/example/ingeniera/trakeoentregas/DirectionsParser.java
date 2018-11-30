@@ -1,5 +1,6 @@
 package com.example.ingeniera.trakeoentregas;
 
+import com.example.ingeniera.trakeoentregas.Destino.Destinos;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -79,7 +80,7 @@ public class DirectionsParser {
                     waypointOrder.add(waypoint);
                 }
                 almacenDestinos.setArrayWaypointOrder(waypointOrder);
-                ordenarArrayListDestinos();
+                //ordenarArrayListDestinos();
             }
 
         } catch (JSONException e) {

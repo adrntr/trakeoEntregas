@@ -1,7 +1,12 @@
-package com.example.ingeniera.trakeoentregas;
+package com.example.ingeniera.trakeoentregas.Destino;
 
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +18,10 @@ import android.widget.Button;
 
 import com.example.ingeniera.trakeoentregas.Entregas.QrReader;
 import com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos;
+import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.RealTimeLocation;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 
@@ -23,29 +32,62 @@ public class ListaDestinos extends AppCompatActivity {
     RecyclerView recyclerView;
     ListDestinosAdapter listDestinosAdapter;
     Button irATodos;
+    private FusedLocationProviderClient mFusedLocationClient;
+    RealTimeLocation realTimeLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_layout);
-
         irATodos=findViewById(R.id.irATodosBt);
         irATodos.setOnClickListener(clicListener);
         recyclerView=findViewById(R.id.recyclerView);
+
+
         recyclerView.setHasFixedSize(true);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         listDestinosAdapter = new ListDestinosAdapter(this);
         recyclerView.setAdapter(listDestinosAdapter);
+
+
+        realTimeLocation=new RealTimeLocation(ListaDestinos.this);
+        realTimeLocation.userLocationSettings();
+
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(ListaDestinos.this);
+
+        setTitle("LISTA - "+ almacenDestinos.getUsuario("nombreApellidoKey"));
+
+        almacenDestinos.setGoogleMapsApp(false);
+
+
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Intent intent=new Intent(ListaDestinos.this,ListaDestinos.class);
-        startActivity(intent);
-        finish();
+        if (!almacenDestinos.getGoogleMapsApp("googleMpasAppKey")){
+            Intent intent=new Intent(ListaDestinos.this,ListaDestinos.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        }
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        realTimeLocation.startLocationUpdates(mFusedLocationClient);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        realTimeLocation.stopLocationUpdates(mFusedLocationClient);
     }
 
     View.OnClickListener clicListener = new View.OnClickListener() {
@@ -54,12 +96,9 @@ public class ListaDestinos extends AppCompatActivity {
             switch (v.getId()){
                 case R.id.irATodosBt:
 
-                    DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi();
-                    //ordenarArrayListDestinos();
-                    direccionesMapsApi.getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),false);
-                    Uri uri = Uri.parse(almacenDestinos.getUrlGoogleMaps());
-                    Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent2);
+                    DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(ListaDestinos.this);
+                    direccionesMapsApi.irAGoogleMaps();
+
                     break;
             }
         }

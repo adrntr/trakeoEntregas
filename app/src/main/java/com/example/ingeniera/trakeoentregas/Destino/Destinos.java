@@ -1,6 +1,4 @@
-package com.example.ingeniera.trakeoentregas;
-
-import com.google.android.gms.maps.model.LatLng;
+package com.example.ingeniera.trakeoentregas.Destino;
 
 public class Destinos {
 

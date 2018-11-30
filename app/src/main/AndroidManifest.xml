@@ -51,10 +51,10 @@
             android:name=".FetchAddressIntentService"
             android:exported="false" />
 
-        <activity android:name=".MapsActivity" />
+        <activity android:name=".Destino.MapsActivity" />
         <activity android:name=".TransporteInfo" />
         <activity android:name=".Entregas.QrReader" />
-        <activity android:name=".ListaDestinos" />
+        <activity android:name=".Destino.ListaDestinos" />
     </application>
 
 </manifest>

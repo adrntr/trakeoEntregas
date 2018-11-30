@@ -2,13 +2,17 @@ package com.example.ingeniera.trakeoentregas.Entregas;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.SparseArray;
@@ -20,23 +24,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.ingeniera.trakeoentregas.Destinos;
+import com.example.ingeniera.trakeoentregas.Destino.Destinos;
+import com.example.ingeniera.trakeoentregas.Destino.DireccionesMapsApi;
+import com.example.ingeniera.trakeoentregas.Destino.ListaDestinos;
 import com.example.ingeniera.trakeoentregas.R;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
-import java.io.BufferedReader;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.text.DateFormat;
+import java.security.PublicKey;
 import java.util.ArrayList;
-import java.util.Date;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 import static com.google.android.gms.vision.CameraSource.CAMERA_FACING_BACK;
@@ -69,7 +71,9 @@ public class QrReader extends AppCompatActivity {
         entregarBt=findViewById(R.id.entregarBt);
 
         entregarBt.setOnClickListener(clicListener);
+        setTitle("ENTREGAS - "+ almacenDestinos.getUsuario("nombreApellidoKey"));
 
+        almacenDestinos.setGoogleMapsApp(false);
 
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
@@ -121,7 +125,7 @@ public class QrReader extends AppCompatActivity {
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
-                if (qrCodes.size() != 0 && System.currentTimeMillis() > timeUltimoUso + 3000) {
+                if (qrCodes.size() != 0 && System.currentTimeMillis() > timeUltimoUso + 5000) {
                     timeUltimoUso = System.currentTimeMillis();
                     textView.post(new Runnable() {
                         @Override
@@ -129,38 +133,43 @@ public class QrReader extends AppCompatActivity {
                             Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                             vibrator.vibrate(1000);
                             String actCod = qrCodes.valueAt(0).displayValue;
-                            textView.setText(actCod);
-
-                            String datos[] = actCod.split("\\|"); //separo el string
-
-                            if (datos.length <= 1) {
+                            JSONObject id_externo = null;
+                            String tipo = null,id_externoString = null;
+                            try {
+                                id_externo=new JSONObject(actCod);
+                                textView.setText(actCod);
+                                tipo=id_externo.optString("tipo");
+                                id_externoString=id_externo.optString("id_externo");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            if(tipo==null||tipo.equals("")) {
                                 textView.setText("Este código no pertenece a ANDIF");
                                 actividadTv.setText("ACTIVIDAD");
                                 codigoTv.setText("CÓDIGO");
                             } else {
-                                actividadTv.setText(datos[0]);
-                                codigoTv.setText(datos[1]);
-
-                                TareaEnviarDatos tareaEnviarDatos = new TareaEnviarDatos();
-
-                                switch (datos[0]) {
-
+                                actividadTv.setText(tipo);
+                                codigoTv.setText(id_externoString);
+                                switch (tipo) {
                                     case "TRANSPORTE":
-                                        //tareaEnviarDatos.execute("https://sistemas.andif.com.ar/pruebas/prueba-remito-transporte/index.php", datos[1], "id_remito_transporte");
-                                        tareaEnviarDatos.execute("http://192.168.1.176/pruebas/prueba-remito-transporte/index.php", datos[1], "id_remito_transporte");
-                                        textView.setText("Enviando...");
-                                        Toast.makeText(QrReader.this, "Codigo " + datos[1], Toast.LENGTH_SHORT).show();
+                                        ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
+                                        Boolean noEsta=true;
+                                        for(int i=0;i<destinos.size();i++){
+                                            if (destinos.get(i).getId_externo()==Integer.parseInt(id_externoString)){
+                                                noEsta=false;
+                                                TaskConsultarQrCode taskConsultarQrCode = new TaskConsultarQrCode(QrReader.this,destinos,i);
+                                                taskConsultarQrCode.execute(String.valueOf(destinos.get(i).getId_externo()),String.valueOf(1),"1");
+                                            }
+                                        }
+                                        if (noEsta) {
+                                            Toast.makeText(QrReader.this, "No se encuentra", Toast.LENGTH_SHORT).show();
+                                        }
                                         break;
                                     default:
                                         Toast.makeText(QrReader.this, "Intente Nuevamente", Toast.LENGTH_SHORT).show();
-
                                         break;
-
                                 }
-
                             }
-
-
                         }
                     });
                 }
@@ -181,16 +190,8 @@ public class QrReader extends AppCompatActivity {
                             noEsta=false;
                             TaskConsultarQrCode taskConsultarQrCode = new TaskConsultarQrCode(QrReader.this,destinos,i);
                             taskConsultarQrCode.execute(String.valueOf(destinos.get(i).getId_externo()),
-                                    String.valueOf(destinos.get(i).getId_tipo_registro()));
-
-                            /*destinos.get(i).setEntregado(true);
-                            noEsta=false;
-                            String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-                            destinos.get(i).setFechaHoraEntrega(currentDateTimeString);
-                            almacenDestinos.saveArrayList(destinos);
-                            Toast.makeText(QrReader.this,"Entregado a las "+currentDateTimeString,Toast.LENGTH_SHORT).show();
-                            ingresoEt.setText("");*/
-
+                                    String.valueOf(destinos.get(i).getId_tipo_registro()),
+                                    "1");
                         }
                     }
                     if (noEsta){
@@ -220,85 +221,27 @@ public class QrReader extends AppCompatActivity {
     }
 
 
-    /*********************************Tarea en hilo secundario para enviar id*************************/
-    class TareaEnviarDatos extends AsyncTask<String, Void, String> {
-
-
-        @Override
-        protected String doInBackground(String... params) {
-            String linea = null;
-            BufferedReader reader = null;
-            String text = "";
-            try {
-                // Defined URL  where to send data
-                URL url = new URL(params[0]);
-
-                // Send POST data request
-
-                URLConnection conn = url.openConnection();
-                conn.setDoOutput(true);
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                String data = URLEncoder.encode(params[2], "UTF-8") + "=" + URLEncoder.encode(params[1], "UTF-8");
-
-                //concateno todos los parametros necesarios.
-                //data += "&" + URLEncoder.encode("nombreDelDato", "UTF-8") + "="+ URLEncoder.encode(dato, "UTF-8");
-                wr.write(data);
-                wr.flush();
-
-                // Get the server response
-
-                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-
-                // Read Server Response
-                while ((line = reader.readLine()) != null) {
-                    // Append server response in string
-                    sb.append(line + "\n");
-                }
-                text = sb.toString();
-                return text;
-            } catch (Exception ex) {
-                return "error";
-            } finally {
-                try {
-                    reader.close();
-                } catch (Exception ex) {
-                }
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            enviando = false;
-
-            if (s != null) {
-                if (s.equals("error")) {
-                    Toast.makeText(QrReader.this, "Intente nuevamente", Toast.LENGTH_SHORT).show();
-                    textView.setText("Intente Nuevamente");
-                } else {
-                    textView.setText(s);
-                }
-            } else {
-                Toast.makeText(QrReader.this, "No se pudo conectar con el servidor", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
-        try{cameraSource.release();
+        try{
+            cameraSource.release();
+            DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(QrReader.this);
+            direccionesMapsApi.irAGoogleMaps();
         }catch (Exception ex){
 
         }
 
     }
 
+
+
+
     @Override
     protected void onRestart() {
         super.onRestart();
         Intent intent=new Intent(QrReader.this,QrReader.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
         finish();
     }

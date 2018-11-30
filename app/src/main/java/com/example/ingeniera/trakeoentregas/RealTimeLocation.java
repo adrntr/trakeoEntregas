@@ -58,7 +58,7 @@ public class RealTimeLocation {
     public void userLocationSettings() {
 
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(60000);// This method sets the rate in milliseconds at which your app prefers to receive location updates
+        mLocationRequest.setInterval(30000);// This method sets the rate in milliseconds at which your app prefers to receive location updates
         mLocationRequest.setFastestInterval(5000);//This method sets the fastest rate in milliseconds at which your app can handle location updates.
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);//This method sets the priority of the request, which gives the Google Play services location services a strong hint about which location sources to use
         //Get the location settings

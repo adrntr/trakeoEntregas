@@ -1,7 +1,6 @@
 package com.example.ingeniera.trakeoentregas.Ingreso;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -19,14 +18,9 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.ingeniera.trakeoentregas.AlmacenDestinos;
-import com.example.ingeniera.trakeoentregas.Destinos;
-import com.example.ingeniera.trakeoentregas.ListDestinosAdapter;
-import com.example.ingeniera.trakeoentregas.ListaDestinos;
-import com.example.ingeniera.trakeoentregas.MapsActivity;
+import com.example.ingeniera.trakeoentregas.Destino.Destinos;
+import com.example.ingeniera.trakeoentregas.Destino.ListaDestinos;
 import com.example.ingeniera.trakeoentregas.R;
-import com.example.ingeniera.trakeoentregas.TaskObtenerDatosRuta;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
@@ -94,11 +88,14 @@ public class SolicitarDestinos extends AppCompatActivity {
 
             hojasDeRutaAdapter = new HojasDeRutaAdapter(this);
             RecyclerviewSolDes.setAdapter(hojasDeRutaAdapter);
+            setTitle("RUTAS - "+almacenDestinos.getUsuario("nombreApellidoKey"));
         }else if (almacenDestinos.getEstadoRuta()==0){
             codigoEt.setVisibility(View.VISIBLE);
             consultarBt.setVisibility(View.VISIBLE);
             nombreIngresoTv.setVisibility(View.GONE);
             cambiarDniBt.setVisibility(View.GONE);
+
+            setTitle("INGRESO");
 
         }
 
@@ -124,7 +121,10 @@ public class SolicitarDestinos extends AppCompatActivity {
                 case R.id.cambiarDniBt:
                     almacenDestinos.setEstadoRuta(0);
                     almacenDestinos.setUsuario("","");
-                    recreate();
+                    Intent intent=new Intent(SolicitarDestinos.this,SolicitarDestinos.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                    finish();
 
 
             }

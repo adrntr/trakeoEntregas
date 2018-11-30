@@ -2,8 +2,8 @@ package com.example.ingeniera.trakeoentregas;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
+import com.example.ingeniera.trakeoentregas.Destino.Destinos;
 import com.example.ingeniera.trakeoentregas.Ingreso.HojasDeRuta;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -184,6 +184,22 @@ public class AlmacenDestinos {
     }
 
     /***********/
+
+    public void setGoogleMapsApp(Boolean googleMapsApp) {
+
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
+        SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
+        editor.putBoolean("googleMpasAppKey",googleMapsApp);
+        editor.commit();//aplico los cambios
+
+    }
+
+
+    public Boolean getGoogleMapsApp (String key){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
+        Boolean googleMpasApp = preferencias.getBoolean(key,false); //me devuelve el string, si no lo encuentra ""
+        return googleMpasApp;
+    }
 
 
 

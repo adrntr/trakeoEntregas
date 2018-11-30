@@ -3,7 +3,6 @@ package com.example.ingeniera.trakeoentregas.Ingreso;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -13,15 +12,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.ingeniera.trakeoentregas.Destinos;
-import com.example.ingeniera.trakeoentregas.MapsActivity;
-import com.example.ingeniera.trakeoentregas.TaskObtenerDatosRuta;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
