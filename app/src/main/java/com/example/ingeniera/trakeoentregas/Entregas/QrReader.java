@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.example.ingeniera.trakeoentregas.Destino.Destinos;
 import com.example.ingeniera.trakeoentregas.Destino.DireccionesMapsApi;
 import com.example.ingeniera.trakeoentregas.Destino.ListaDestinos;
+import com.example.ingeniera.trakeoentregas.Destino.Usuarios;
 import com.example.ingeniera.trakeoentregas.R;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -71,9 +72,14 @@ public class QrReader extends AppCompatActivity {
         entregarBt=findViewById(R.id.entregarBt);
 
         entregarBt.setOnClickListener(clicListener);
-        setTitle("ENTREGAS - "+ almacenDestinos.getUsuario("nombreApellidoKey"));
 
-        almacenDestinos.setGoogleMapsApp(false);
+        ArrayList<Usuarios> usuarios=almacenDestinos.getArrayUsuarios("arrayUsuariosKey");
+        for (int i=0;i<usuarios.size();i++){
+            if (usuarios.get(i).getTipo().equals("Responsable")){
+                setTitle("ENTREGAS - "+usuarios.get(i).getNombre());
+            }
+        }
+
 
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
@@ -158,7 +164,7 @@ public class QrReader extends AppCompatActivity {
                                             if (destinos.get(i).getId_externo()==Integer.parseInt(id_externoString)){
                                                 noEsta=false;
                                                 TaskConsultarQrCode taskConsultarQrCode = new TaskConsultarQrCode(QrReader.this,destinos,i);
-                                                taskConsultarQrCode.execute(String.valueOf(destinos.get(i).getId_externo()),String.valueOf(1),"1");
+                                                taskConsultarQrCode.execute(String.valueOf(destinos.get(i).getId_externo()),String.valueOf(1),"1",String.valueOf(destinos.get(i).getId()));
                                             }
                                         }
                                         if (noEsta) {
@@ -191,7 +197,8 @@ public class QrReader extends AppCompatActivity {
                             TaskConsultarQrCode taskConsultarQrCode = new TaskConsultarQrCode(QrReader.this,destinos,i);
                             taskConsultarQrCode.execute(String.valueOf(destinos.get(i).getId_externo()),
                                     String.valueOf(destinos.get(i).getId_tipo_registro()),
-                                    "1");
+                                    "1",
+                                    String.valueOf(destinos.get(i).getId()));
                         }
                     }
                     if (noEsta){
@@ -226,8 +233,11 @@ public class QrReader extends AppCompatActivity {
         super.onPause();
         try{
             cameraSource.release();
-            DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(QrReader.this);
-            direccionesMapsApi.irAGoogleMaps();
+            if (almacenDestinos.getGoogleMapsApp("googleMpasAppKey")){
+                DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(QrReader.this);
+                direccionesMapsApi.irAGoogleMaps();
+            }
+
         }catch (Exception ex){
 
         }

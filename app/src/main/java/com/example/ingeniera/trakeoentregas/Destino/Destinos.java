@@ -3,9 +3,26 @@ package com.example.ingeniera.trakeoentregas.Destino;
 public class Destinos {
 
     private Double latitude,longitude;
-    private String nombre_cliente,nombre_transporte,direccion_transporte,telefono,fechaHoraEntrega,motivo;
+    private String nombre_tipo_registro,nombre_cliente,nombre_transporte,direccion_transporte,telefono,fechaHoraEntrega,motivo,direccion;
     private int id,id_cliente,cantidad,id_tipo_registro,orden,id_externo;
     Boolean entregado;
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getNombre_tipo_registro() {
+
+        return nombre_tipo_registro;
+    }
+
+    public void setNombre_tipo_registro(String nombre_tipo_registro) {
+        this.nombre_tipo_registro = nombre_tipo_registro;
+    }
 
     public Double getLatitude() {
         return latitude;

@@ -1,12 +1,15 @@
 package com.example.ingeniera.trakeoentregas.Destino;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,17 +26,24 @@ import com.example.ingeniera.trakeoentregas.RealTimeLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
-import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ListaDestinos extends AppCompatActivity {
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.estadoRuta;
+
+public class ListaDestinos extends AppCompatActivity{
 
 
     private static final int QR_REQUEST = 600;
     RecyclerView recyclerView;
     ListDestinosAdapter listDestinosAdapter;
     Button irATodos;
+    FloatingActionButton actualizarDestinosFb;
     private FusedLocationProviderClient mFusedLocationClient;
     RealTimeLocation realTimeLocation;
+    SwipeRefreshLayout swipeRefreshLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +52,11 @@ public class ListaDestinos extends AppCompatActivity {
         irATodos=findViewById(R.id.irATodosBt);
         irATodos.setOnClickListener(clicListener);
         recyclerView=findViewById(R.id.recyclerView);
+        swipeRefreshLayout=findViewById(R.id.swiperefresh);
+
+        actualizarDestinosFb = findViewById(R.id.actualizarDestinosFb);
+
+        actualizarDestinosFb.setOnClickListener(clicListener);
 
 
         recyclerView.setHasFixedSize(true);
@@ -51,6 +66,18 @@ public class ListaDestinos extends AppCompatActivity {
         listDestinosAdapter = new ListDestinosAdapter(this);
         recyclerView.setAdapter(listDestinosAdapter);
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                TaskObtenerDatosRuta taskObtenerDatosRuta = new TaskObtenerDatosRuta(ListaDestinos.this);
+                taskObtenerDatosRuta.execute(almacenDestinos.getIdHojaDeRuta());
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+
+
+
 
         realTimeLocation=new RealTimeLocation(ListaDestinos.this);
         realTimeLocation.userLocationSettings();
@@ -58,23 +85,42 @@ public class ListaDestinos extends AppCompatActivity {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(ListaDestinos.this);
 
-        setTitle("LISTA - "+ almacenDestinos.getUsuario("nombreApellidoKey"));
-
+        ArrayList<Usuarios> usuarios=almacenDestinos.getArrayUsuarios("arrayUsuariosKey");
+        for (int i=0;i<usuarios.size();i++){
+            if (usuarios.get(i).getTipo().equals("Responsable")){
+                setTitle("LISTA - "+usuarios.get(i).getNombre());
+            }
+        }
         almacenDestinos.setGoogleMapsApp(false);
 
+        switch (almacenDestinos.getEstadoRuta()){
+            case 0:
+                finish();
+                break;
+            case 1:
+                finish();
+                break;
+            case 2:
 
+                break;
+            case 3:
+
+                break;
+            case 4:
+
+                break;
+        }
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (!almacenDestinos.getGoogleMapsApp("googleMpasAppKey")){
-            Intent intent=new Intent(ListaDestinos.this,ListaDestinos.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
-            finish();
-        }
-
+        recyclerView=findViewById(R.id.recyclerView);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        /*Intent intent=new Intent(ListaDestinos.this,ListaDestinos.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
+        finish();*/
 
     }
 
@@ -82,6 +128,8 @@ public class ListaDestinos extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         realTimeLocation.startLocationUpdates(mFusedLocationClient);
+        recyclerView=findViewById(R.id.recyclerView);
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -100,6 +148,9 @@ public class ListaDestinos extends AppCompatActivity {
                     direccionesMapsApi.irAGoogleMaps();
 
                     break;
+                case R.id.actualizarDestinosFb:
+                    TaskObtenerDatosRuta taskObtenerDatosRuta = new TaskObtenerDatosRuta(ListaDestinos.this);
+                    taskObtenerDatosRuta.execute(almacenDestinos.getIdHojaDeRuta());
             }
         }
     };
@@ -119,10 +170,10 @@ public class ListaDestinos extends AppCompatActivity {
         switch (id){
 
             case R.id.Terminar:
-                almacenDestinos.setEstadoRuta(0);
-                Intent intent=new Intent(ListaDestinos.this,SolicitarDestinos.class);
-                startActivity(intent);
-                finish();
+
+                TaskCancerlarHojaDeRuta taskCancerlarHojaDeRuta = new TaskCancerlarHojaDeRuta(ListaDestinos.this);
+                taskCancerlarHojaDeRuta.execute(almacenDestinos.getIdHojaDeRuta());
+
                 break;
             case R.id.LeerQR:
                 Intent intent1=new Intent(ListaDestinos.this,QrReader.class);

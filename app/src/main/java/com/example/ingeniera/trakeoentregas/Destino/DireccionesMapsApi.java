@@ -42,6 +42,7 @@ public class DireccionesMapsApi {
 
     GoogleMap mMap;
     Context context;
+    private static final String latAndif="-34.673841",lngAndif="-58.575378";
 
     public DireccionesMapsApi(GoogleMap mMap, Context context) {
         this.mMap=mMap;
@@ -87,7 +88,7 @@ public class DireccionesMapsApi {
             }
         }
         str_org = "origin="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
-        str_dest = "destination="+almacenDestinos.getLat()+","+almacenDestinos.getLng();
+        str_dest = "destination="+latAndif+","+lngAndif;
         String sensor="sensor=false";
         //mode for find direction
         String mode= "mode=driving";
@@ -305,6 +306,7 @@ public class DireccionesMapsApi {
         }
 
         almacenDestinos.setGoogleMapsApp(true);
+        almacenDestinos.setEstadoRuta(4);
 
     }
 }

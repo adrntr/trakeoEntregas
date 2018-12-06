@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.ingeniera.trakeoentregas.Destino.Destinos;
+import com.example.ingeniera.trakeoentregas.Destino.Usuarios;
 import com.example.ingeniera.trakeoentregas.Ingreso.HojasDeRuta;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -22,6 +23,7 @@ public class AlmacenDestinos {
     public AlmacenDestinos (Context context){
         this.context=context;   //al llamar se pasa el contexto de donde de llamo
     }
+
 
     /***********/
 
@@ -78,7 +80,9 @@ public class AlmacenDestinos {
         editor.putInt("EstadoRuta",estadoRuta);     //0 --> ruta no iniciada
                                                     //1 --> Hojas de ruta obtenidas pero no se selecciono alguna
                                                     //2 --> Se selecciono una hoja de ruta y se obtuvieron los destinos
-                                                    //3 -->direcciones obtenidas
+                                                    //3 --> direcciones obtenidas
+                                                    //4 --> Hoja de ruta seleccionada pero no se presiono ir a todos
+                                                    //5 --> se requiere actualizar la tabla de destinos
         editor.commit();//aplico los cambios
     }
 
@@ -166,6 +170,14 @@ public class AlmacenDestinos {
 
     }
 
+    public String getToken (){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
+        String token = preferencias.getString("tokenKey",""); //me devuelve el string, si no lo encuentra ""
+        return token;
+    }
+
+
+/*
     public void setUsuario(String dni,String nombreApellido) {
 
         SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
@@ -181,6 +193,25 @@ public class AlmacenDestinos {
         SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
         String s = preferencias.getString(key,""); //me devuelve el string, si no lo encuentra ""
         return s;
+    }
+
+    /***********/
+
+    public void setArrayUsuarios(ArrayList<Usuarios> list){
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString("arrayUsuariosKey", json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
+
+    public ArrayList<Usuarios> getArrayUsuarios(String key){
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<Usuarios>>() {}.getType();
+        return gson.fromJson(json, type);
     }
 
     /***********/
@@ -201,8 +232,25 @@ public class AlmacenDestinos {
         return googleMpasApp;
     }
 
+    /***********/
 
 
+
+    public String getIdHojaDeRuta (){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
+        String idHojaDeRuta = preferencias.getString("idHojaDeRutaKey",""); //me devuelve el string, si no lo encuentra ""
+        return idHojaDeRuta;
+    }
+
+    public void setIdHojaDeRuta(String idHojaDeRuta){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
+        SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
+        editor.putString("idHojaDeRutaKey", idHojaDeRuta);
+        editor.commit();//aplico los cambios
+    }
+
+
+    /***********/
 
 
 

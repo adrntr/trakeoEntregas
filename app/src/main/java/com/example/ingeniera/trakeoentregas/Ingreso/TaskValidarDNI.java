@@ -12,10 +12,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ingeniera.trakeoentregas.Destino.Usuarios;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,8 +61,11 @@ public class TaskValidarDNI extends AsyncTask<String,Void,String> {
                         String tienePermiso=jsonObject.getString("tiene_permiso");
                         if(tienePermiso.equals("true")){
                             String nombreApellido=jsonObject.getString("nombre_colaborador");
-                            almacenDestinos.setUsuario(strings[1],nombreApellido);
                             Toast.makeText(context,"Bienvenido Sr/Sra "+nombreApellido,Toast.LENGTH_SHORT).show();
+                            ArrayList<Usuarios> usuarios = new ArrayList<>();
+                            Usuarios responsable = new Usuarios(nombreApellido,strings[0],"Responsable");
+                            usuarios.add(responsable);
+                            almacenDestinos.setArrayUsuarios(usuarios);
                             progreso.dismiss();
                             TaskObtenerHojasRutas obtenerHojasRutas = new TaskObtenerHojasRutas(context);
                             obtenerHojasRutas.execute();
@@ -82,13 +87,14 @@ public class TaskValidarDNI extends AsyncTask<String,Void,String> {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Toast.makeText(context,error.toString(),Toast.LENGTH_SHORT).show();
+                progreso.dismiss();
             }
         }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put(strings[0], strings[1]);
+                params.put("dni", strings[0]);
                 return params;
             }
         };

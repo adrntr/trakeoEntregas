@@ -7,8 +7,12 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardviewTransporte"
-        android:layout_width="590dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,30 +23,48 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/transporteListaTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif"
-                android:text="Transporte"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/dirTransporteListaTv"
+                android:id="@+id/usuarioCardTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif"
+                android:text="Transporte"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/tipoImagenIv"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/dirTransporteListaTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center_vertical"
                 android:text="Direccion"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@+id/irBt"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/dirTransporteListaTv2"
+                app:layout_constraintTop_toBottomOf="@+id/usuarioCardTv" />
+
+            <TextView
+                android:id="@+id/dirTransporteListaTv2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Dirección:"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/transporteListaTv" />
+                app:layout_constraintTop_toBottomOf="@+id/usuarioCardTv" />
 
             <TextView
                 android:id="@+id/textview34"
@@ -50,9 +72,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="12dp"
                 android:text="Cliente"
                 android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@+id/textview2"
+                app:layout_constraintTop_toBottomOf="@+id/dirTransporteListaTv" />
+
+            <TextView
+                android:id="@+id/textview2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="12dp"
+                android:text="Cliente:"
+                android:textSize="14sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dirTransporteListaTv" />
 
@@ -62,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:text="Cantidad"
                 android:textAllCaps="true"
                 android:textSize="18sp"
@@ -73,13 +108,12 @@
             <View
                 android:id="@+id/divider2"
                 android:layout_width="574dp"
-                android:layout_height="5dp"
+                android:layout_height="2dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="2dp"
                 android:background="@color/colorPrimary"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -100,13 +134,15 @@
             <Button
                 android:id="@+id/irBt"
                 style="@style/Widget.AppCompat.Button"
-                android:layout_width="116dp"
-                android:layout_height="104dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="9dp"
+                android:layout_marginRight="9dp"
                 android:layout_marginBottom="32dp"
-                android:background="@color/colorPrimary"
+                android:background="@drawable/navigation"
                 android:lineSpacingExtra="8sp"
                 android:text="IR"
                 android:textAppearance="@style/TextAppearance.AppCompat"
@@ -114,7 +150,23 @@
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/dirTransporteListaTv"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/tipoImagenIv"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/usuarioCardTv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/delivery" />
+
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 

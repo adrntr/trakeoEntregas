@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 
@@ -60,7 +62,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     private Marker mSelectedMarker;
 
-    Button irATodosMapsBt;
+    private Button irATodosMapsBt;
+    private FloatingActionButton actualizarMapsFb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +87,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(MapsActivity.this);
 
         irATodosMapsBt=findViewById(R.id.irATodosMapsBt);
+        actualizarMapsFb=findViewById(R.id.actualizarMapsFb);
+
 
         irATodosMapsBt.setOnClickListener(clicListener);
+        actualizarMapsFb.setOnClickListener(clicListener);
 
-        setTitle("MAPA - "+ almacenDestinos.getUsuario("nombreApellidoKey"));
+        ArrayList<Usuarios> usuarios=almacenDestinos.getArrayUsuarios("arrayUsuariosKey");
+        for (int i=0;i<usuarios.size();i++){
+            if (usuarios.get(i).getTipo().equals("Responsable")){
+                setTitle("MAPA - "+usuarios.get(i).getNombre());
+            }
+        }
+
 
         almacenDestinos.setGoogleMapsApp(false);
 
@@ -151,6 +163,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 direccionesMapsApi.agregarMarkers();
                 direccionesMapsApi.agregarLineas();
                 break;
+            case 4:
+                direccionesMapsApi.agregarMarkers();
+                direccionesMapsApi.agregarLineas();
+                break;
         }
     }
 
@@ -170,10 +186,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (id){
 
             case R.id.Terminar:
-                almacenDestinos.setEstadoRuta(0);
-                Intent intent=new Intent(MapsActivity.this,SolicitarDestinos.class);
-                startActivity(intent);
-                finish();
+
+                TaskCancerlarHojaDeRuta taskCancerlarHojaDeRuta = new TaskCancerlarHojaDeRuta(MapsActivity.this);
+                taskCancerlarHojaDeRuta.execute(almacenDestinos.getIdHojaDeRuta());
                 break;
             case R.id.LeerQR:
                 Intent intent1=new Intent(MapsActivity.this,QrReader.class);
@@ -244,6 +259,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(MapsActivity.this);
                     direccionesMapsApi.irAGoogleMaps();
                     break;
+                case R.id.actualizarMapsFb:
+                    TaskObtenerDatosRuta taskObtenerDatosRuta = new TaskObtenerDatosRuta(MapsActivity.this);
+                    taskObtenerDatosRuta.execute(almacenDestinos.getIdHojaDeRuta());
+
 
             }
         }

@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/Terminar"
-        android:icon="@android:drawable/ic_delete"
+        android:icon="@drawable/back"
         android:orderInCategory="100"
         android:title="Terminar Ruta"
         app:showAsAction="always" />
     <item
         android:id="@+id/LeerQR"
-        android:icon="@android:drawable/ic_menu_myplaces"
+        android:icon="@drawable/qrcodeicon"
         android:orderInCategory="90"
         android:title="Terminar Ruta"
         app:showAsAction="always" />
     <item
         android:id="@+id/MapsApp"
-        android:icon="@android:drawable/ic_dialog_map"
+        android:icon="@drawable/map"
         android:orderInCategory="95"
         android:title="Terminar Ruta"
         app:showAsAction="always" />

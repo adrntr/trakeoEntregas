@@ -9,6 +9,8 @@
         android:id="@+id/HojasDeRutaCv"
         android:layout_width="590dp"
         android:layout_height="150dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,7 +21,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/transporteListaTv"
+                android:id="@+id/usuarioCardTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -48,13 +50,13 @@
 
             <View
                 android:id="@+id/divider2"
-                android:layout_width="574dp"
-                android:layout_height="5dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
                 android:layout_marginBottom="2dp"
                 android:background="@color/colorPrimary"
                 android:visibility="visible"
@@ -82,7 +84,7 @@
                 android:layout_marginTop="8dp"
                 android:text="Número"
                 android:textSize="30sp"
-                app:layout_constraintStart_toEndOf="@+id/transporteListaTv"
+                app:layout_constraintStart_toEndOf="@+id/usuarioCardTv"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -108,7 +110,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/transporteListaTv" />
+                app:layout_constraintTop_toBottomOf="@+id/usuarioCardTv" />
 
             <TextView
                 android:id="@+id/creadoTv"

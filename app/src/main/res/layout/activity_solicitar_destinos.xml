@@ -19,12 +19,29 @@
         android:hint="DNI"
         android:inputType="number"
         android:textColor="@color/colorPrimaryDark"
+        android:textSize="30sp"
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/consultarBt"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/registroLoginTv" />
 
-    <Button
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewUsuarios"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/cambiarDniBt"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/responsablesTv" />
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/consultarBt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,12 +49,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="@color/colorPrimary"
-        android:text="Ingresar"
-        android:textColor="@color/cardview_light_background"
-        android:textStyle="bold"
+        android:src="@drawable/keycar"
         android:visibility="visible"
+        app:elevation="7dp"
+        app:fabCustomSize="70dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/registroLoginTv"
+        app:maxImageSize="70dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/RecyclerviewSolDes"
@@ -45,49 +63,115 @@
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/seleccionarHojaTv" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/cambiarDniBt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/exit"
+        android:src="@drawable/exit"
+        android:visibility="gone"
+        app:elevation="7dp"
+        app:fabCustomSize="70dp"
+        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:maxImageSize="70dp" />
 
     <TextView
-        android:id="@+id/nombreIngresoTv"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:id="@+id/seleccionarHojaTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:gravity="fill_vertical"
-        android:text="ADRIAN TRILLO"
+        android:text="Seleccionar hoja de ruta"
+        android:textAllCaps="false"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="24sp"
+        android:textSize="40sp"
+        android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/RecyclerviewSolDes"
-        app:layout_constraintEnd_toStartOf="@+id/cambiarDniBt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+    <TextView
+        android:id="@+id/responsablesTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Responsables:"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/cambiarDniBt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/colorPrimary"
-        android:text="Cambiar"
-        android:textColor="@color/cardview_light_background"
+        android:background="@color/colorPrimaryDark"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/RecyclerviewSolDes"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewUsuarios" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/agregarAcompañanteBt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="32dp"
+        android:clickable="true"
+        android:src="@drawable/adduser"
+        android:visibility="gone"
+        app:backgroundTintMode="src_in"
+        app:borderWidth="0dp"
+        app:elevation="7dp"
+        app:fabCustomSize="70dp"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="70dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/registroLoginTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Registro"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

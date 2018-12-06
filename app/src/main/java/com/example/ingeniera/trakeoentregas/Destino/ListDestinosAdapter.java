@@ -45,13 +45,23 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
         Destinos destino = destinos.get(position);
 
         holder.transporteTv.setText(destino.getNombre_transporte());
-        holder.dirTransporteTv.setText(destino.getDireccion_transporte());
+        holder.dirTransporteTv.setText(destino.getDireccion());
         holder.clienteTv.setText(String.valueOf(destino.getNombre_cliente()));
         holder.cantidadTv.setText("Cantidad: "+String.valueOf(destino.getCantidad()));
         holder.codigoClienteTv.setText(String.valueOf(destino.getId()));
         if (destino.getEntregado()) {
             holder.cardViewTransporte.setCardBackgroundColor(0xFFDAF7A6);
             holder.irBt.setVisibility(View.GONE);
+        }else{
+            holder.cardViewTransporte.setCardBackgroundColor(0xFFFFFFFF);
+            holder.irBt.setVisibility(View.VISIBLE);
+        }
+        switch (destino.getId_tipo_registro()){
+            case 1:
+                holder.tipoImagenIv.setImageResource(R.drawable.delivery);
+                break;
+            case 2:
+                holder.tipoImagenIv.setImageResource(R.drawable.send);
         }
         holder.setOnClickListeners();
     }
@@ -65,20 +75,21 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
 
     public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView tipoEnvioIv;
+        ImageView tipoImagenIv;
         TextView transporteTv, dirTransporteTv, clienteTv, cantidadTv,codigoClienteTv;
         CardView cardViewTransporte;
         Button irBt;
 
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
-            transporteTv = itemView.findViewById(R.id.transporteListaTv);
+            transporteTv = itemView.findViewById(R.id.usuarioCardTv);
             dirTransporteTv = itemView.findViewById(R.id.dirTransporteListaTv);
             clienteTv = itemView.findViewById(R.id.textview34);
             cantidadTv = itemView.findViewById(R.id.texview32);
             cardViewTransporte = itemView.findViewById(R.id.cardviewTransporte);
             codigoClienteTv=itemView.findViewById(R.id.codigoClienteListaTv);
             irBt=itemView.findViewById(R.id.irBt);
+            tipoImagenIv=itemView.findViewById(R.id.tipoImagenIv);
 
         }
 

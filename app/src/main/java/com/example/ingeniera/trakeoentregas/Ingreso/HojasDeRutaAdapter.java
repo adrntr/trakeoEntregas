@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.ingeniera.trakeoentregas.AlmacenDestinos;
 import com.example.ingeniera.trakeoentregas.R;
 import com.example.ingeniera.trakeoentregas.Destino.TaskObtenerDatosRuta;
 
@@ -78,7 +79,7 @@ public class HojasDeRutaAdapter extends RecyclerView.Adapter<HojasDeRutaAdapter.
             switch (v.getId()) {
                 case R.id.HojasDeRutaCv:
                     TaskObtenerDatosRuta taskObtenerDatosRuta = new TaskObtenerDatosRuta(mCtx);
-                    taskObtenerDatosRuta.execute("id_ruta",idHojaDeRutaTv.getText().toString());
+                    taskObtenerDatosRuta.execute(idHojaDeRutaTv.getText().toString());
                     break;
             }
         }

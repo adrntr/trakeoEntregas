@@ -5,9 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -17,7 +19,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ingeniera.trakeoentregas.Destino.Destinos;
+import com.example.ingeniera.trakeoentregas.Destino.Usuarios;
 import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.TransporteInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,9 +84,29 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                                 String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
                                 destinos.get(i).setFechaHoraEntrega(currentDateTimeString);
                                 almacenDestinos.saveArrayList(destinos);
-                                Toast.makeText(context,"Entregado a las "+currentDateTimeString,Toast.LENGTH_SHORT).show();
-                                EditText ingresoEt = ((Activity)context).findViewById(R.id.ingresoEt);
-                                ingresoEt.setText("");
+                                if (context instanceof QrReader){
+                                    EditText ingresoEt = ((Activity)context).findViewById(R.id.ingresoEt);
+                                    ingresoEt.setText("");
+                                }else if (context instanceof TransporteInfo){
+                                    FloatingActionButton entregarTransporteInfoFb = ((Activity)context).findViewById(R.id.entregarTransporteInfoFb);
+                                    FloatingActionButton irTransporteInfoFb = ((Activity)context).findViewById(R.id.irTransporteInfoFb);
+                                    FloatingActionButton cancelarEntregaBt= ((Activity)context).findViewById(R.id.cancelarEntregaBt);
+                                    TextView entregadoTv =  ((Activity)context).findViewById(R.id.entregadoTv);
+                                    TextView irTransporteInfoTv=((Activity)context).findViewById(R.id.irTransporteInfoTv);
+                                    TextView entregarTransporteInfoTv=((Activity)context).findViewById(R.id.entregarTransporteInfoTv);
+                                    TextView entregadoTv3=((Activity)context).findViewById(R.id.entregadoTv3);
+                                    TextView cancelarEntregaTransporteInfoTv = ((Activity)context).findViewById(R.id.cancelarEntregaTransporteInfoTv);
+                                    entregarTransporteInfoFb.setVisibility(View.GONE);
+                                    irTransporteInfoFb.setVisibility(View.GONE);
+                                    cancelarEntregaBt.setVisibility(View.VISIBLE);
+                                    entregadoTv.setVisibility(View.VISIBLE);
+                                    entregadoTv3.setVisibility(View.VISIBLE);
+                                    entregadoTv.setText(destinos.get(i).getFechaHoraEntrega());
+                                    irTransporteInfoTv.setVisibility(View.GONE);
+                                    entregarTransporteInfoTv.setVisibility(View.GONE);
+                                    cancelarEntregaTransporteInfoTv.setVisibility(View.VISIBLE);
+                                }
+
                             }else if(mensaje.equals("Ya se ha marcado como despachado")) {
                                 destinos.get(i).setEntregado(true);
                                 almacenDestinos.saveArrayList(destinos);
@@ -100,15 +124,28 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                                 destinos.get(i).setFechaHoraEntrega("");
                                 almacenDestinos.saveArrayList(destinos);
                                 almacenDestinos.saveArrayList(destinos);
-                                Button cancelarEntregaBt = ((Activity)context).findViewById(R.id.cancelarEntregaBt);
+                                FloatingActionButton entregarTransporteInfoFb = ((Activity)context).findViewById(R.id.entregarTransporteInfoFb);
+                                FloatingActionButton irTransporteInfoFb = ((Activity)context).findViewById(R.id.irTransporteInfoFb);
+                                FloatingActionButton cancelarEntregaBt= ((Activity)context).findViewById(R.id.cancelarEntregaBt);
+                                TextView entregadoTv =  ((Activity)context).findViewById(R.id.entregadoTv);
+                                TextView irTransporteInfoTv=((Activity)context).findViewById(R.id.irTransporteInfoTv);
+                                TextView entregarTransporteInfoTv=((Activity)context).findViewById(R.id.entregarTransporteInfoTv);
+                                TextView entregadoTv3=((Activity)context).findViewById(R.id.entregadoTv3);
+                                TextView cancelarEntregaTransporteInfoTv = ((Activity)context).findViewById(R.id.cancelarEntregaTransporteInfoTv);
+                                entregarTransporteInfoFb.setVisibility(View.VISIBLE);
+                                irTransporteInfoFb.setVisibility(View.VISIBLE);
                                 cancelarEntregaBt.setVisibility(View.GONE);
-                                Toast.makeText(context,"Entrega cancelada",Toast.LENGTH_SHORT).show();
+                                entregadoTv.setVisibility(View.GONE);
+                                entregadoTv3.setVisibility(View.GONE);
+                                irTransporteInfoTv.setVisibility(View.VISIBLE);
+                                cancelarEntregaTransporteInfoTv.setVisibility(View.GONE);
+                                entregarTransporteInfoTv.setVisibility(View.VISIBLE);
                             }else if(mensaje.equals("No se ha marcado como despachado")) {
                                 destinos.get(i).setEntregado(false);
                                 almacenDestinos.saveArrayList(destinos);
                                 Toast.makeText(context,mensaje,Toast.LENGTH_SHORT).show();
-                                Button cancelarEntregaBt = ((Activity)context).findViewById(R.id.cancelarEntregaBt);
-                                cancelarEntregaBt.setVisibility(View.GONE);
+                                //Button cancelarEntregaBt = ((Activity)context).findViewById(R.id.cancelarEntregaBt);
+                                //cancelarEntregaBt.setVisibility(View.GONE);
                                 progreso.dismiss();
                             }else {
                                 Toast.makeText(context,mensaje,Toast.LENGTH_SHORT).show();
@@ -124,6 +161,7 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                         progreso.dismiss();
                     }
                 }else{
+                    progreso.dismiss();
                     Toast.makeText(context,"Sin respuesta",Toast.LENGTH_SHORT).show();
                 }
 
@@ -132,7 +170,8 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Toast.makeText(context,error.toString(),Toast.LENGTH_SHORT).show();
+                progreso.dismiss();
             }
         }) {
             @Override
@@ -141,8 +180,18 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                 params.put("id_externo", strings[0]);
                 params.put("id_tipo_registro", strings[1]);
                 params.put("entregado",strings[2]);
-                params.put("responsable", almacenDestinos.getUsuario("dniKey"));
-
+                params.put("id",strings[3]);
+                ArrayList<Usuarios> usuarios=almacenDestinos.getArrayUsuarios("arrayUsuariosKey");
+                ArrayList<String> dnisAcompañantes=new ArrayList<>();
+                int numAcompañante=0;
+                for (int i=0;i<usuarios.size();i++){
+                    if (usuarios.get(i).getTipo().equals("Responsable")){
+                        params.put("responsable", usuarios.get(i).getDni());
+                    }else {
+                        params.put("acompanantes_"+numAcompañante,usuarios.get(i).getDni());
+                        numAcompañante++;
+                    }
+                }
                 return params;
             }
         };
