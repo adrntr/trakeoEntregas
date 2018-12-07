@@ -2,6 +2,7 @@ package com.example.ingeniera.trakeoentregas.Destino;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -205,8 +206,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             case R.id.listDestinos:
                 Intent intent4=new Intent(MapsActivity.this,ListaDestinos.class);
+                intent4.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent4);
-                finish();
         }
 
 
@@ -277,7 +278,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onResume();
         if (mRequestingLocationUpdates) {
             realTimeLocation.startLocationUpdates(mFusedLocationClient);
-
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.cancelAll();
         }
     }
 

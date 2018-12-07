@@ -54,9 +54,6 @@ public class ListaDestinos extends AppCompatActivity{
         recyclerView=findViewById(R.id.recyclerView);
         swipeRefreshLayout=findViewById(R.id.swiperefresh);
 
-        actualizarDestinosFb = findViewById(R.id.actualizarDestinosFb);
-
-        actualizarDestinosFb.setOnClickListener(clicListener);
 
 
         recyclerView.setHasFixedSize(true);
@@ -117,11 +114,6 @@ public class ListaDestinos extends AppCompatActivity{
         super.onRestart();
         recyclerView=findViewById(R.id.recyclerView);
         recyclerView.getAdapter().notifyDataSetChanged();
-        /*Intent intent=new Intent(ListaDestinos.this,ListaDestinos.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(intent);
-        finish();*/
-
     }
 
     @Override
@@ -130,6 +122,8 @@ public class ListaDestinos extends AppCompatActivity{
         realTimeLocation.startLocationUpdates(mFusedLocationClient);
         recyclerView=findViewById(R.id.recyclerView);
         recyclerView.getAdapter().notifyDataSetChanged();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     @Override
@@ -148,9 +142,6 @@ public class ListaDestinos extends AppCompatActivity{
                     direccionesMapsApi.irAGoogleMaps();
 
                     break;
-                case R.id.actualizarDestinosFb:
-                    TaskObtenerDatosRuta taskObtenerDatosRuta = new TaskObtenerDatosRuta(ListaDestinos.this);
-                    taskObtenerDatosRuta.execute(almacenDestinos.getIdHojaDeRuta());
             }
         }
     };
@@ -180,10 +171,10 @@ public class ListaDestinos extends AppCompatActivity{
                 startActivityForResult(intent1,QR_REQUEST);
                 break;
             case R.id.MapsApp:
-                //almacenDestinos.setEstadoRuta(0);
                 Intent intent2=new Intent(ListaDestinos.this,MapsActivity.class);
+                intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent2);
-                finish();
+                //finish();
 
                 break;
         }

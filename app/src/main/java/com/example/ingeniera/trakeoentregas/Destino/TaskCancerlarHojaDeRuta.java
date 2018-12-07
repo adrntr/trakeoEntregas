@@ -73,8 +73,9 @@ public class TaskCancerlarHojaDeRuta extends AsyncTask<String ,Void,String > {
                                 progreso.dismiss();
                                 Toast.makeText(context,"Finalizado Correctamente",Toast.LENGTH_SHORT).show();
 
-                                if(almacenDestinos.getEstadoRuta()>3){
+                                if(almacenDestinos.getComenzoRecorrido()){
                                     almacenDestinos.setEstadoRuta(0);
+                                    almacenDestinos.setComenzoRecorrido(false);
                                 } else {
                                     almacenDestinos.setEstadoRuta(1);
                                 }

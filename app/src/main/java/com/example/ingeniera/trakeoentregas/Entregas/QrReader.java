@@ -43,6 +43,7 @@ import java.util.ArrayList;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
 import static com.google.android.gms.vision.CameraSource.CAMERA_FACING_BACK;
+import static com.google.android.gms.vision.CameraSource.CAMERA_FACING_FRONT;
 
 public class QrReader extends AppCompatActivity {
 
@@ -50,14 +51,14 @@ public class QrReader extends AppCompatActivity {
     SurfaceView surfaceView;
     CameraSource cameraSource;
     TextView textView, actividadTv, codigoTv;
-    EditText ingresoEt;
-    Button entregarBt;
     BarcodeDetector barcodeDetector;
     Boolean enviando = false;
     long timeUltimoUso = System.currentTimeMillis();
 
     SurfaceHolder surfaceHolderGlobal;
     private static final int CAMERA_REQUEST = 500;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +69,8 @@ public class QrReader extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         actividadTv = findViewById(R.id.actividadTv);
         codigoTv = findViewById(R.id.codigoTv);
-        ingresoEt=findViewById(R.id.ingresoEt);
-        entregarBt=findViewById(R.id.entregarBt);
 
-        entregarBt.setOnClickListener(clicListener);
+
 
         ArrayList<Usuarios> usuarios=almacenDestinos.getArrayUsuarios("arrayUsuariosKey");
         for (int i=0;i<usuarios.size();i++){
@@ -90,6 +89,7 @@ public class QrReader extends AppCompatActivity {
                 .setAutoFocusEnabled(true)
                 .setFacing(CAMERA_FACING_BACK)
                 .build();
+
 
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
 
@@ -183,30 +183,6 @@ public class QrReader extends AppCompatActivity {
         });
     }
 
-    View.OnClickListener clicListener =new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.entregarBt:
-                    ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
-                    int id=Integer.parseInt(ingresoEt.getText().toString());
-                    Boolean noEsta=true;
-                    for(int i=0;i<destinos.size();i++){
-                        if (destinos.get(i).getId()==id){
-                            noEsta=false;
-                            TaskConsultarQrCode taskConsultarQrCode = new TaskConsultarQrCode(QrReader.this,destinos,i);
-                            taskConsultarQrCode.execute(String.valueOf(destinos.get(i).getId_externo()),
-                                    String.valueOf(destinos.get(i).getId_tipo_registro()),
-                                    "1",
-                                    String.valueOf(destinos.get(i).getId()));
-                        }
-                    }
-                    if (noEsta){
-                        Toast.makeText(QrReader.this,"No se encuentra",Toast.LENGTH_SHORT).show();
-                    }
-            }
-        }
-    };
 
     @SuppressLint("MissingPermission")
     @Override
@@ -237,15 +213,17 @@ public class QrReader extends AppCompatActivity {
                 DireccionesMapsApi direccionesMapsApi=new DireccionesMapsApi(QrReader.this);
                 direccionesMapsApi.irAGoogleMaps();
             }
-
         }catch (Exception ex){
-
         }
 
     }
 
-
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+    }
 
     @Override
     protected void onRestart() {

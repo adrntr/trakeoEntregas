@@ -82,7 +82,6 @@ public class AlmacenDestinos {
                                                     //2 --> Se selecciono una hoja de ruta y se obtuvieron los destinos
                                                     //3 --> direcciones obtenidas
                                                     //4 --> Hoja de ruta seleccionada pero no se presiono ir a todos
-                                                    //5 --> se requiere actualizar la tabla de destinos
         editor.commit();//aplico los cambios
     }
 
@@ -230,6 +229,23 @@ public class AlmacenDestinos {
         SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
         Boolean googleMpasApp = preferencias.getBoolean(key,false); //me devuelve el string, si no lo encuentra ""
         return googleMpasApp;
+    }
+
+    /***********/
+    public void setComenzoRecorrido(Boolean comenzoRecorrido) {
+
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
+        SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
+        editor.putBoolean("comenzoRecorridoKey",comenzoRecorrido);
+        editor.commit();//aplico los cambios
+
+    }
+
+
+    public Boolean getComenzoRecorrido (){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
+        Boolean comenzoRecorrido = preferencias.getBoolean("comenzoRecorridoKey",false); //me devuelve el string, si no lo encuentra false
+        return comenzoRecorrido;
     }
 
     /***********/

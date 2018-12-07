@@ -3,6 +3,7 @@ package com.example.ingeniera.trakeoentregas.Ingreso;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -71,6 +72,8 @@ public class SolicitarDestinos extends AppCompatActivity {
             almacenDestinos.setEstadoRuta(0);
         }
 
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
 
         if (almacenDestinos.getEstadoRuta() > 1) {
             Intent intent = new Intent(SolicitarDestinos.this, ListaDestinos.class);

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.ingeniera.trakeoentregas.R;
@@ -49,12 +50,46 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
         holder.clienteTv.setText(String.valueOf(destino.getNombre_cliente()));
         holder.cantidadTv.setText("Cantidad: "+String.valueOf(destino.getCantidad()));
         holder.codigoClienteTv.setText(String.valueOf(destino.getId()));
+        Double difLat=destino.getLatitude()-Double.parseDouble(almacenDestinos.getLat());
+        Double difLng=destino.getLongitude()-Double.parseDouble(almacenDestinos.getLng());
+        Double dist=Math.sqrt(Math.pow(difLat,2)+Math.pow(difLng,2));
+        holder.distanciaListaDestinosTv.setText("Dist: "+String.valueOf(Math.round(dist*10000.0)/100.0));
+        holder.progressBar.setMax(100);
+        if (dist>0.6){
+            holder.progressBar.setProgress(0);
+        }else if(dist>5&&dist<=0.6) {
+            holder.progressBar.setProgress(10);
+        } else if(dist>0.45&&dist<=0.5) {
+        holder.progressBar.setProgress(20);
+        }else if(dist>0.4&&dist<=0.45) {
+            holder.progressBar.setProgress(30);
+        }else if(dist>0.35&&dist<=0.4) {
+            holder.progressBar.setProgress(40);
+        }else if(dist>0.3&&dist<=0.35) {
+            holder.progressBar.setProgress(50);
+        }else if(dist>0.25&&dist<=0.3) {
+            holder.progressBar.setProgress(60);
+        }else if(dist>0.2&&dist<=0.25) {
+            holder.progressBar.setProgress(70);
+        }else if(dist>0.15&&dist<=0.2) {
+            holder.progressBar.setProgress(80);
+        }else if(dist>0.1&&dist<=0.15) {
+            holder.progressBar.setProgress(90);
+        }else if(dist>0.05&&dist<=0.1) {
+            holder.progressBar.setProgress(100);
+        }
+
         if (destino.getEntregado()) {
             holder.cardViewTransporte.setCardBackgroundColor(0xFFDAF7A6);
             holder.irBt.setVisibility(View.GONE);
+            holder.progressBar.setVisibility(View.GONE);
+            holder.distanciaListaDestinosTv.setVisibility(View.GONE);
+
         }else{
             holder.cardViewTransporte.setCardBackgroundColor(0xFFFFFFFF);
             holder.irBt.setVisibility(View.VISIBLE);
+            holder.progressBar.setVisibility(View.VISIBLE);
+            holder.distanciaListaDestinosTv.setVisibility(View.VISIBLE);
         }
         switch (destino.getId_tipo_registro()){
             case 1:
@@ -76,8 +111,9 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
     public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView tipoImagenIv;
-        TextView transporteTv, dirTransporteTv, clienteTv, cantidadTv,codigoClienteTv;
+        TextView transporteTv, dirTransporteTv, clienteTv, cantidadTv,codigoClienteTv,distanciaListaDestinosTv;
         CardView cardViewTransporte;
+        ProgressBar progressBar;
         Button irBt;
 
         public ListViewHolder(@NonNull View itemView) {
@@ -90,6 +126,8 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
             codigoClienteTv=itemView.findViewById(R.id.codigoClienteListaTv);
             irBt=itemView.findViewById(R.id.irBt);
             tipoImagenIv=itemView.findViewById(R.id.tipoImagenIv);
+            progressBar=itemView.findViewById(R.id.progressBarListaDestinos);
+            distanciaListaDestinosTv=itemView.findViewById(R.id.distanciaListaDestinosTv);
 
         }
 

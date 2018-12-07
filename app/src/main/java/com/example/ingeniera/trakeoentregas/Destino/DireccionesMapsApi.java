@@ -284,7 +284,7 @@ public class DireccionesMapsApi {
     public void irAGoogleMaps() {
 
         Intent i = new Intent(context,QrReader.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context,0,i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
@@ -292,6 +292,7 @@ public class DireccionesMapsApi {
                 .setContentText("Marcar como entregado")
                 .setSmallIcon(R.drawable.qrcode)
                 .setContentTitle("ENTREGAR")
+                .setOngoing(true)
                 .setContentIntent(pendingIntent);
         NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         manager.notify(0,builder.build());
@@ -306,7 +307,7 @@ public class DireccionesMapsApi {
         }
 
         almacenDestinos.setGoogleMapsApp(true);
-        almacenDestinos.setEstadoRuta(4);
+        almacenDestinos.setComenzoRecorrido(true);
 
     }
 }

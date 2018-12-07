@@ -1,5 +1,6 @@
 package com.example.ingeniera.trakeoentregas.Entregas;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -67,6 +68,7 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
         String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/marcar-despachado.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @SuppressLint("RestrictedApi")
             @Override
             public void onResponse(String response) {
 
@@ -84,10 +86,8 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                                 String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
                                 destinos.get(i).setFechaHoraEntrega(currentDateTimeString);
                                 almacenDestinos.saveArrayList(destinos);
-                                if (context instanceof QrReader){
-                                    EditText ingresoEt = ((Activity)context).findViewById(R.id.ingresoEt);
-                                    ingresoEt.setText("");
-                                }else if (context instanceof TransporteInfo){
+
+                                if (context instanceof TransporteInfo){
                                     FloatingActionButton entregarTransporteInfoFb = ((Activity)context).findViewById(R.id.entregarTransporteInfoFb);
                                     FloatingActionButton irTransporteInfoFb = ((Activity)context).findViewById(R.id.irTransporteInfoFb);
                                     FloatingActionButton cancelarEntregaBt= ((Activity)context).findViewById(R.id.cancelarEntregaBt);
