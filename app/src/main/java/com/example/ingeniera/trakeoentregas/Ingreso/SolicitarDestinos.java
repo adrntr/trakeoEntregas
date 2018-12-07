@@ -1,6 +1,7 @@
 package com.example.ingeniera.trakeoentregas.Ingreso;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,6 +15,8 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +31,7 @@ import com.example.ingeniera.trakeoentregas.Destino.ListaDestinos;
 import com.example.ingeniera.trakeoentregas.Destino.Usuarios;
 import com.example.ingeniera.trakeoentregas.R;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
@@ -48,12 +52,15 @@ public class SolicitarDestinos extends AppCompatActivity {
     public static int estadoRuta;
     Boolean hojasDeRutaReady=false;
 
+    AlertDialog alertDialog;
+
 
     RecyclerView RecyclerviewSolDes;
     private RecyclerView recyclerViewUsuarios;
     HojasDeRutaAdapter hojasDeRutaAdapter;
     UsuariosAdapter usuariosAdapter;
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +92,8 @@ public class SolicitarDestinos extends AppCompatActivity {
         consultarBt.setOnClickListener(ClickListener);
         cambiarDniBt.setOnClickListener(ClickListener);
         agregarAcompañanteBt.setOnClickListener(ClickListener);
+
+        codigoEt.addTextChangedListener(textChangeListener);
 
         destinos = new ArrayList<>();
 
@@ -150,6 +159,40 @@ public class SolicitarDestinos extends AppCompatActivity {
 
     }
 
+    TextWatcher textChangeListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            //Toast.makeText(SolicitarDestinos.this,s+" "+start+" "+count+" "+before,Toast.LENGTH_LONG).show();
+            if (start > 6) {
+                String dni = codigoEt.getText().toString();
+                if (dni != null) {
+                    try {
+                        if (Integer.parseInt(dni) > 1000000) {
+                            TaskValidarDNI validarDNI = new TaskValidarDNI(SolicitarDestinos.this);
+                            validarDNI.execute(dni);
+                            almacenDestinos.setEstadoRuta(0);
+                            codigoEt.setText("");
+                        } else {
+                            Toast.makeText(SolicitarDestinos.this, "DNI invalido", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(SolicitarDestinos.this, "No es un número", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
     View.OnClickListener ClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -159,14 +202,20 @@ public class SolicitarDestinos extends AppCompatActivity {
                 case R.id.consultarBt:
                     String dni = codigoEt.getText().toString();
                     if (dni != null) {
-                        if (Integer.parseInt(dni)>1000000){
-                            TaskValidarDNI validarDNI = new TaskValidarDNI(SolicitarDestinos.this);
-                            validarDNI.execute(dni);
-                            almacenDestinos.setEstadoRuta(0);
-                            codigoEt.setText("");
-                        }else{
-                            Toast.makeText(SolicitarDestinos.this,"DNI invalido",Toast.LENGTH_SHORT).show();
+                        try{
+                            if (Integer.parseInt(dni)>1000000){
+                                TaskValidarDNI validarDNI = new TaskValidarDNI(SolicitarDestinos.this);
+                                validarDNI.execute(dni);
+                                almacenDestinos.setEstadoRuta(0);
+                                codigoEt.setText("");
+                            }else{
+                                Toast.makeText(SolicitarDestinos.this,"DNI invalido",Toast.LENGTH_SHORT).show();
+                            }
+                        }catch(NumberFormatException e){
+                            Toast.makeText(SolicitarDestinos.this,"No es un número",Toast.LENGTH_SHORT).show();
                         }
+
+
 
                     }
                     break;
@@ -180,12 +229,42 @@ public class SolicitarDestinos extends AppCompatActivity {
                     break;
                 case R.id.agregarAcompañanteBt:
                     final EditText input = new EditText(SolicitarDestinos.this);
+                    input.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        }
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            if (start>6){
+                                alertDialog.dismiss();
+                                String dniAcompañante= String.valueOf(input.getText());
+                                ArrayList<Usuarios> acompañantes =almacenDestinos.getArrayUsuarios("arrayUsuariosKey");
+                                Boolean existe=false;
+                                for (int i=0;i<acompañantes.size();i++){
+                                    if (dniAcompañante.equals(acompañantes.get(i).getDni())){
+                                        Toast.makeText(SolicitarDestinos.this,"El dni "+dniAcompañante+" ya se encuentra en uso",Toast.LENGTH_SHORT).show();
+                                        existe=true;
+                                    }
+                                }
+                                if (!existe){
+                                    TaskValidarAcompanante taskValidarAcompanante = new TaskValidarAcompanante(SolicitarDestinos.this);
+                                    taskValidarAcompanante.execute(dniAcompañante);
+
+                                }
+                            }
+
+                        }
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.MATCH_PARENT);
                     input.setLayoutParams(lp);
                     input.setInputType(TYPE_CLASS_NUMBER);
-                    new AlertDialog.Builder(SolicitarDestinos.this)
+                    alertDialog=new AlertDialog.Builder(SolicitarDestinos.this)
                             .setTitle("AGREGAR ACOMPAÑANTE")
                             .setMessage("Ingrese su DNI")
                             .setView(input)
