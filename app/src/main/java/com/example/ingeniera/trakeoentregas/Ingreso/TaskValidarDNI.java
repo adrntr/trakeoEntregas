@@ -13,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ingeniera.trakeoentregas.Destino.Usuarios;
+import com.example.ingeniera.trakeoentregas.SingleToast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,7 +62,7 @@ public class TaskValidarDNI extends AsyncTask<String,Void,String> {
                         String tienePermiso=jsonObject.getString("tiene_permiso");
                         if(tienePermiso.equals("true")){
                             String nombreApellido=jsonObject.getString("nombre_colaborador");
-                            Toast.makeText(context,"Bienvenido Sr/Sra "+nombreApellido,Toast.LENGTH_SHORT).show();
+                            SingleToast.show(context, "Bienvenido Sr/Sra "+nombreApellido, Toast.LENGTH_SHORT);
                             ArrayList<Usuarios> usuarios = new ArrayList<>();
                             Usuarios responsable = new Usuarios(nombreApellido,strings[0],"Responsable");
                             usuarios.add(responsable);
@@ -70,7 +71,7 @@ public class TaskValidarDNI extends AsyncTask<String,Void,String> {
                             TaskObtenerHojasRutas obtenerHojasRutas = new TaskObtenerHojasRutas(context);
                             obtenerHojasRutas.execute();
                         }else {
-                            Toast.makeText(context,"No se encuentra su DNI",Toast.LENGTH_SHORT).show();
+                            SingleToast.show(context, "No se encuentra su DNI", Toast.LENGTH_SHORT);
                             progreso.dismiss();
                         }
 
@@ -79,7 +80,7 @@ public class TaskValidarDNI extends AsyncTask<String,Void,String> {
                         e.printStackTrace();
                     }
                 }else{
-                    Toast.makeText(context,"Sin respuesta",Toast.LENGTH_SHORT).show();
+                    SingleToast.show(context, "Sin respuesta", Toast.LENGTH_SHORT);
                 }
 
             }
@@ -87,7 +88,7 @@ public class TaskValidarDNI extends AsyncTask<String,Void,String> {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context,error.toString(),Toast.LENGTH_SHORT).show();
+                SingleToast.show(context, error.toString(), Toast.LENGTH_SHORT);
                 progreso.dismiss();
             }
         }) {

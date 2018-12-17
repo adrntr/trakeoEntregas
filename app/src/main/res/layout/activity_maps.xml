@@ -59,6 +59,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:maxImageSize="70dp"
             tools:srcCompat="@tools:sample/avatars" />
+
     </android.support.constraint.ConstraintLayout>
 
 </LinearLayout>

@@ -5,10 +5,27 @@ public class Destinos {
     private Double latitude,longitude;
     private String nombre_tipo_registro,nombre_cliente,nombre_transporte,direccion_transporte,telefono,fechaHoraEntrega,motivo,direccion;
     private int id,id_cliente,cantidad,id_tipo_registro,orden,id_externo;
-    Boolean entregado;
+    Boolean entregado,agregadoDurRecorrido,cancelado;
+
+    public Boolean getCancelado() {
+        return cancelado;
+    }
+
+    public void setCancelado(Boolean cancelado) {
+        this.cancelado = cancelado;
+    }
+
+    public Boolean getAgregadoDurRecorrido() {
+        return agregadoDurRecorrido;
+    }
+
+    public void setAgregadoDurRecorrido(Boolean agregadoDurRecorrido) {
+        this.agregadoDurRecorrido = agregadoDurRecorrido;
+    }
 
     public String getDireccion() {
         return direccion;
+
     }
 
     public void setDireccion(String direccion) {

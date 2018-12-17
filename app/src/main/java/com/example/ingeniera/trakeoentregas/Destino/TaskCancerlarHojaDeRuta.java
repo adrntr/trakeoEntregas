@@ -20,6 +20,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.ingeniera.trakeoentregas.Entregas.TaskConsultarQrCode;
 import com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos;
 import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.SingleToast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,7 +72,9 @@ public class TaskCancerlarHojaDeRuta extends AsyncTask<String ,Void,String > {
                             String mensaje= jsonObject.getString("mensaje");
                             if (error.equals("false")){
                                 progreso.dismiss();
-                                Toast.makeText(context,"Finalizado Correctamente",Toast.LENGTH_SHORT).show();
+                                SingleToast.show(context,"Finalizado Correctamente",Toast.LENGTH_SHORT);
+                                ArrayList<Destinos> destinos=new ArrayList<>();
+                                almacenDestinos.saveArrayDestinosBackUp(destinos);
 
                                 if(almacenDestinos.getComenzoRecorrido()){
                                     almacenDestinos.setEstadoRuta(0);
@@ -84,16 +87,16 @@ public class TaskCancerlarHojaDeRuta extends AsyncTask<String ,Void,String > {
                                 ((Activity)context).finish();
                             }else {
                                 progreso.dismiss();
-                                Toast.makeText(context,"Volver a intentar",Toast.LENGTH_SHORT).show();
+                                SingleToast.show(context,"Volver a intentar",Toast.LENGTH_SHORT);
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(context, "Error - Intente nuevamente",Toast.LENGTH_SHORT).show();
+                            SingleToast.show(context, "Error - Intente nuevamente",Toast.LENGTH_SHORT);
                             progreso.dismiss();
                         }
                     }else{
-                        Toast.makeText(context,"Sin respuesta",Toast.LENGTH_SHORT).show();
+                        SingleToast.show(context,"Sin respuesta",Toast.LENGTH_SHORT);
                     }
 
                 }
@@ -101,7 +104,7 @@ public class TaskCancerlarHojaDeRuta extends AsyncTask<String ,Void,String > {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context,error.toString(),Toast.LENGTH_SHORT).show();
+                    SingleToast.show(context,error.toString(),Toast.LENGTH_SHORT);
                     progreso.dismiss();
                 }
             }) {

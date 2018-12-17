@@ -136,9 +136,6 @@ public class UsuariosAdapter extends RecyclerView.Adapter<UsuariosAdapter.ListVi
                     }
 
 
-            //Toast.makeText(mCtx, usuarioCardTv.getText().toString(), Toast.LENGTH_SHORT).show();
-            //TaskObtenerDatosRuta taskObtenerDatosRuta = new TaskObtenerDatosRuta(mCtx);
-            //taskObtenerDatosRuta.execute("id_ruta",idHojaDeRutaTv.getText().toString());
             break;
             }
 

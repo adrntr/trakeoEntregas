@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.ingeniera.trakeoentregas.Destino.Destinos;
 import com.example.ingeniera.trakeoentregas.Destino.Usuarios;
 import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.SingleToast;
 import com.example.ingeniera.trakeoentregas.TransporteInfo;
 
 import org.json.JSONException;
@@ -78,9 +80,9 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                         String error=jsonObject.getString("error");
                         String mensaje= jsonObject.getString("mensaje");
 
-                        if (strings[2].equals("1")){
+                        if (strings[2].equals("1")){ //Se entrego
                             if(error.equals("false")){
-                                Toast.makeText(context,"Entregado Correctamente",Toast.LENGTH_SHORT).show();
+                                SingleToast.show(context,"Entregado Correctamente",Toast.LENGTH_SHORT);
                                 progreso.dismiss();
                                 destinos.get(i).setEntregado(true);
                                 String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
@@ -96,6 +98,7 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                                     TextView entregarTransporteInfoTv=((Activity)context).findViewById(R.id.entregarTransporteInfoTv);
                                     TextView entregadoTv3=((Activity)context).findViewById(R.id.entregadoTv3);
                                     TextView cancelarEntregaTransporteInfoTv = ((Activity)context).findViewById(R.id.cancelarEntregaTransporteInfoTv);
+                                    Switch switchAB=((Activity)context).findViewById(R.id.switchAB);
                                     entregarTransporteInfoFb.setVisibility(View.GONE);
                                     irTransporteInfoFb.setVisibility(View.GONE);
                                     cancelarEntregaBt.setVisibility(View.VISIBLE);
@@ -105,20 +108,21 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                                     irTransporteInfoTv.setVisibility(View.GONE);
                                     entregarTransporteInfoTv.setVisibility(View.GONE);
                                     cancelarEntregaTransporteInfoTv.setVisibility(View.VISIBLE);
+                                    switchAB.setVisibility(View.GONE);
                                 }
 
                             }else if(mensaje.equals("Ya se ha marcado como despachado")) {
                                 destinos.get(i).setEntregado(true);
                                 almacenDestinos.saveArrayList(destinos);
-                                Toast.makeText(context,mensaje,Toast.LENGTH_SHORT).show();
+                                SingleToast.show(context,mensaje,Toast.LENGTH_SHORT);
                                 progreso.dismiss();
                             }else {
-                                Toast.makeText(context,mensaje,Toast.LENGTH_SHORT).show();
+                                SingleToast.show(context,mensaje,Toast.LENGTH_SHORT);
                                 progreso.dismiss();
                             }
                         }else{
                             if(error.equals("false")){
-                                Toast.makeText(context,"Cancelado Correctamente",Toast.LENGTH_SHORT).show();
+                                SingleToast.show(context,"Cancelado Correctamente",Toast.LENGTH_SHORT);
                                 progreso.dismiss();
                                 destinos.get(i).setEntregado(false);
                                 destinos.get(i).setFechaHoraEntrega("");
@@ -132,6 +136,7 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                                 TextView entregarTransporteInfoTv=((Activity)context).findViewById(R.id.entregarTransporteInfoTv);
                                 TextView entregadoTv3=((Activity)context).findViewById(R.id.entregadoTv3);
                                 TextView cancelarEntregaTransporteInfoTv = ((Activity)context).findViewById(R.id.cancelarEntregaTransporteInfoTv);
+                                Switch switchAB=((Activity)context).findViewById(R.id.switchAB);
                                 entregarTransporteInfoFb.setVisibility(View.VISIBLE);
                                 irTransporteInfoFb.setVisibility(View.VISIBLE);
                                 cancelarEntregaBt.setVisibility(View.GONE);
@@ -140,15 +145,16 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                                 irTransporteInfoTv.setVisibility(View.VISIBLE);
                                 cancelarEntregaTransporteInfoTv.setVisibility(View.GONE);
                                 entregarTransporteInfoTv.setVisibility(View.VISIBLE);
+                                switchAB.setVisibility(View.VISIBLE);
                             }else if(mensaje.equals("No se ha marcado como despachado")) {
                                 destinos.get(i).setEntregado(false);
                                 almacenDestinos.saveArrayList(destinos);
-                                Toast.makeText(context,mensaje,Toast.LENGTH_SHORT).show();
+                                SingleToast.show(context,mensaje,Toast.LENGTH_SHORT);
                                 //Button cancelarEntregaBt = ((Activity)context).findViewById(R.id.cancelarEntregaBt);
                                 //cancelarEntregaBt.setVisibility(View.GONE);
                                 progreso.dismiss();
                             }else {
-                                Toast.makeText(context,mensaje,Toast.LENGTH_SHORT).show();
+                                SingleToast.show(context,mensaje,Toast.LENGTH_SHORT);
                                 progreso.dismiss();
                             }
                         }
@@ -157,12 +163,12 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(context, "Error - Intente nuevamente",Toast.LENGTH_SHORT).show();
+                        SingleToast.show(context, "Error - Intente nuevamente",Toast.LENGTH_SHORT);
                         progreso.dismiss();
                     }
                 }else{
                     progreso.dismiss();
-                    Toast.makeText(context,"Sin respuesta",Toast.LENGTH_SHORT).show();
+                    SingleToast.show(context,"Sin respuesta",Toast.LENGTH_SHORT);
                 }
 
             }
@@ -170,7 +176,7 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context,error.toString(),Toast.LENGTH_SHORT).show();
+                SingleToast.show(context,error.toString(),Toast.LENGTH_SHORT);
                 progreso.dismiss();
             }
         }) {

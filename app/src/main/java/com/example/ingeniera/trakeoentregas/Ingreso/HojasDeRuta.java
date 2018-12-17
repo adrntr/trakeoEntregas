@@ -1,11 +1,19 @@
 package com.example.ingeniera.trakeoentregas.Ingreso;
 
 public class HojasDeRuta {
-    int Codigo,cantDestinos;
+    int Codigo,cantDestinos,cantPendientes;
     String fecha;
 
     public int getCodigo() {
         return Codigo;
+    }
+
+    public int getCantPendientes() {
+        return cantPendientes;
+    }
+
+    public void setCantPendientes(int cantPendientes) {
+        this.cantPendientes = cantPendientes;
     }
 
     public void setCodigo(int codigo) {

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.ingeniera.trakeoentregas.DirectionsParser;
 import com.example.ingeniera.trakeoentregas.Entregas.QrReader;
 import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.SingleToast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -75,7 +76,7 @@ public class DireccionesMapsApi {
             Boolean primero=true;
             int cant=0;
             for (int i = 0;i<waypoints.size()&& cant < 9; i++) {
-                if (!(destinos.get(i).getEntregado())){
+                if (!(destinos.get(i).getEntregado())&&!(destinos.get(i).getCancelado())){
                     if (primero) {
                         waypointsStr += waypoints.get(i).latitude + "," + waypoints.get(i).longitude;
                         primero=false;
@@ -222,7 +223,7 @@ public class DireccionesMapsApi {
                             .addAll(points));
 
                 } else {
-                    Toast.makeText(context, "Direction not found", Toast.LENGTH_SHORT).show();
+                    SingleToast.show(context, "Direction not found", Toast.LENGTH_SHORT);
                 }
             }
         }
@@ -237,25 +238,18 @@ public class DireccionesMapsApi {
         for (int i = 0; i < destinos.size(); i++) {
 
             if (destinos.get(i).getEntregado()){
-                colocarMarker(BitmapDescriptorFactory.HUE_RED,destinos.get(i));
+                colocarMarker(BitmapDescriptorFactory.HUE_GREEN,destinos.get(i));
             }else{
                 switch (destinos.get(i).getId_tipo_registro()){
                     case 1:
                         colocarMarker(BitmapDescriptorFactory.HUE_BLUE,destinos.get(i));
                         break;
                     case 2:
-                        colocarMarker(BitmapDescriptorFactory.HUE_ORANGE,destinos.get(i));
+                        colocarMarker(BitmapDescriptorFactory.HUE_RED,destinos.get(i));
                         break;
-                    case 3:
-                        colocarMarker(BitmapDescriptorFactory.HUE_GREEN,destinos.get(i));
+                    default:
+                        colocarMarker(BitmapDescriptorFactory.HUE_BLUE,destinos.get(i));
                         break;
-                    case 4:
-                        colocarMarker(BitmapDescriptorFactory.HUE_MAGENTA,destinos.get(i));
-                        break;
-                        default:
-                            colocarMarker(BitmapDescriptorFactory.HUE_GREEN,destinos.get(i));
-                            break;
-
 
                 }
             }

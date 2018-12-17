@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Ingreso.SolicitarDestinos">
 
+
     <EditText
         android:id="@+id/codigoEt"
         android:layout_width="0dp"
@@ -35,7 +36,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/cambiarDniBt"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,23 +58,38 @@
         app:layout_constraintTop_toBottomOf="@+id/registroLoginTv"
         app:maxImageSize="70dp" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/RecyclerviewSolDes"
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swiperefreshHojaRuta"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seleccionarHojaTv" />
+        app:layout_constraintTop_toBottomOf="@+id/seleccionarHojaTv">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/RecyclerviewSolDes"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/seleccionarHojaTv" />
+    </android.support.v4.widget.SwipeRefreshLayout>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/cambiarDniBt"
         android:layout_width="0dp"
@@ -103,7 +119,7 @@
         android:textColor="@color/colorPrimaryDark"
         android:textSize="40sp"
         android:textStyle="bold"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider3" />
 

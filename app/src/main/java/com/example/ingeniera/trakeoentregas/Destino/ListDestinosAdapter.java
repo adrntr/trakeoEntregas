@@ -10,11 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.SingleToast;
 import com.example.ingeniera.trakeoentregas.TransporteInfo;
 
 import java.util.ArrayList;
@@ -50,33 +54,22 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
         holder.clienteTv.setText(String.valueOf(destino.getNombre_cliente()));
         holder.cantidadTv.setText("Cantidad: "+String.valueOf(destino.getCantidad()));
         holder.codigoClienteTv.setText(String.valueOf(destino.getId()));
-        Double difLat=destino.getLatitude()-Double.parseDouble(almacenDestinos.getLat());
-        Double difLng=destino.getLongitude()-Double.parseDouble(almacenDestinos.getLng());
-        Double dist=Math.sqrt(Math.pow(difLat,2)+Math.pow(difLng,2));
-        holder.distanciaListaDestinosTv.setText("Dist: "+String.valueOf(Math.round(dist*10000.0)/100.0));
-        holder.progressBar.setMax(100);
-        if (dist>0.6){
-            holder.progressBar.setProgress(0);
-        }else if(dist>5&&dist<=0.6) {
-            holder.progressBar.setProgress(10);
-        } else if(dist>0.45&&dist<=0.5) {
-        holder.progressBar.setProgress(20);
-        }else if(dist>0.4&&dist<=0.45) {
-            holder.progressBar.setProgress(30);
-        }else if(dist>0.35&&dist<=0.4) {
-            holder.progressBar.setProgress(40);
-        }else if(dist>0.3&&dist<=0.35) {
-            holder.progressBar.setProgress(50);
-        }else if(dist>0.25&&dist<=0.3) {
-            holder.progressBar.setProgress(60);
-        }else if(dist>0.2&&dist<=0.25) {
-            holder.progressBar.setProgress(70);
-        }else if(dist>0.15&&dist<=0.2) {
-            holder.progressBar.setProgress(80);
-        }else if(dist>0.1&&dist<=0.15) {
-            holder.progressBar.setProgress(90);
-        }else if(dist>0.05&&dist<=0.1) {
-            holder.progressBar.setProgress(100);
+        String lat=almacenDestinos.getLat();
+        if (almacenDestinos.getLat()!=""){
+            Double difLat=destino.getLatitude()-Double.parseDouble(almacenDestinos.getLat());
+            Double difLng=destino.getLongitude()-Double.parseDouble(almacenDestinos.getLng());
+            Double dist=Math.sqrt(Math.pow(difLat,2)+Math.pow(difLng,2));
+            holder.distanciaListaDestinosTv.setText("Dist: "+String.valueOf(Math.round(dist*10000.0)/100.0)+" Km");
+            holder.progressBar.setMax(100);
+            Double porcentaje=dist*100/0.3;
+            if (porcentaje>100){
+                porcentaje=100.0;
+            }
+            holder.progressBar.setProgress((int)(100.0-porcentaje));
+        }
+
+        if (destino.getAgregadoDurRecorrido()!=null&&destino.getAgregadoDurRecorrido()){
+            holder.transporteTv.append(" (Agregado)");
         }
 
         if (destino.getEntregado()) {
@@ -84,21 +77,32 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
             holder.irBt.setVisibility(View.GONE);
             holder.progressBar.setVisibility(View.GONE);
             holder.distanciaListaDestinosTv.setVisibility(View.GONE);
-
+            holder.switchAdapterDestinos.setVisibility(View.GONE);
+        }else if (destino.getCancelado()){
+            holder.cardViewTransporte.setCardBackgroundColor(0x44FF4000);
+            holder.irBt.setVisibility(View.GONE);
+            holder.progressBar.setVisibility(View.GONE);
+            holder.distanciaListaDestinosTv.setVisibility(View.GONE);
+            holder.switchAdapterDestinos.setVisibility(View.VISIBLE);
         }else{
             holder.cardViewTransporte.setCardBackgroundColor(0xFFFFFFFF);
             holder.irBt.setVisibility(View.VISIBLE);
             holder.progressBar.setVisibility(View.VISIBLE);
             holder.distanciaListaDestinosTv.setVisibility(View.VISIBLE);
+            holder.switchAdapterDestinos.setVisibility(View.VISIBLE);
         }
-        switch (destino.getId_tipo_registro()){
+        switch (destino.getId_tipo_registro()) {
             case 1:
                 holder.tipoImagenIv.setImageResource(R.drawable.delivery);
                 break;
             case 2:
                 holder.tipoImagenIv.setImageResource(R.drawable.send);
+                break;
         }
+        holder.switchAdapterDestinos.setChecked(destino.getCancelado());
+
         holder.setOnClickListeners();
+
     }
 
     @Override
@@ -116,6 +120,8 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
         ProgressBar progressBar;
         Button irBt;
 
+        Switch switchAdapterDestinos;
+
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             transporteTv = itemView.findViewById(R.id.usuarioCardTv);
@@ -128,13 +134,16 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
             tipoImagenIv=itemView.findViewById(R.id.tipoImagenIv);
             progressBar=itemView.findViewById(R.id.progressBarListaDestinos);
             distanciaListaDestinosTv=itemView.findViewById(R.id.distanciaListaDestinosTv);
+            switchAdapterDestinos=itemView.findViewById(R.id.switchAdapterDestino);
 
         }
 
         public void setOnClickListeners() {
             cardViewTransporte.setOnClickListener(this);
             irBt.setOnClickListener(this);
+            switchAdapterDestinos.setOnClickListener(this);
         }
+
 
         @Override
         public void onClick(View v) {
@@ -157,6 +166,17 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
                     Uri uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin="+almacenDestinos.getLat()+","+almacenDestinos.getLng()+"&destination="+latDest+","+lngDest+"&sensor=false&mode=driving");
                     Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
                     mCtx.startActivity(intent2);
+                    break;
+                case R.id.switchAdapterDestino:
+                    if (switchAdapterDestinos.isChecked()) {
+                        SingleToast.show(mCtx, "ON"+codigoClienteTv.getText().toString(), Toast.LENGTH_SHORT);
+                        TaskCancelarDestino taskCancelarDestino = new TaskCancelarDestino(mCtx);
+                        taskCancelarDestino.execute(codigoClienteTv.getText().toString(),String.valueOf(1));
+                    } else {
+                        SingleToast.show(mCtx, "OFF"+codigoClienteTv.getText().toString(), Toast.LENGTH_SHORT);
+                        TaskCancelarDestino taskCancelarDestino = new TaskCancelarDestino(mCtx);
+                        taskCancelarDestino.execute(codigoClienteTv.getText().toString(),String.valueOf(0));
+                    }
                     break;
             }
         }

@@ -17,11 +17,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:gravity="left|center"
-        android:text="Jean Juares 3070, San Justo, Buenos Aires, Argentina"
+        android:text="andif"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintEnd_toStartOf="@+id/cambiarDireccionBt"
         app:layout_constraintStart_toEndOf="@+id/textview34"
         app:layout_constraintTop_toBottomOf="@+id/transporteTv" />
 
@@ -261,7 +260,7 @@
         android:layout_marginBottom="16dp"
         android:text="Entregado:"
         android:textSize="18sp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -274,7 +273,7 @@
         android:layout_marginBottom="16dp"
         android:text="Entregado:"
         android:textSize="18sp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/entregadoTv3" />
 
@@ -352,7 +351,7 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="ENTREGAR"
+        android:text="CUMPLIDO"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.499"
@@ -373,5 +372,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cancelarEntregaBt" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/cambiarDireccionBt"
+        android:layout_width="wrap_content"
+        android:layout_height="47dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/cambiar"
+        app:fabCustomSize="47dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transporteTv"
+        app:maxImageSize="47dp" />
 
 </android.support.constraint.ConstraintLayout>

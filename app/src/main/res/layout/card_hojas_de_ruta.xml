@@ -21,6 +21,20 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/texview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="8dp"
+                android:text="Pendientes: "
+                android:textAllCaps="true"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/cantidadDestinosTv"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+            <TextView
                 android:id="@+id/usuarioCardTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,6 +111,18 @@
                 android:text="Cantidad"
                 android:textSize="18sp"
                 app:layout_constraintStart_toEndOf="@+id/texview32"
+                app:layout_constraintTop_toBottomOf="@+id/creadoTv" />
+
+            <TextView
+                android:id="@+id/cantidadPendientesTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Cantidad"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/texview"
                 app:layout_constraintTop_toBottomOf="@+id/creadoTv" />
 
             <TextView

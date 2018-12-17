@@ -16,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.SingleToast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,23 +70,26 @@ public class TaskObtenerHojasRutas extends AsyncTask<String,Void,String> {
                             JSONObject jsonObjectExplorer = jsonArray.getJSONObject(i);
                             hojaDeRuta.setCodigo(jsonObjectExplorer.optInt("id"));
                             hojaDeRuta.setFecha(jsonObjectExplorer.optString("fecha_ruta"));
+                            hojaDeRuta.setCantDestinos(jsonObjectExplorer.optInt("destinos"));
+                            hojaDeRuta.setCantPendientes(jsonObjectExplorer.optInt("pendientes"));
                             hojasDeRutas.add(hojaDeRuta);
                         }
                         almacenDestinos.setArrayHojasDeRutas(hojasDeRutas);
-                        almacenDestinos.setEstadoRuta(1);
                         progreso.dismiss();
-
-                        ((Activity)context).recreate();
-
-                        //Intent intent = new Intent(context,SolicitarDestinos.class);
-                        //context.startActivity(intent);
-                        //((Activity)context).finish();
+                        if (context instanceof SolicitarDestinos&&almacenDestinos.getEstadoRuta()==1){
+                            RecyclerView RecyclerviewSolDes = ((Activity) context).findViewById(R.id.RecyclerviewSolDes);
+                            RecyclerviewSolDes.getAdapter().notifyDataSetChanged();
+                            almacenDestinos.setEstadoRuta(1);
+                        }else{
+                            almacenDestinos.setEstadoRuta(1);
+                            ((Activity)context).recreate();
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }else{
-                    Toast.makeText(context,"Sin respuesta",Toast.LENGTH_SHORT).show();
+                    SingleToast.show(context, "Sin respuesta", Toast.LENGTH_SHORT);
                 }
 
             }
@@ -93,7 +97,8 @@ public class TaskObtenerHojasRutas extends AsyncTask<String,Void,String> {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context,error.toString(),Toast.LENGTH_SHORT).show();
+                SingleToast.show(context, error.toString(), Toast.LENGTH_SHORT);
+
                 progreso.dismiss();
             }
         });

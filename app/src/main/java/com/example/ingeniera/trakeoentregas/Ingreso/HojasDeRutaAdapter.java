@@ -42,7 +42,13 @@ public class HojasDeRutaAdapter extends RecyclerView.Adapter<HojasDeRutaAdapter.
 
         holder.idHojaDeRutaTv.setText(String.valueOf(hojaDeRuta.getCodigo()));
         holder.creadoTv.setText(hojaDeRuta.getFecha());
-
+        holder.cantidadDestinosTv.setText(String.valueOf(hojaDeRuta.getCantDestinos()));
+        holder.cantidadPendientesTv.setText(String.valueOf(hojaDeRuta.getCantPendientes()));
+        if (hojaDeRuta.getCantPendientes()==0){
+            holder.hojasDeRutaCv.setCardBackgroundColor(0xFFDAF7A6);
+        }else{
+            holder.hojasDeRutaCv.setCardBackgroundColor(0xFFFFFFFF);
+        }
         holder.setOnClickListeners();
     }
 
@@ -57,7 +63,7 @@ public class HojasDeRutaAdapter extends RecyclerView.Adapter<HojasDeRutaAdapter.
     public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
-        TextView idHojaDeRutaTv,creadoTv,cantidadDestinosTv;
+        TextView idHojaDeRutaTv,creadoTv,cantidadDestinosTv,cantidadPendientesTv;
         CardView hojasDeRutaCv;
 
         public ListViewHolder(@NonNull View itemView) {
@@ -65,6 +71,7 @@ public class HojasDeRutaAdapter extends RecyclerView.Adapter<HojasDeRutaAdapter.
             idHojaDeRutaTv = itemView.findViewById(R.id.IdHojaDeRutaTv);
             creadoTv = itemView.findViewById(R.id.creadoTv);
             cantidadDestinosTv = itemView.findViewById(R.id.cantidadDestinosTv);
+            cantidadPendientesTv=itemView.findViewById(R.id.cantidadPendientesTv);
             hojasDeRutaCv=itemView.findViewById(R.id.HojasDeRutaCv);
 
 

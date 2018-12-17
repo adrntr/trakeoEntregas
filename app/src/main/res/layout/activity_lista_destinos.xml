@@ -25,15 +25,19 @@
 
             <TextView
                 android:id="@+id/usuarioCardTv"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
                 android:fontFamily="sans-serif"
                 android:text="Transporte"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="30sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/switchAdapterDestino"
                 app:layout_constraintStart_toEndOf="@+id/tipoImagenIv"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -139,7 +143,6 @@
                 android:layout_height="80dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="9dp"
                 android:layout_marginRight="9dp"
                 android:layout_marginBottom="32dp"
@@ -151,8 +154,7 @@
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/dirTransporteListaTv"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/dirTransporteListaTv" />
 
             <ImageView
                 android:id="@+id/tipoImagenIv"
@@ -191,6 +193,18 @@
                 android:layout_marginRight="100dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/texview32" />
+
+            <Switch
+                android:id="@+id/switchAdapterDestino"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:switchMinWidth="70dp"
+                android:theme="@style/SCBSwitch"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

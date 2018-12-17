@@ -44,6 +44,23 @@ public class AlmacenDestinos {
         return gson.fromJson(json, type);
     }
 
+    public void saveArrayDestinosBackUp(ArrayList<Destinos> list){
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString("arrayDestinosKey", json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
+
+    public ArrayList<Destinos> getArrayDestinosBackUp(String key){
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<Destinos>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
     /***********/
 
     public String getLat (){
@@ -268,6 +285,22 @@ public class AlmacenDestinos {
 
     /***********/
 
+    public void setContextLista(Context contextLista){
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(contextLista);
+        editor.putString("contextLista", json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
 
+    public Context getContextLista(){
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString("contextLista", null);
+        Type type = new TypeToken<Context>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+    /***********/
 
 }

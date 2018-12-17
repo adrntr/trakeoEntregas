@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -29,8 +30,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.ingeniera.trakeoentregas.AlmacenDestinos;
 import com.example.ingeniera.trakeoentregas.Destino.Destinos;
 import com.example.ingeniera.trakeoentregas.Destino.ListaDestinos;
+import com.example.ingeniera.trakeoentregas.Destino.TaskObtenerDatosRuta;
 import com.example.ingeniera.trakeoentregas.Destino.Usuarios;
 import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.SingleToast;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -44,6 +47,7 @@ public class SolicitarDestinos extends AppCompatActivity {
     FloatingActionButton agregarAcompañanteBt,consultarBt,cambiarDniBt;
     private TextView responsableTv,seleccionarHojaTv,registroLoginTv;
     private View divider3;
+    SwipeRefreshLayout swipeRefreshHojaRuta;
 
     public ArrayList<Destinos> destinos;
     JsonObjectRequest jsonObjectRequest;
@@ -91,12 +95,27 @@ public class SolicitarDestinos extends AppCompatActivity {
         seleccionarHojaTv=findViewById(R.id.seleccionarHojaTv);
         divider3=findViewById(R.id.divider3);
         registroLoginTv=findViewById(R.id.registroLoginTv);
+        swipeRefreshHojaRuta=findViewById(R.id.swiperefreshHojaRuta);
 
         consultarBt.setOnClickListener(ClickListener);
         cambiarDniBt.setOnClickListener(ClickListener);
         agregarAcompañanteBt.setOnClickListener(ClickListener);
 
         codigoEt.addTextChangedListener(textChangeListener);
+
+        RecyclerviewSolDes=findViewById(R.id.RecyclerviewSolDes);
+        RecyclerviewSolDes.setHasFixedSize(true);
+        RecyclerviewSolDes.setLayoutManager(new LinearLayoutManager(this));
+        hojasDeRutaAdapter = new HojasDeRutaAdapter(this);
+        RecyclerviewSolDes.setAdapter(hojasDeRutaAdapter);
+
+        recyclerViewUsuarios=findViewById(R.id.recyclerViewUsuarios);
+        recyclerViewUsuarios.setHasFixedSize(true);
+        recyclerViewUsuarios.setLayoutManager(new LinearLayoutManager(this));
+        usuariosAdapter = new UsuariosAdapter(this);
+        recyclerViewUsuarios.setAdapter(usuariosAdapter);
+
+
 
         destinos = new ArrayList<>();
 
@@ -105,6 +124,8 @@ public class SolicitarDestinos extends AppCompatActivity {
 
 
         if(almacenDestinos.getEstadoRuta()==1){
+            TaskObtenerHojasRutas obtenerHojasRutas = new TaskObtenerHojasRutas(SolicitarDestinos.this);
+            obtenerHojasRutas.execute();
             codigoEt.setVisibility(View.GONE);
             consultarBt.setVisibility(View.GONE);
             registroLoginTv.setVisibility(View.GONE);
@@ -113,23 +134,17 @@ public class SolicitarDestinos extends AppCompatActivity {
             seleccionarHojaTv.setVisibility(View.VISIBLE);
             responsableTv.setVisibility(View.VISIBLE);
             divider3.setVisibility(View.VISIBLE);
-            //recyclerViewUsuarios.setVisibility(View.VISIBLE);
-            //RecyclerviewSolDes.setVisibility(View.VISIBLE);
-
-            RecyclerviewSolDes=findViewById(R.id.RecyclerviewSolDes);
-            RecyclerviewSolDes.setHasFixedSize(true);
-            RecyclerviewSolDes.setLayoutManager(new LinearLayoutManager(this));
-            hojasDeRutaAdapter = new HojasDeRutaAdapter(this);
-            RecyclerviewSolDes.setAdapter(hojasDeRutaAdapter);
-
-            recyclerViewUsuarios=findViewById(R.id.recyclerViewUsuarios);
-            recyclerViewUsuarios.setHasFixedSize(true);
-            recyclerViewUsuarios.setLayoutManager(new LinearLayoutManager(this));
-            usuariosAdapter = new UsuariosAdapter(this);
-            recyclerViewUsuarios.setAdapter(usuariosAdapter);
-
-
-
+            recyclerViewUsuarios.setVisibility(View.VISIBLE);
+            RecyclerviewSolDes.setVisibility(View.VISIBLE);
+            swipeRefreshHojaRuta.setVisibility(View.VISIBLE);
+            swipeRefreshHojaRuta.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    TaskObtenerHojasRutas obtenerHojasRutas = new TaskObtenerHojasRutas(SolicitarDestinos.this);
+                    obtenerHojasRutas.execute();
+                    swipeRefreshHojaRuta.setRefreshing(false);
+                }
+            });
 
             ArrayList<Usuarios> usuarios=almacenDestinos.getArrayUsuarios("arrayUsuariosKey");
             for (int i=0;i<usuarios.size();i++){
@@ -150,8 +165,9 @@ public class SolicitarDestinos extends AppCompatActivity {
             cambiarDniBt.setVisibility(View.GONE);
             agregarAcompañanteBt.setVisibility(View.GONE);
             divider3.setVisibility(View.GONE);
-            //recyclerViewUsuarios.setVisibility(View.GONE);
-            //RecyclerviewSolDes.setVisibility(View.GONE);
+            recyclerViewUsuarios.setVisibility(View.GONE);
+            RecyclerviewSolDes.setVisibility(View.GONE);
+            swipeRefreshHojaRuta.setVisibility(View.GONE);
 
             codigoEt.setText(null);
 
@@ -170,7 +186,6 @@ public class SolicitarDestinos extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            //Toast.makeText(SolicitarDestinos.this,s+" "+start+" "+count+" "+before,Toast.LENGTH_LONG).show();
             if (start > 6) {
                 String dni = codigoEt.getText().toString();
                 if (dni != null) {
@@ -181,10 +196,11 @@ public class SolicitarDestinos extends AppCompatActivity {
                             almacenDestinos.setEstadoRuta(0);
                             codigoEt.setText("");
                         } else {
-                            Toast.makeText(SolicitarDestinos.this, "DNI invalido", Toast.LENGTH_SHORT).show();
+                            SingleToast.show(SolicitarDestinos.this, "DNI invalido", Toast.LENGTH_SHORT);
+
                         }
                     } catch (NumberFormatException e) {
-                        Toast.makeText(SolicitarDestinos.this, "No es un número", Toast.LENGTH_SHORT).show();
+                        SingleToast.show(SolicitarDestinos.this, "No es un número", Toast.LENGTH_SHORT);
                     }
                 }
             }
@@ -212,10 +228,10 @@ public class SolicitarDestinos extends AppCompatActivity {
                                 almacenDestinos.setEstadoRuta(0);
                                 codigoEt.setText("");
                             }else{
-                                Toast.makeText(SolicitarDestinos.this,"DNI invalido",Toast.LENGTH_SHORT).show();
+                                SingleToast.show(SolicitarDestinos.this, "DNI invalido", Toast.LENGTH_SHORT);
                             }
                         }catch(NumberFormatException e){
-                            Toast.makeText(SolicitarDestinos.this,"No es un número",Toast.LENGTH_SHORT).show();
+                            SingleToast.show(SolicitarDestinos.this, "No es un número", Toast.LENGTH_SHORT);
                         }
 
 
@@ -245,7 +261,7 @@ public class SolicitarDestinos extends AppCompatActivity {
                                 Boolean existe=false;
                                 for (int i=0;i<acompañantes.size();i++){
                                     if (dniAcompañante.equals(acompañantes.get(i).getDni())){
-                                        Toast.makeText(SolicitarDestinos.this,"El dni "+dniAcompañante+" ya se encuentra en uso",Toast.LENGTH_SHORT).show();
+                                        SingleToast.show(SolicitarDestinos.this, "El dni "+dniAcompañante+" ya se encuentra en uso", Toast.LENGTH_SHORT);
                                         existe=true;
                                     }
                                 }
@@ -279,7 +295,7 @@ public class SolicitarDestinos extends AppCompatActivity {
                                     Boolean existe=false;
                                     for (int i=0;i<acompañantes.size();i++){
                                         if (dniAcompañante.equals(acompañantes.get(i).getDni())){
-                                            Toast.makeText(SolicitarDestinos.this,"El dni "+dniAcompañante+" ya se encuentra en uso",Toast.LENGTH_SHORT).show();
+                                            SingleToast.show(SolicitarDestinos.this, "El dni "+dniAcompañante+" ya se encuentra en uso", Toast.LENGTH_SHORT);
                                             existe=true;
                                         }
                                     }

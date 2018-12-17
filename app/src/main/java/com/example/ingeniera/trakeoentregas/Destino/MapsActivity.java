@@ -24,6 +24,7 @@ import com.example.ingeniera.trakeoentregas.Entregas.QrReader;
 import com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos;
 import com.example.ingeniera.trakeoentregas.R;
 import com.example.ingeniera.trakeoentregas.RealTimeLocation;
+import com.example.ingeniera.trakeoentregas.SingleToast;
 import com.example.ingeniera.trakeoentregas.TransporteInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -97,7 +98,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ArrayList<Usuarios> usuarios=almacenDestinos.getArrayUsuarios("arrayUsuariosKey");
         for (int i=0;i<usuarios.size();i++){
             if (usuarios.get(i).getTipo().equals("Responsable")){
-                setTitle("MAPA - "+usuarios.get(i).getNombre());
+                setTitle("Hoja Nº"+almacenDestinos.getIdHojaDeRuta()+" - "+usuarios.get(i).getNombre());
             }
         }
 
@@ -235,13 +236,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case LOCATION_REQUEST:
                 if(grantResults.length>0&&grantResults[0]==PackageManager.PERMISSION_GRANTED){
                     if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(MapsActivity.this, "Permiso aceptado", Toast.LENGTH_SHORT).show();
+                        SingleToast.show(MapsActivity.this, "Permiso aceptado", Toast.LENGTH_SHORT);
                         Intent i = new Intent(MapsActivity.this, MapsActivity.class);
                         startActivity(i);
                         finish();
                     } else {
 
-                        Toast.makeText(MapsActivity.this, "Permiso NO aceptado", Toast.LENGTH_SHORT).show();
+                        SingleToast.show(MapsActivity.this, "Permiso NO aceptado", Toast.LENGTH_SHORT);
                     }
                     return;
                 }
@@ -351,7 +352,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onInfoWindowClick(Marker marker) {
         int idDestino= (int) marker.getTag();
-        Toast.makeText(this,"TAG= "+idDestino,Toast.LENGTH_SHORT).show();
+        SingleToast.show(this,"TAG= "+idDestino,Toast.LENGTH_SHORT);
         Intent intent=new Intent(this,TransporteInfo.class);
         intent.putExtra("idDestino",idDestino);
         startActivity(intent);

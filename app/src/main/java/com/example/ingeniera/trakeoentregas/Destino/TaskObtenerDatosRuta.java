@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -18,6 +20,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos;
 import com.example.ingeniera.trakeoentregas.Notificaciones.FirebaseMessagingService;
 import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.SingleToast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +41,7 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
 
     Context context=null;
     private ProgressDialog progreso;
+    private LocalBroadcastManager broadcaster;
 
     public TaskObtenerDatosRuta(Context context) {
         this.context=context;
@@ -46,6 +50,8 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
 
     @Override
     protected void onPreExecute() {
+        broadcaster = LocalBroadcastManager.getInstance(context);
+
         if (!(context instanceof FirebaseMessagingService)){
             progreso=new ProgressDialog(context);
             progreso.setMessage("Cargando Ruta...");
@@ -58,6 +64,9 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
             });
             progreso.show();
         }
+
+
+
     }
 
     @Override
@@ -76,6 +85,7 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
                         JSONArray jsonArray = jsonObject.getJSONArray("destinos");
                         Destinos destino;
                         ArrayList<Destinos> destinos = new ArrayList<>();
+                        ArrayList<Destinos> destinosBackUp=almacenDestinos.getArrayDestinosBackUp("arrayDestinosKey");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             destino = new Destinos();
                             JSONObject jsonObjectExplorer = jsonArray.getJSONObject(i);
@@ -94,24 +104,42 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
                             destino.setLatitude(jsonObjectExplorer.optDouble("latitud"));
                             destino.setLongitude(jsonObjectExplorer.optDouble("longitud"));
                             destino.setTelefono(jsonObjectExplorer.optString("telefono"));
+                            destino.setCancelado(jsonObjectExplorer.optBoolean("entrega_cancelada"));
                             destino.setDireccion(jsonObjectExplorer.optString("direccion"));
 
+                            Boolean agregadoDurRecorrido;
+                            agregadoDurRecorrido=true;
+                            if (destinosBackUp!=null) {
+                                if (!(context instanceof SolicitarDestinos)) {
+                                    for (int j = 0; j < destinosBackUp.size(); j++) {
+                                        if (destino.getId() == destinosBackUp.get(j).getId() && !(destinosBackUp.get(j).getAgregadoDurRecorrido())) {//si lo encuentra y agregado
+                                            agregadoDurRecorrido = false;
+                                        }
+                                    }
+                                }else {
+                                    agregadoDurRecorrido=false;
+                                }
+                            }else {
+                                agregadoDurRecorrido=false;
+                            }
+                            destino.setAgregadoDurRecorrido(agregadoDurRecorrido);
                             if (destino.getLongitude() != 0 && destino.getLatitude() != 0) {
                                 destinos.add(destino);
                             } else {
                                 if (!(context instanceof FirebaseMessagingService)) {
-                                    Toast.makeText(context, "El destino: " + destino.getNombre_transporte() + "No tiene latitudo y/o longitud", Toast.LENGTH_SHORT).show();
+                                    SingleToast.show(context, "El destino: " + destino.getNombre_transporte() + "No tiene latitudo y/o longitud", Toast.LENGTH_SHORT);
                                 }
                             }
                         }
                         if (destinos.size() > 0) {
                             almacenDestinos.saveArrayList(destinos);
+                            if (context instanceof SolicitarDestinos){
+                                almacenDestinos.saveArrayDestinosBackUp(destinos);
+                            }
                             almacenDestinos.setEstadoRuta(2);
                             almacenDestinos.setIdHojaDeRuta(strings[0]);
-                            if (!(context instanceof FirebaseMessagingService)){
-                                progreso.dismiss();
-                            }
                             if (!(context instanceof FirebaseMessagingService)) {//si no fue llamada desde el servicio de la notificacion
+                                progreso.dismiss();
                                 if (context instanceof ListaDestinos) { //si fue llamado del listview solo actualiza
                                     RecyclerView recyclerView = ((Activity) context).findViewById(R.id.recyclerView);
                                     recyclerView.getAdapter().notifyDataSetChanged();
@@ -121,12 +149,14 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
                                     Intent intent = new Intent(context, ListaDestinos.class); //si fue llamada desde el registro para pasar de inicio a la hoja de ruta
                                     context.startActivity(intent);
                                 }
+                            }else {
+                                Intent intent = new Intent("MyData"); //envia un intent a ListaDestinos para notificar que actualice la lista
+                                broadcaster.sendBroadcast(intent);
                             }
                         } else {
                             if (!(context instanceof FirebaseMessagingService)) {
                                 progreso.dismiss();
-                                Toast.makeText(context, "No se encontraron los destinos", Toast.LENGTH_SHORT).show();
-                                Toast.makeText(context, "Vuelva a intentar", Toast.LENGTH_SHORT).show();
+                                SingleToast.show(context, "No se encontraron los destinos - Vuelva a intentar", Toast.LENGTH_SHORT);
                             }
 
 
@@ -134,7 +164,7 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
                     }else{
                         if (!(context instanceof FirebaseMessagingService)) {
                             progreso.dismiss();
-                            Toast.makeText(context, jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                            SingleToast.show(context, jsonObject.optString("mensaje"), Toast.LENGTH_SHORT);
 
                         }
                     }
@@ -150,7 +180,7 @@ public class TaskObtenerDatosRuta extends AsyncTask<String,Void,String> {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (!(context instanceof FirebaseMessagingService)) {
-                    Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                    SingleToast.show(context, error.toString(), Toast.LENGTH_SHORT);
                     progreso.dismiss();
                     if (context instanceof SolicitarDestinos){
                         TaskCancerlarHojaDeRuta taskCancerlarHojaDeRuta= new TaskCancerlarHojaDeRuta(context);

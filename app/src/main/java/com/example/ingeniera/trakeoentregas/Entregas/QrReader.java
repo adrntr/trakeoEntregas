@@ -29,6 +29,7 @@ import com.example.ingeniera.trakeoentregas.Destino.DireccionesMapsApi;
 import com.example.ingeniera.trakeoentregas.Destino.ListaDestinos;
 import com.example.ingeniera.trakeoentregas.Destino.Usuarios;
 import com.example.ingeniera.trakeoentregas.R;
+import com.example.ingeniera.trakeoentregas.SingleToast;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -168,11 +169,11 @@ public class QrReader extends AppCompatActivity {
                                             }
                                         }
                                         if (noEsta) {
-                                            Toast.makeText(QrReader.this, "No se encuentra", Toast.LENGTH_SHORT).show();
+                                            SingleToast.show(QrReader.this, "No se encuentra", Toast.LENGTH_SHORT);
                                         }
                                         break;
                                     default:
-                                        Toast.makeText(QrReader.this, "Intente Nuevamente", Toast.LENGTH_SHORT).show();
+                                        SingleToast.show(QrReader.this, "Intente Nuevamente", Toast.LENGTH_SHORT);
                                         break;
                                 }
                             }
@@ -190,13 +191,12 @@ public class QrReader extends AppCompatActivity {
         switch (requestCode) {
             case CAMERA_REQUEST: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(QrReader.this, "Permiso aceptado", Toast.LENGTH_SHORT).show();
+                    SingleToast.show(QrReader.this, "Permiso aceptado", Toast.LENGTH_SHORT);
                     Intent i = new Intent(QrReader.this, QrReader.class);
                     startActivity(i);
                     finish();
                 } else {
-
-                    Toast.makeText(QrReader.this, "Permiso NO aceptado", Toast.LENGTH_SHORT).show();
+                    SingleToast.show(QrReader.this, "Permiso NO aceptado", Toast.LENGTH_SHORT);
                 }
                 return;
             }

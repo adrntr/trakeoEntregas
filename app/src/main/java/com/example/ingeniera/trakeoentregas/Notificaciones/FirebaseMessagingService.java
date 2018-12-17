@@ -1,11 +1,16 @@
 package com.example.ingeniera.trakeoentregas.Notificaciones;
 
+import android.app.Activity;
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Binder;
+import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.ingeniera.trakeoentregas.Destino.ListaDestinos;
@@ -20,6 +25,12 @@ import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.alm
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
 
 
+
+    @Override
+    public void onCreate() {
+
+    }
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
@@ -28,6 +39,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         TaskObtenerDatosRuta taskObtenerDatosRuta = new TaskObtenerDatosRuta(this);
         taskObtenerDatosRuta.execute(almacenDestinos.getIdHojaDeRuta());
+
+
 
     }
 
@@ -51,6 +64,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         manager.notify(0,builder.build());
 
     }
+
 
 
 }
