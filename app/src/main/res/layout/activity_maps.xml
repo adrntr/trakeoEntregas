@@ -16,7 +16,7 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:background="@color/colorPrimary"
-            android:text="IR A TODOS"
+            android:text="IR A Pendientes"
             android:textColor="@color/cardview_light_background"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

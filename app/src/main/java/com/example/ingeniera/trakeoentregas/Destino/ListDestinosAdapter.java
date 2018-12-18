@@ -207,27 +207,27 @@ public class ListDestinosAdapter extends RecyclerView.Adapter<ListDestinosAdapte
             }
         }
 
-/*
+
         View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 switch (v.getId()){
                     case R.id.cardviewTransporte:
+
                         int id=Integer.parseInt(codigoClienteTv.getText().toString());
+
                         ArrayList<Destinos> destinos3 = almacenDestinos.getArrayList("arrayDestinosKey");
                         for(int i=0;i<destinos3.size();i++){
-                            if (destinos3.get(i).getId()==id){
-                                TaskConsultarQrCode taskConsultarQrCode = new TaskConsultarQrCode(,destinos3,i);
+                            if (destinos3.get(i).getId()==id&&(!destinos3.get(i).getEntregado())&&(!destinos3.get(i).getCancelado())){
+                                TaskConsultarQrCode taskConsultarQrCode = new TaskConsultarQrCode(mCtx,destinos3,i);
                                 taskConsultarQrCode.execute(String.valueOf(destinos3.get(i).getId_externo()),String.valueOf(destinos3.get(i).getId_tipo_registro()),"1",String.valueOf(destinos3.get(i).getId()));
                             }
                         }
-
-                        SingleToast.show(mCtx,"LONG CLICK "+codigoClienteTv.getText().toString(),Toast.LENGTH_SHORT);
                         break;
                 }
                 return true;
             }
-        };*/
+        };
     }
 }
 

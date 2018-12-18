@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ingeniera.trakeoentregas.Destino.Destinos;
+import com.example.ingeniera.trakeoentregas.Destino.ListaDestinos;
 import com.example.ingeniera.trakeoentregas.Destino.Usuarios;
 import com.example.ingeniera.trakeoentregas.R;
 import com.example.ingeniera.trakeoentregas.SingleToast;
@@ -109,6 +111,9 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                                     entregarTransporteInfoTv.setVisibility(View.GONE);
                                     cancelarEntregaTransporteInfoTv.setVisibility(View.VISIBLE);
                                     switchAB.setVisibility(View.GONE);
+                                }else if (context instanceof ListaDestinos){
+                                    RecyclerView recyclerView = ((Activity) context).findViewById(R.id.recyclerView);
+                                    recyclerView.getAdapter().notifyDataSetChanged();
                                 }
 
                             }else if(mensaje.equals("Ya se ha marcado como despachado")) {

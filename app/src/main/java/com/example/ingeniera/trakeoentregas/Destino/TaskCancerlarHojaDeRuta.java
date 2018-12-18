@@ -73,6 +73,7 @@ public class TaskCancerlarHojaDeRuta extends AsyncTask<String ,Void,String > {
                             if (error.equals("false")){
                                 progreso.dismiss();
                                 SingleToast.show(context,"Finalizado Correctamente",Toast.LENGTH_SHORT);
+                                almacenDestinos.setFiltros(true,true,true,true);
                                 ArrayList<Destinos> destinos=new ArrayList<>();
                                 almacenDestinos.saveArrayDestinosBackUp(destinos);
 
