@@ -303,4 +303,23 @@ public class AlmacenDestinos {
     }
     /***********/
 
+    public void setFiltros(Boolean pendiente,Boolean cumplido,Boolean cancelado,Boolean agregado) {
+
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS, Context.MODE_PRIVATE); //Se crea un archivo de nombre PREFERENCIAS para guardar las puntuaciones
+        SharedPreferences.Editor editor = preferencias.edit(); //crea un editor para modificar el archivo
+        editor.putBoolean("pendienteKey",pendiente);
+        editor.putBoolean("cumplidoKey",cumplido);
+        editor.putBoolean("canceladoKey",cancelado);
+        editor.putBoolean("agregadoKey",agregado);
+        editor.commit();//aplico los cambios
+
+    }
+
+
+    public Boolean getFiltros (String key){
+        SharedPreferences preferencias = context.getSharedPreferences(PREFERENCIAS,Context.MODE_PRIVATE);
+        Boolean filtro = preferencias.getBoolean(key,true); //me devuelve el string, si no lo encuentra ""
+        return filtro;
+    }
+
 }

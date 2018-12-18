@@ -92,7 +92,7 @@ public class TaskCancelarDestino extends AsyncTask<String,Void,String> {
                             }else if (context instanceof TransporteInfo){
                                 ((Activity)context).recreate();
                             }
-                            SingleToast.show(context,"Realizado con éxito",Toast.LENGTH_SHORT);
+                            //SingleToast.show(context,"Realizado con éxito",Toast.LENGTH_SHORT);
 
 
                         }else {

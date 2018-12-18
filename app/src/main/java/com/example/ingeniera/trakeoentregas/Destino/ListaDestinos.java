@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.example.ingeniera.trakeoentregas.Entregas.QrReader;
@@ -51,6 +52,10 @@ public class ListaDestinos extends AppCompatActivity{
     RealTimeLocation realTimeLocation;
     SwipeRefreshLayout swipeRefreshLayout;
 
+    CheckBox cumplidoCb,agregadoCb,canceladoCb,pendienteCb;
+
+
+
     Thread uiThread;
     Handler handler;
 
@@ -69,6 +74,22 @@ public class ListaDestinos extends AppCompatActivity{
         irATodos.setOnClickListener(clicListener);
         recyclerView=findViewById(R.id.recyclerView);
         swipeRefreshLayout=findViewById(R.id.swiperefresh);
+        cumplidoCb=findViewById(R.id.cumplidosCb);
+        agregadoCb=findViewById(R.id.agregadosCb);
+        canceladoCb=findViewById(R.id.canceladosCb);
+        pendienteCb=findViewById(R.id.pendienteCb);
+
+        canceladoCb.setOnClickListener(clicListener);
+        cumplidoCb.setOnClickListener(clicListener);
+        pendienteCb.setOnClickListener(clicListener);
+        agregadoCb.setOnClickListener(clicListener);
+
+        cumplidoCb.setChecked(almacenDestinos.getFiltros("cumplidoKey"));
+        pendienteCb.setChecked(almacenDestinos.getFiltros("pendienteKey"));
+        agregadoCb.setChecked(almacenDestinos.getFiltros("agregadoKey"));
+        canceladoCb.setChecked(almacenDestinos.getFiltros("canceladoKey"));
+
+
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -159,6 +180,21 @@ public class ListaDestinos extends AppCompatActivity{
                     direccionesMapsApi.irAGoogleMaps();
 
                     break;
+               /* case  R.id.cumplidosCb:
+
+                    break;
+                case R.id.agregadosCb:
+                    break;
+                case R.id.canceladosCb:
+                    break;
+                case R.id.pendienteCb:
+                    break;
+                    */
+                    default:
+                        almacenDestinos.setFiltros(pendienteCb.isChecked(),cumplidoCb.isChecked(),canceladoCb.isChecked(),agregadoCb.isChecked());
+                        recyclerView.getAdapter().notifyDataSetChanged();
+                        break;
+
             }
         }
     };

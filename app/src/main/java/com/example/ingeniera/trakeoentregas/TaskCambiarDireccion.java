@@ -131,34 +131,31 @@ public class TaskCambiarDireccion extends AsyncTask<String,Void,String> {
                 final Double lat = (Double) ((JSONObject)((JSONObject) ((JSONObject) jResultados.get(0)).get("geometry")).get("location")).get("lat");
                 final Double lng = (Double) ((JSONObject)((JSONObject) ((JSONObject) jResultados.get(0)).get("geometry")).get("location")).get("lng");
                 final String formatedAddress= (String) (((JSONObject) jResultados.get(0)).get("formatted_address"));
-                SingleToast.show(context,succed+String.valueOf(lat)+String.valueOf(lng)+formatedAddress,Toast.LENGTH_SHORT);
                 progreso.dismiss();
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                alertDialogBuilder
-                        .setTitle("Cambiar por " + formatedAddress)
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                TaskEnviarDireccion taskEnviarDireccion = new TaskEnviarDireccion(context,idDestino,lat,lng,formatedAddress);
-                                taskEnviarDireccion.execute();
-                            }
-                        })
-                        .setNegativeButton("Cancel",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                // create alert dialog
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                // show it
-                alertDialog.show();
 
+                if (formatedAddress.matches(".*\\d+.*")){
 
-
-
-
-
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                    alertDialogBuilder
+                            .setTitle("Cambiar por " + formatedAddress)
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    TaskEnviarDireccion taskEnviarDireccion = new TaskEnviarDireccion(context,idDestino,lat,lng,formatedAddress);
+                                    taskEnviarDireccion.execute();
+                                }
+                            })
+                            .setNegativeButton("Cancel",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                }else {
+                    SingleToast.show(context,"No se encuentra - Sea más específico",0);
+                }
 
             }else {
                 SingleToast.show(context,"No se encuentra la dirección",Toast.LENGTH_SHORT);
@@ -238,7 +235,7 @@ class TaskEnviarDireccion extends AsyncTask<String ,Void,String >{
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        SingleToast.show(context, "Error - Intente nuevamente",Toast.LENGTH_SHORT);
+                        SingleToast.show(context, "Error - "+e.toString(),Toast.LENGTH_SHORT);
                         progreso.dismiss();
                     }
                 }else{
