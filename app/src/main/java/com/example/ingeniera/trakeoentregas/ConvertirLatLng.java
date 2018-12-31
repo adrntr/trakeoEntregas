@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
+
 public class ConvertirLatLng {
     private Context context;
     private AddressResultReceiver mResultReceiver;
@@ -48,8 +50,12 @@ public class ConvertirLatLng {
             String mAddressOutput = resultData.getString(FetchAddressIntentService.Constants.RESULT_DATA_KEY);
             if (mAddressOutput == null) {
                 mAddressOutput = "";
+            }else {
+                //Toast.makeText(context,mAddressOutput,Toast.LENGTH_SHORT).show();
+
+                almacenDestinos.setCurrentAddress(mAddressOutput);
             }
-            //Toast.makeText(context,mAddressOutput,Toast.LENGTH_SHORT).show();
+
 
             // Show a toast message if an address was found.
             if (resultCode == FetchAddressIntentService.Constants.SUCCESS_RESULT) {

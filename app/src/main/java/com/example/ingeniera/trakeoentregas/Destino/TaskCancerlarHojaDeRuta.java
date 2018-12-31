@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.urlSistemasAndifIP;
 
 public class TaskCancerlarHojaDeRuta extends AsyncTask<String ,Void,String > {
 
@@ -46,7 +47,7 @@ public class TaskCancerlarHojaDeRuta extends AsyncTask<String ,Void,String > {
         protected void onPreExecute() {
             progreso=new ProgressDialog(context);
             progreso.setMessage("Finalizando hoja de ruta...");
-            progreso.setCancelable(true);
+            progreso.setCancelable(false);
             progreso.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
@@ -59,7 +60,8 @@ public class TaskCancerlarHojaDeRuta extends AsyncTask<String ,Void,String > {
         @Override
         protected String doInBackground(final String... strings) {
             RequestQueue queue = Volley.newRequestQueue(context);
-            String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/marcar-en-curso.php";
+            //String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/marcar-en-curso.php";
+            String url = urlSistemasAndifIP+"/pruebas/prueba-remito-transporte/marcar-en-curso.php";
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
@@ -71,7 +73,7 @@ public class TaskCancerlarHojaDeRuta extends AsyncTask<String ,Void,String > {
                             String error=jsonObject.getString("error");
                             String mensaje= jsonObject.getString("mensaje");
                             if (error.equals("false")){
-                                progreso.dismiss();
+
                                 SingleToast.show(context,"Finalizado Correctamente",Toast.LENGTH_SHORT);
                                 almacenDestinos.setFiltros(true,true,true,true);
                                 ArrayList<Destinos> destinos=new ArrayList<>();
@@ -83,24 +85,27 @@ public class TaskCancerlarHojaDeRuta extends AsyncTask<String ,Void,String > {
                                 } else {
                                     almacenDestinos.setEstadoRuta(1);
                                 }
+                                SingleToast.show(context,"Finalizado Correctamente",Toast.LENGTH_SHORT);
                                 Intent intent=new Intent(context,SolicitarDestinos.class);
                                 context.startActivity(intent);
                                 ((Activity)context).finish();
                             }else {
-                                progreso.dismiss();
+
                                 SingleToast.show(context,"Volver a intentar",Toast.LENGTH_SHORT);
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                             SingleToast.show(context, "Error - Intente nuevamente",Toast.LENGTH_SHORT);
-                            progreso.dismiss();
+
                         }
                     }else{
                         SingleToast.show(context,"Sin respuesta",Toast.LENGTH_SHORT);
                     }
 
+                    progreso.dismiss();
                 }
+
 
             }, new Response.ErrorListener() {
                 @Override

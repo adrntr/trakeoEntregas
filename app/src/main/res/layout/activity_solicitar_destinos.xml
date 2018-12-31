@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
     tools:context=".Ingreso.SolicitarDestinos">
 
 
@@ -52,6 +53,7 @@
         android:background="@color/colorPrimary"
         android:src="@drawable/keycar"
         android:visibility="visible"
+
         app:elevation="7dp"
         app:fabCustomSize="70dp"
         app:layout_constraintEnd_toEndOf="parent"

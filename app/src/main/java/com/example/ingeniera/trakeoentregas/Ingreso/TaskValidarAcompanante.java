@@ -40,7 +40,7 @@ public class TaskValidarAcompanante extends AsyncTask<String,Void,String> {
     protected void onPreExecute() {
         progreso=new ProgressDialog(context);
         progreso.setMessage("Verificando su DNI...");
-        progreso.setCancelable(true);
+        progreso.setCancelable(false);
         progreso.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -73,24 +73,22 @@ public class TaskValidarAcompanante extends AsyncTask<String,Void,String> {
                             Usuarios acompañante = new Usuarios(nombreApellido,strings[0],"Acompañante");
                             acompañantes.add(acompañante);
                             almacenDestinos.setArrayUsuarios(acompañantes);
-                            progreso.dismiss();
                             ((Activity)context).recreate();
                             ((Activity)context).overridePendingTransition(0, 0);
 
                         }else {
                             SingleToast.show(context, "No se encuentra su DNI", Toast.LENGTH_SHORT);
-                            progreso.dismiss();
                         }
 
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        progreso.dismiss();
                     }
                 }else{
                     SingleToast.show(context, "Sin respuesta", Toast.LENGTH_SHORT);
                 }
 
+                progreso.dismiss();
             }
 
         }, new Response.ErrorListener() {

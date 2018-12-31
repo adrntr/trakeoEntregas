@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.urlSistemasAndifIP;
 
 public class TaskCambiarDireccion extends AsyncTask<String,Void,String> {
 
@@ -58,7 +59,7 @@ public class TaskCambiarDireccion extends AsyncTask<String,Void,String> {
     protected void onPreExecute() {
         progreso=new ProgressDialog(context);
         progreso.setMessage("Verificando dirección");
-        progreso.setCancelable(true);
+        progreso.setCancelable(false);
         progreso.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -73,7 +74,7 @@ public class TaskCambiarDireccion extends AsyncTask<String,Void,String> {
     protected String doInBackground(String... strings) {
         String responseString="";
         try {
-            responseString=requestDirection("https://maps.googleapis.com/maps/api/geocode/json?address="+strings[0]+"&key=AIzaSyAh43n9GmtYXG_Mr88OyNUJNltxQbYPftk");
+            responseString=requestDirection("https://maps.googleapis.com/maps/api/geocode/json?address="+strings[0]+"&key=AIzaSyB6BulEANLih38n5t7jNsLtt_q-OBMfh2Q");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -131,9 +132,8 @@ public class TaskCambiarDireccion extends AsyncTask<String,Void,String> {
                 final Double lat = (Double) ((JSONObject)((JSONObject) ((JSONObject) jResultados.get(0)).get("geometry")).get("location")).get("lat");
                 final Double lng = (Double) ((JSONObject)((JSONObject) ((JSONObject) jResultados.get(0)).get("geometry")).get("location")).get("lng");
                 final String formatedAddress= (String) (((JSONObject) jResultados.get(0)).get("formatted_address"));
-                progreso.dismiss();
 
-                if (formatedAddress.matches(".*\\d+.*")){
+                if (formatedAddress.matches(".*\\d+.*")){ //si tiene un numero
 
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                     alertDialogBuilder
@@ -159,12 +159,14 @@ public class TaskCambiarDireccion extends AsyncTask<String,Void,String> {
 
             }else {
                 SingleToast.show(context,"No se encuentra la dirección",Toast.LENGTH_SHORT);
-                progreso.dismiss();
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            progreso.dismiss();
+
         }
+
+        progreso.dismiss();
 
     }
 
@@ -189,7 +191,7 @@ class TaskEnviarDireccion extends AsyncTask<String ,Void,String >{
     protected void onPreExecute() {
         progreso=new ProgressDialog(context);
         progreso.setMessage("Enviando dirección...");
-        progreso.setCancelable(true);
+        progreso.setCancelable(false);
         progreso.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -202,7 +204,8 @@ class TaskEnviarDireccion extends AsyncTask<String ,Void,String >{
     @Override
     protected String doInBackground(final String... strings) {
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/cambiar-direccion-transporte.php";
+        //String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/cambiar-direccion-transporte.php";
+        String url = urlSistemasAndifIP+"/pruebas/prueba-remito-transporte/cambiar-direccion-transporte.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -215,7 +218,7 @@ class TaskEnviarDireccion extends AsyncTask<String ,Void,String >{
                         String error=jsonObject.getString("error");
                         String mensaje= jsonObject.getString("mensaje");
                         if (error.equals("false")){
-                            progreso.dismiss();
+
                             SingleToast.show(context,"Cambiado correctamente",Toast.LENGTH_SHORT);
                             ArrayList<Destinos> destinos=new ArrayList<>();
                             destinos=almacenDestinos.getArrayList("arrayDestinosKey");
@@ -229,20 +232,20 @@ class TaskEnviarDireccion extends AsyncTask<String ,Void,String >{
                                 }
                             }
                         }else {
-                            progreso.dismiss();
+
                             SingleToast.show(context,"Error - "+mensaje,Toast.LENGTH_SHORT);
                         }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                         SingleToast.show(context, "Error - "+e.toString(),Toast.LENGTH_SHORT);
-                        progreso.dismiss();
+
                     }
                 }else{
                     SingleToast.show(context,"Sin respuesta",Toast.LENGTH_SHORT);
-                    progreso.dismiss();
-                }
 
+                }
+                progreso.dismiss();
             }
 
         }, new Response.ErrorListener() {

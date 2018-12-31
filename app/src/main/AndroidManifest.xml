@@ -68,7 +68,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".CambiarDireccion"></activity>
+        <activity android:name=".CambiarDireccion" />
+        <activity android:name=".CambiarHorarios"></activity>
     </application>
 
 </manifest>

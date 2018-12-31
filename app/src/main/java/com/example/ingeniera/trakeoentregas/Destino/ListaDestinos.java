@@ -55,20 +55,10 @@ public class ListaDestinos extends AppCompatActivity{
     CheckBox cumplidoCb,agregadoCb,canceladoCb,pendienteCb;
 
 
-
-    Thread uiThread;
-    Handler handler;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_layout);
-
-        uiThread = Thread.currentThread();
-        handler=new Handler();
-
-
 
         irATodos=findViewById(R.id.irATodosBt);
         irATodos.setOnClickListener(clicListener);
@@ -88,8 +78,6 @@ public class ListaDestinos extends AppCompatActivity{
         pendienteCb.setChecked(almacenDestinos.getFiltros("pendienteKey"));
         agregadoCb.setChecked(almacenDestinos.getFiltros("agregadoKey"));
         canceladoCb.setChecked(almacenDestinos.getFiltros("canceladoKey"));
-
-
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -116,7 +104,10 @@ public class ListaDestinos extends AppCompatActivity{
                 setTitle("Hoja Nº"+almacenDestinos.getIdHojaDeRuta()+" - "+usuarios.get(i).getNombre());
             }
         }
+
+
         almacenDestinos.setGoogleMapsApp(false);
+
 
     }
 
@@ -131,8 +122,10 @@ public class ListaDestinos extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         realTimeLocation.startLocationUpdates(mFusedLocationClient);
+
         recyclerView=findViewById(R.id.recyclerView);
         recyclerView.getAdapter().notifyDataSetChanged();
+
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
     }
@@ -180,16 +173,7 @@ public class ListaDestinos extends AppCompatActivity{
                     direccionesMapsApi.irAGoogleMaps();
 
                     break;
-               /* case  R.id.cumplidosCb:
 
-                    break;
-                case R.id.agregadosCb:
-                    break;
-                case R.id.canceladosCb:
-                    break;
-                case R.id.pendienteCb:
-                    break;
-                    */
                     default:
                         almacenDestinos.setFiltros(pendienteCb.isChecked(),cumplidoCb.isChecked(),canceladoCb.isChecked(),agregadoCb.isChecked());
                         recyclerView.getAdapter().notifyDataSetChanged();

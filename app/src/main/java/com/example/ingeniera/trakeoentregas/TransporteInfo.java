@@ -34,9 +34,9 @@ import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.alm
 public class TransporteInfo extends AppCompatActivity {
 
     private static final int CAMBIAR_DIRECCION = 1000;
-    private TextView transporteTv,direccionTv,clienteTv,cantidadTv,tipoTv,telefonoTv,cierreTV,idDestinoTv,entregadoTv,entregadoTv3,entregarTransporteInfoTv,irTransporteInfoTv,cancelarEntregaTransporteInfoTv;
+    private TextView transporteTv,direccionTv,clienteTv,tipoTv,telefonoTv,cierreTV,idDestinoTv,entregadoTv,entregadoTv3,entregarTransporteInfoTv,irTransporteInfoTv,cancelarEntregaTransporteInfoTv;
     private ImageView tipoEnvioInfoIv;
-    private FloatingActionButton entregarTransporteInfoFb,irTransporteInfoFb,cancelarEntregaBt,cambiarDireccionBt;
+    private FloatingActionButton entregarTransporteInfoFb,irTransporteInfoFb,cancelarEntregaBt,cambiarDireccionBt,cambiarHorarioBt;
     Switch switchAB;
 
     int idDestino;
@@ -50,7 +50,7 @@ public class TransporteInfo extends AppCompatActivity {
         transporteTv=findViewById(R.id.transporteTv);
         direccionTv=findViewById(R.id.direccionTv);
         clienteTv=findViewById(R.id.clienteTv);
-        cantidadTv=findViewById(R.id.cantidadTv);
+
         tipoTv=findViewById(R.id.tipoTv);
         telefonoTv=findViewById(R.id.telefonoTv);
         cierreTV=findViewById(R.id.cierreTv);
@@ -65,6 +65,8 @@ public class TransporteInfo extends AppCompatActivity {
         irTransporteInfoTv=findViewById(R.id.irTransporteInfoTv);
         cancelarEntregaTransporteInfoTv=findViewById(R.id.cancelarEntregaTransporteInfoTv);
         cambiarDireccionBt=findViewById(R.id.cambiarDireccionBt);
+        cambiarHorarioBt=findViewById(R.id.cambiarHorariobt);
+
 
 
 
@@ -72,6 +74,7 @@ public class TransporteInfo extends AppCompatActivity {
         entregarTransporteInfoFb.setOnClickListener(clicListener);
         irTransporteInfoFb.setOnClickListener(clicListener);
         cambiarDireccionBt.setOnClickListener(clicListener);
+        cambiarHorarioBt.setOnClickListener(clicListener);
 
         Bundle extras = getIntent().getExtras();
         idDestino=extras.getInt("idDestino");
@@ -85,10 +88,32 @@ public class TransporteInfo extends AppCompatActivity {
                 transporteTv.setText(destino.getNombre_transporte());
                 direccionTv.setText(destino.getDireccion());
                 clienteTv.setText(destino.getNombre_cliente());
-                cantidadTv.setText(String.valueOf(destino.getCantidad()));
-                tipoTv.setText(destino.getNombre_tipo_registro());
+                tipoTv.setText(destino.getMotivo());
                 telefonoTv.setText(destino.getTelefono());
-                cierreTV.setText("18:00");
+
+                String horario1Inicio=destino.gethorario1_inicio();
+                String horario1Fin=destino.gethorario1_fin();
+                String horario2Inicio=destino.gethorario2_incio();
+                String horario2Fin=destino.gethorario2_fin();
+
+
+
+
+                Boolean horario1InicioBool=(horario1Inicio==null||horario1Inicio.equals(""))? false : true;
+                Boolean horario1FinBool=(horario1Fin==null||horario1Fin.equals(""))? false : true;
+                Boolean horario2InicioBool=(horario2Inicio==null||horario2Inicio.equals(""))? false : true;
+                Boolean horario2FinBool=(horario2Fin==null||horario2Fin.equals(""))? false : true;
+
+                if (!horario1FinBool||!horario1InicioBool){
+                    horario1Fin="00:00";
+                    horario1Inicio="00:00";
+                }
+                if (!horario2InicioBool||!horario2FinBool){
+                    cierreTV.setText(horario1Inicio +" a " +horario1Fin  );
+                }else {
+                    cierreTV.setText(horario1Inicio +" a "+horario1Fin +" - "+ horario2Inicio +" a " +horario2Fin  );
+                }
+
                 idDestinoTv.setText(String.valueOf(destino.getId()));
                 if(destino.getEntregado()){
                     cancelarEntregaBt.setVisibility(View.VISIBLE);
@@ -96,7 +121,7 @@ public class TransporteInfo extends AppCompatActivity {
                     entregadoTv3.setVisibility(View.VISIBLE);
                     entregarTransporteInfoFb.setVisibility(View.GONE);
                     irTransporteInfoFb.setVisibility(View.GONE);
-                    entregadoTv.setText(destino.getFechaHoraEntrega());
+                    entregadoTv.setText(destino.getFecha_despacho());
                     irTransporteInfoTv.setVisibility(View.GONE);
                     entregarTransporteInfoTv.setVisibility(View.GONE);
                     cancelarEntregaTransporteInfoTv.setVisibility(View.VISIBLE);
@@ -119,14 +144,28 @@ public class TransporteInfo extends AppCompatActivity {
                     entregarTransporteInfoTv.setVisibility(View.VISIBLE);
                     cancelarEntregaTransporteInfoTv.setVisibility(View.GONE);
                 }
-                switch (destino.getId_tipo_registro()){
-                    case 1:
-                        tipoEnvioInfoIv.setImageResource(R.drawable.delivery);
-                        break;
-                    case 2:
+                Boolean pedido=false,sobre=false,publicidad=false;
+                ArrayList<Integer> idsTiposRegistro=destino.getIds_tipos_registro();
+                try{
+                    for (int j=0;j<idsTiposRegistro.size();j++){
+                        if (idsTiposRegistro.get(j)==1){
+                            pedido=true;
+                        }else if(idsTiposRegistro.get(j)==2){
+                            sobre=true;
+                        }else if (idsTiposRegistro.get(j)==3){
+                            publicidad=true;
+                        }
+                    }
+                    if(pedido||publicidad){
+                       tipoEnvioInfoIv.setImageResource(R.drawable.delivery);
+                    }else if (sobre){
                         tipoEnvioInfoIv.setImageResource(R.drawable.send);
-                        break;
-
+                    }
+                    if ((pedido||publicidad)&&sobre){
+                        tipoEnvioInfoIv.setImageResource(R.drawable.sobrecaja);
+                    }
+                }catch (NullPointerException e){
+                    SingleToast.show(TransporteInfo.this,e.toString(),1);
                 }
 
 
@@ -189,12 +228,30 @@ public class TransporteInfo extends AppCompatActivity {
                     intent3.putExtra("id",idDestino);
                     startActivityForResult(intent3,CAMBIAR_DIRECCION);
                     break;
+
+                case R.id.cambiarHorariobt:
+                    Intent intent4= new Intent(TransporteInfo.this,CambiarHorarios.class);
+                    intent4.putExtra("id",idDestino);
+                    startActivityForResult(intent4,CAMBIAR_DIRECCION);
+                    break;
                 case R.id.switchAB:
+
+                    int id3=Integer.parseInt(idDestinoTv.getText().toString());
+                    int h=0;
+
+                    ArrayList<Destinos> destinos4 = almacenDestinos.getArrayList("arrayDestinosKey");
+                    for(int i=0;i<destinos4.size();i++){
+                        if (destinos4.get(i).getId()==id3){
+                            h=i;
+                        }
+                    }
+
+
                     if (switchAB.isChecked()) {
-                        TaskCancelarDestino taskCancelarDestino = new TaskCancelarDestino(TransporteInfo.this);
+                        TaskCancelarDestino taskCancelarDestino = new TaskCancelarDestino(TransporteInfo.this,destinos4,h);
                         taskCancelarDestino.execute(String.valueOf(idDestino),String.valueOf(1));
                     } else {
-                        TaskCancelarDestino taskCancelarDestino = new TaskCancelarDestino(TransporteInfo.this);
+                        TaskCancelarDestino taskCancelarDestino = new TaskCancelarDestino(TransporteInfo.this,destinos4,h);
                         taskCancelarDestino.execute(String.valueOf(idDestino),String.valueOf(0));
                     }
                     break;

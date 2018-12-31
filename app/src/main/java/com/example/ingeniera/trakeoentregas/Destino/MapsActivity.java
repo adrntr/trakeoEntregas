@@ -163,11 +163,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             case 3:
                 direccionesMapsApi.agregarMarkers();
-                direccionesMapsApi.agregarLineas();
+                //direccionesMapsApi.agregarLineas();
                 break;
             case 4:
                 direccionesMapsApi.agregarMarkers();
-                direccionesMapsApi.agregarLineas();
+                //direccionesMapsApi.agregarLineas();
                 break;
         }
     }

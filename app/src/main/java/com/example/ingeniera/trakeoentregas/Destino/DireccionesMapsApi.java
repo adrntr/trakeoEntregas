@@ -65,7 +65,7 @@ public class DireccionesMapsApi {
         }
         String waypointsStr="",str_org = null,str_dest=null;
         if(pedirDestinos){
-            for (int i=0;i<waypoints.size();i++){
+            for (int i=0;i<waypoints.size()&&i<22;i++){
                 if(i==0){
                     waypointsStr+=waypoints.get(i).latitude+","+waypoints.get(i).longitude;
                 }else{
@@ -98,17 +98,21 @@ public class DireccionesMapsApi {
         String paramMaps=str_org+"&"+str_dest+"&"+sensor+"&"+mode+"&"+"waypoints="+waypointsStr;
         String output = "json";
         //create url to request
-        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+param+"&key=AIzaSyBh8thmOqQy78-ozgmQOYIdKgqHDCKgDME";
+        //String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+param+"&key=AIzaSyAh43n9GmtYXG_Mr88OyNUJNltxQbYPftk";
         String urlGoogleMaps="https://www.google.com/maps/dir/?api=1&"+paramMaps;
         almacenDestinos.setUrlGoogleMaps(urlGoogleMaps);
+
+        /*
         if(pedirDestinos){
             TaskRequestDirections taskRequestDirections=new TaskRequestDirections();
             taskRequestDirections.execute(url);
         }
-
+        */
 
 
     }
+
+    /*ESTO ES PARA OBTENER LAS LINEAS Y LA INFORMACION DEL RECORRIDO (SI SON MAS DE 23 NO ENTREGA NADA)
 
     public class TaskRequestDirections extends AsyncTask<String,Void,String> {
 
@@ -206,7 +210,7 @@ public class DireccionesMapsApi {
             return;
         }
         if(lists.size()==0){
-            getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),true);
+            //getRequestedUrl(almacenDestinos.getArrayList("arrayDestinosKey"),true);
         }else {
             for (List<HashMap<String, String>> path : lists) {
                 points = new ArrayList();
@@ -230,6 +234,7 @@ public class DireccionesMapsApi {
 
     }
 
+    */
     public void agregarMarkers() {
 
         ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
@@ -239,16 +244,20 @@ public class DireccionesMapsApi {
 
             if (destinos.get(i).getEntregado()){
                 colocarMarker(BitmapDescriptorFactory.HUE_GREEN,destinos.get(i));
+            }else if(destinos.get(i).getCancelado()){
+                colocarMarker(BitmapDescriptorFactory.HUE_RED,destinos.get(i));
+            }else if(destinos.get(i).getAgregadoDurRecorrido()) {
+                colocarMarker(BitmapDescriptorFactory.HUE_BLUE,destinos.get(i));
             }else{
                 switch (destinos.get(i).getId_tipo_registro()){
                     case 1:
-                        colocarMarker(BitmapDescriptorFactory.HUE_BLUE,destinos.get(i));
+                        colocarMarker(BitmapDescriptorFactory.HUE_AZURE,destinos.get(i));
                         break;
                     case 2:
-                        colocarMarker(BitmapDescriptorFactory.HUE_RED,destinos.get(i));
+                        colocarMarker(BitmapDescriptorFactory.HUE_CYAN,destinos.get(i));
                         break;
                     default:
-                        colocarMarker(BitmapDescriptorFactory.HUE_BLUE,destinos.get(i));
+                        colocarMarker(BitmapDescriptorFactory.HUE_AZURE,destinos.get(i));
                         break;
 
                 }
@@ -261,15 +270,23 @@ public class DireccionesMapsApi {
     private void colocarMarker(float hue, Destinos destino) {
         Marker marker;
         String title;
-        if(destino.getNombre_transporte()==""){
-            title=destino.getNombre_transporte();
+        String estado = "";
+        if(destino.getNombre_transporte().equals("SUCURSAL CLIENTE")){
+            title="Cliente: "+destino.getNombre_cliente()+" --- Dir: "+destino.getDireccion();
         }else {
-            title=destino.getNombre_cliente();
+            title="Transp: "+destino.getNombre_transporte()+" --- Dir: "+destino.getDireccion();
+        }
+        if (!destino.getEntregado()){
+            estado="Pendiente";
+        }else if(destino.getEntregado()){
+            estado="Entregado";
+        }else if(destino.getCancelado()){
+            estado="Cancelado";
         }
         marker=mMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.defaultMarker(hue))
                 .title(title)
-                .snippet(String.valueOf(destino.getOrden()))
+                .snippet("Pos: "+ String.valueOf(destino.getOrden())+" -- Tipo: "+destino.getMotivo()+" -- Estado: "+estado)
                 .position(new LatLng(destino.getLatitude(), destino.getLongitude())));
         marker.setTag(destino.getId());
 

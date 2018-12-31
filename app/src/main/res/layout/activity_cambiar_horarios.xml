@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CambiarHorarios">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/cambiarHorarioTotalFb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/cambiar"
+        app:fabCustomSize="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horario2FinFb"
+        app:maxImageSize="100dp" />
+
+    <TextView
+        android:id="@+id/horario1FinTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="hh:mm"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/horario1InicioTv"
+        app:layout_constraintTop_toTopOf="@+id/textview4" />
+
+    <TextView
+        android:id="@+id/texview4"
+        android:layout_width="0dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
+        android:text="Incio"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview5" />
+
+    <TextView
+        android:id="@+id/textview6"
+        android:layout_width="0dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
+        android:text="Fin"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/texview4" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="584dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Horario 1"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cambiarDireccionTv2" />
+
+    <TextView
+        android:id="@+id/texasdadadasda"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="32dp"
+        android:text="Incio"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textview4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Fin"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="@+id/texasdadadasda"
+        app:layout_constraintTop_toBottomOf="@+id/texasdadadasda" />
+
+    <TextView
+        android:id="@+id/textview5"
+        android:layout_width="0dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Horario 2"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview4" />
+
+    <TextView
+        android:id="@+id/cambiarDireccionTv2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Cambiar horarios"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+    <TextView
+        android:id="@+id/horario1InicioTv"
+        android:layout_width="wrap_content"
+        android:layout_height="31dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="4dp"
+        android:text="hh:mm"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/texasdadadasda"
+        app:layout_constraintTop_toTopOf="@+id/texasdadadasda" />
+
+    <TextView
+        android:id="@+id/horaria2InicioTv"
+        android:layout_width="72dp"
+        android:layout_height="31dp"
+        android:text="hh:mm"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/horario1FinTv"
+        app:layout_constraintTop_toTopOf="@+id/texview4" />
+
+    <TextView
+        android:id="@+id/horario2FinTv"
+        android:layout_width="wrap_content"
+        android:layout_height="31dp"
+        android:layout_marginTop="4dp"
+        android:text="hh:mm"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/horaria2InicioTv"
+        app:layout_constraintTop_toTopOf="@+id/textview6" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/horario1IncioFb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginLeft="100dp"
+        android:clickable="true"
+        android:src="@drawable/edithour"
+        app:fabCustomSize="40dp"
+        app:layout_constraintStart_toEndOf="@+id/horario1InicioTv"
+        app:layout_constraintTop_toTopOf="@+id/horario1InicioTv"
+        app:maxImageSize="40dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/horario2InicioFb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/edithour"
+        app:fabCustomSize="40dp"
+        app:layout_constraintStart_toStartOf="@+id/horario1FinFb"
+        app:layout_constraintTop_toTopOf="@+id/horaria2InicioTv"
+        app:maxImageSize="40dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/horario1FinFb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/edithour"
+        app:fabCustomSize="40dp"
+        app:layout_constraintStart_toStartOf="@+id/horario1IncioFb"
+        app:layout_constraintTop_toTopOf="@+id/horario1FinTv"
+        app:maxImageSize="40dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/horario2FinFb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/edithour"
+        app:fabCustomSize="40dp"
+        app:layout_constraintStart_toStartOf="@+id/horario2InicioFb"
+        app:layout_constraintTop_toTopOf="@+id/horario2FinTv"
+        app:maxImageSize="40dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+</android.support.constraint.ConstraintLayout>

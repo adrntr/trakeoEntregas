@@ -28,19 +28,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.urlSistemasAndifIP;
 
 public class TaskCancelarDestino extends AsyncTask<String,Void,String> {
     Context context;
     private ProgressDialog progreso;
+    ArrayList<Destinos> destinos;
+    int i;
 
-    public TaskCancelarDestino(Context context) {
+    public TaskCancelarDestino(Context context,ArrayList<Destinos> destinos,int i) {
         this.context=context;
+        this.destinos=destinos;
+        this.i=i;
     }
 
     @Override
     protected void onPreExecute() {
         progreso=new ProgressDialog(context);
-        progreso.setCancelable(true);
+        progreso.setCancelable(false);
         progreso.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -58,19 +63,19 @@ public class TaskCancelarDestino extends AsyncTask<String,Void,String> {
             progreso.setMessage("Activando destino");
         }
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/cancelar-entrega.php";
+        //String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/cancelar-entrega.php";
+        String url = urlSistemasAndifIP+"/pruebas/prueba-remito-transporte/cancelar-entrega.php";
 
         final StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
                 if(response!=null){
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         String error=jsonObject.getString("error");
                         String mensaje= jsonObject.getString("mensaje");
                         if (error.equals("false")){
-                            progreso.dismiss();
+
                             ArrayList<Destinos> destinos=almacenDestinos.getArrayList("arrayDestinosKey");
                             for (int i = 0;i<destinos.size();i++){
                                 if (destinos.get(i).getId()==Integer.valueOf(strings[0])){
@@ -96,7 +101,7 @@ public class TaskCancelarDestino extends AsyncTask<String,Void,String> {
 
 
                         }else {
-                            progreso.dismiss();
+
                             SingleToast.show(context,"Error "+ mensaje,Toast.LENGTH_SHORT);
                             if (context instanceof ListaDestinos){
                                 RecyclerView recyclerView = ((Activity) context).findViewById(R.id.recyclerView);
@@ -109,7 +114,7 @@ public class TaskCancelarDestino extends AsyncTask<String,Void,String> {
                     } catch (JSONException e) {
                         e.printStackTrace();
                         SingleToast.show(context, "Error - Intente nuevamente",Toast.LENGTH_SHORT);
-                        progreso.dismiss();
+
                         if (context instanceof ListaDestinos){
                             RecyclerView recyclerView = ((Activity) context).findViewById(R.id.recyclerView);
                             recyclerView.getAdapter().notifyDataSetChanged();
@@ -118,7 +123,7 @@ public class TaskCancelarDestino extends AsyncTask<String,Void,String> {
                         }
                     }
                 }else{
-                    progreso.dismiss();
+
                     SingleToast.show(context,"Sin respuesta",Toast.LENGTH_SHORT);
                     if (context instanceof ListaDestinos){
                         RecyclerView recyclerView = ((Activity) context).findViewById(R.id.recyclerView);
@@ -126,6 +131,11 @@ public class TaskCancelarDestino extends AsyncTask<String,Void,String> {
                     } else if (context instanceof TransporteInfo){
                         ((Activity)context).recreate();
                     }
+                }
+                try{
+                    progreso.dismiss();
+                }catch (IllegalArgumentException e){
+                    SingleToast.show(context,e.toString(),1);
                 }
 
             }
@@ -146,7 +156,21 @@ public class TaskCancelarDestino extends AsyncTask<String,Void,String> {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("id_registro", strings[0]);
+                //params.put("id_registro", strings[0]);
+
+                //ENTREGO TODOS LOS ID PORQUE SI ES PUBLICIDAD TIENEN IDS DIFERENTES
+                ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
+                ArrayList<Integer> idsRegistroRuta=new ArrayList<>();
+                for (int j= 0 ; j<destinos.size();j++){
+                    if (destinos.get(i).getId()==Integer.valueOf(strings[0])){
+                        idsRegistroRuta=destinos.get(i).getIds_registro_ruta();
+                        for (int k=0;k<idsRegistroRuta.size();k++){
+                            params.put("id_registro_"+k,String.valueOf(idsRegistroRuta.get(k)));
+                        }
+                        break;
+                    }
+                }
+
                 params.put("cancelar", strings[1]);
                 return params;
             }

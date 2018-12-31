@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.urlSistemasAndifIP;
 
 public class TaskObtenerHojasRutas extends AsyncTask<String,Void,String> {
 
@@ -41,7 +42,7 @@ public class TaskObtenerHojasRutas extends AsyncTask<String,Void,String> {
     protected void onPreExecute() {
         progreso=new ProgressDialog(context);
         progreso.setMessage("Obteniendo hojas de ruta...");
-        progreso.setCancelable(true);
+        progreso.setCancelable(false);
         progreso.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -53,7 +54,8 @@ public class TaskObtenerHojasRutas extends AsyncTask<String,Void,String> {
     @Override
     protected String doInBackground(final String... strings) {
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/ultimas-hojas-ruta.php";
+        //String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/ultimas-hojas-ruta.php";
+        String url = urlSistemasAndifIP+"/pruebas/prueba-remito-transporte/ultimas-hojas-ruta.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -75,7 +77,6 @@ public class TaskObtenerHojasRutas extends AsyncTask<String,Void,String> {
                             hojasDeRutas.add(hojaDeRuta);
                         }
                         almacenDestinos.setArrayHojasDeRutas(hojasDeRutas);
-                        progreso.dismiss();
                         if (context instanceof SolicitarDestinos&&almacenDestinos.getEstadoRuta()==1){
                             RecyclerView RecyclerviewSolDes = ((Activity) context).findViewById(R.id.RecyclerviewSolDes);
                             RecyclerviewSolDes.getAdapter().notifyDataSetChanged();
@@ -87,18 +88,18 @@ public class TaskObtenerHojasRutas extends AsyncTask<String,Void,String> {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        SingleToast.show(context, "Error - "+ e.toString(), Toast.LENGTH_SHORT);
                     }
                 }else{
                     SingleToast.show(context, "Sin respuesta", Toast.LENGTH_SHORT);
                 }
-
+                progreso.dismiss();
             }
 
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 SingleToast.show(context, error.toString(), Toast.LENGTH_SHORT);
-
                 progreso.dismiss();
             }
         });

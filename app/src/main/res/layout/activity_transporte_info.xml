@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
     tools:context=".TransporteInfo"
     tools:layout_editor_absoluteY="25dp">
 
@@ -21,7 +22,7 @@
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/cambiarDireccionBt"
-        app:layout_constraintStart_toEndOf="@+id/textview34"
+        app:layout_constraintStart_toEndOf="@+id/horariosCardTv"
         app:layout_constraintTop_toBottomOf="@+id/transporteTv" />
 
     <TextView
@@ -56,7 +57,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView7"
-        app:layout_constraintTop_toBottomOf="@+id/cantidadTv" />
+        app:layout_constraintTop_toBottomOf="@+id/clienteTv" />
 
     <TextView
         android:id="@+id/cierreTv"
@@ -71,10 +72,22 @@
         android:text="18:00"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintEnd_toStartOf="@+id/cambiarHorariobt"
         app:layout_constraintStart_toEndOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/telefonoTv" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/cambiarHorariobt"
+        android:layout_width="wrap_content"
+        android:layout_height="47dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/cambiar"
+        app:fabCustomSize="47dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/telefonoTv"
+        app:maxImageSize="47dp" />
 
     <TextView
         android:id="@+id/idDestinoTv"
@@ -102,7 +115,7 @@
         app:layout_constraintEnd_toStartOf="@+id/idDestinoTv" />
 
     <TextView
-        android:id="@+id/textview34"
+        android:id="@+id/horariosCardTv"
         android:layout_width="200dp"
         android:layout_height="47dp"
         android:layout_marginStart="8dp"
@@ -125,20 +138,7 @@
         android:textColor="@color/colorPrimaryDark"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textview34" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="200dp"
-        android:layout_height="47dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Cantidad:"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="30sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/texview32" />
+        app:layout_constraintTop_toBottomOf="@+id/horariosCardTv" />
 
     <TextView
         android:id="@+id/textView7"
@@ -147,11 +147,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="Tipo:"
+        android:text="Motivo:"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toBottomOf="@+id/texview32" />
 
     <TextView
         android:id="@+id/textView8"
@@ -160,7 +160,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="Hora de cierre:"
+        android:text="Horarios:"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -183,24 +183,6 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView14"
         app:layout_constraintTop_toBottomOf="@+id/tipoTv" />
-
-    <TextView
-        android:id="@+id/cantidadTv"
-        android:layout_width="0dp"
-        android:layout_height="47dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:gravity="left|center"
-        android:text="4"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toBottomOf="@+id/clienteTv" />
 
     <TextView
         android:id="@+id/textView14"

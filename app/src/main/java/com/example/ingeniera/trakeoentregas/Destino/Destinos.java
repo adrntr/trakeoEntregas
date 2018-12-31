@@ -1,15 +1,87 @@
 package com.example.ingeniera.trakeoentregas.Destino;
 
+import java.util.ArrayList;
+
 public class Destinos {
 
     private Double latitude,longitude;
-    private String nombre_tipo_registro,nombre_cliente,nombre_transporte,direccion_transporte,telefono,fechaHoraEntrega,motivo,direccion;
-    private int id,id_cliente,cantidad,id_tipo_registro,orden,id_externo;
+    private String nombre_tipo_registro,nombre_cliente,nombre_transporte,direccion_transporte,telefono,fechaHoraEntrega,motivo,direccion
+            ,horario1_inicio,horario1_fin,horario2_incio,horario2_fin,fecha_despacho;
+    private int id,id_cliente,cantidad,id_tipo_registro,orden,id_externo,id_transporte;
     Boolean entregado,agregadoDurRecorrido,cancelado;
+
+    private ArrayList<Integer> ids_registro_ruta,ids_tipos_registro;
+
+    public ArrayList<Integer> getIds_tipos_registro() {
+        return ids_tipos_registro;
+    }
+
+    public void setIds_tipos_registro(ArrayList<Integer> ids_tipos_registro) {
+        this.ids_tipos_registro = ids_tipos_registro;
+    }
+
+    public String getFecha_despacho() {
+        return fecha_despacho;
+    }
+
+    public void setFecha_despacho(String fecha_despacho) {
+        this.fecha_despacho = fecha_despacho;
+    }
+
+    public ArrayList<Integer> getIds_registro_ruta() {
+        return ids_registro_ruta;
+    }
+
+    public void setIds_registro_ruta(ArrayList<Integer> ids_registro_ruta) {
+        this.ids_registro_ruta = ids_registro_ruta;
+    }
+
+    public int getId_transporte() {
+        return id_transporte;
+
+    }
+
+    public void setId_transporte(int id_transporte) {
+        this.id_transporte = id_transporte;
+    }
+
+    public String gethorario1_inicio() {
+        return horario1_inicio;
+    }
+
+    public void sethorario1_inicio(String horario1_inicio) {
+        this.horario1_inicio = horario1_inicio;
+    }
+
+    public String gethorario1_fin() {
+        return horario1_fin;
+    }
+
+    public void sethorario1_fin(String horario1_fin) {
+        this.horario1_fin = horario1_fin;
+    }
+
+    public String gethorario2_incio() {
+        return horario2_incio;
+    }
+
+    public void sethorario2_incio(String horario2_incio) {
+        this.horario2_incio = horario2_incio;
+    }
+
+    public String gethorario2_fin() {
+        return horario2_fin;
+    }
+
+    public void sethorario2_fin(String horario2_fin) {
+        this.horario2_fin = horario2_fin;
+    }
 
     public Boolean getCancelado() {
         return cancelado;
     }
+
+
 
     public void setCancelado(Boolean cancelado) {
         this.cancelado = cancelado;

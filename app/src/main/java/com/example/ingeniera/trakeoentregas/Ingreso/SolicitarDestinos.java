@@ -59,6 +59,9 @@ public class SolicitarDestinos extends AppCompatActivity {
 
     AlertDialog alertDialog;
 
+    //public static String urlSistemasAndifIP = "https://sistemas.andif.com.ar";
+
+    public static String urlSistemasAndifIP = "http://192.168.1.176";
 
     RecyclerView RecyclerviewSolDes;
     private RecyclerView recyclerViewUsuarios;

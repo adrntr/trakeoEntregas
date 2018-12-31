@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.almacenDestinos;
+import static com.example.ingeniera.trakeoentregas.Ingreso.SolicitarDestinos.urlSistemasAndifIP;
 
 public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
 
@@ -56,7 +57,7 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
     protected void onPreExecute() {
         progreso=new ProgressDialog(context);
         progreso.setMessage("Realizando entrega...");
-        progreso.setCancelable(true);
+        progreso.setCancelable(false);
         progreso.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -69,7 +70,8 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
     @Override
     protected String doInBackground(final String... strings) {
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/marcar-despachado.php";
+        //String url = "http://192.168.1.176/pruebas/prueba-remito-transporte/marcar-despachado.php";
+        String url = urlSistemasAndifIP+"/pruebas/prueba-remito-transporte/marcar-despachado.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @SuppressLint("RestrictedApi")
@@ -85,7 +87,6 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                         if (strings[2].equals("1")){ //Se entrego
                             if(error.equals("false")){
                                 SingleToast.show(context,"Entregado Correctamente",Toast.LENGTH_SHORT);
-                                progreso.dismiss();
                                 destinos.get(i).setEntregado(true);
                                 String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
                                 destinos.get(i).setFechaHoraEntrega(currentDateTimeString);
@@ -120,15 +121,15 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                                 destinos.get(i).setEntregado(true);
                                 almacenDestinos.saveArrayList(destinos);
                                 SingleToast.show(context,mensaje,Toast.LENGTH_SHORT);
-                                progreso.dismiss();
+
                             }else {
                                 SingleToast.show(context,mensaje,Toast.LENGTH_SHORT);
-                                progreso.dismiss();
+
                             }
                         }else{
                             if(error.equals("false")){
                                 SingleToast.show(context,"Cancelado Correctamente",Toast.LENGTH_SHORT);
-                                progreso.dismiss();
+
                                 destinos.get(i).setEntregado(false);
                                 destinos.get(i).setFechaHoraEntrega("");
                                 almacenDestinos.saveArrayList(destinos);
@@ -157,10 +158,10 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                                 SingleToast.show(context,mensaje,Toast.LENGTH_SHORT);
                                 //Button cancelarEntregaBt = ((Activity)context).findViewById(R.id.cancelarEntregaBt);
                                 //cancelarEntregaBt.setVisibility(View.GONE);
-                                progreso.dismiss();
+
                             }else {
                                 SingleToast.show(context,mensaje,Toast.LENGTH_SHORT);
-                                progreso.dismiss();
+
                             }
                         }
 
@@ -169,13 +170,13 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                     } catch (JSONException e) {
                         e.printStackTrace();
                         SingleToast.show(context, "Error - Intente nuevamente",Toast.LENGTH_SHORT);
-                        progreso.dismiss();
+
                     }
                 }else{
-                    progreso.dismiss();
+
                     SingleToast.show(context,"Sin respuesta",Toast.LENGTH_SHORT);
                 }
-
+                progreso.dismiss();
             }
 
         }, new Response.ErrorListener() {
@@ -191,7 +192,20 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                 params.put("id_externo", strings[0]);
                 params.put("id_tipo_registro", strings[1]);
                 params.put("entregado",strings[2]);
-                params.put("id",strings[3]);
+
+                //ENTREGO TODOS LOS ID PORQUE SI ES PUBLICIDAD TIENEN IDS DIFERENTES
+                ArrayList<Destinos> destinos = almacenDestinos.getArrayList("arrayDestinosKey");
+                ArrayList<Integer> idsRegistroRuta=new ArrayList<>();
+                for (int j= 0 ; j<destinos.size();j++){
+                    if (destinos.get(i).getId()==Integer.valueOf(strings[3])){
+                        idsRegistroRuta=destinos.get(i).getIds_registro_ruta();
+                        for (int k=0;k<idsRegistroRuta.size();k++){
+                            params.put("id_"+k,String.valueOf(idsRegistroRuta.get(k)));
+                        }
+                        break;
+                    }
+                }
+
                 ArrayList<Usuarios> usuarios=almacenDestinos.getArrayUsuarios("arrayUsuariosKey");
                 ArrayList<String> dnisAcompañantes=new ArrayList<>();
                 int numAcompañante=0;
@@ -203,6 +217,7 @@ public class TaskConsultarQrCode extends AsyncTask<String,Void,String> {
                         numAcompañante++;
                     }
                 }
+
                 return params;
             }
         };
